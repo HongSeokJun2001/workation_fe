@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import './App.css'
+import { Routes,Route } from 'react-router-dom'
+import NoticeListComponent from './notice/component/NoticeListComponent'
 
 import Header from "./common/components/Header";
 import Footer from "./common/components/Footer";
@@ -64,6 +66,8 @@ function App() {
                 ? <MemberListComponent />
                 : <Navigate to={roleHome} replace />}
             />
+
+            <Route path="/notice/list" element={<NoticeListComponent/>}/>
           </Routes>
         </div>
 
