@@ -2,14 +2,12 @@ import { useState } from 'react'
 import './App.css'
 import { Routes,Route } from 'react-router-dom'
 import NoticeListComponent from './notice/component/NoticeListComponent'
-<<<<<<< Updated upstream
-=======
 import WorkationApplicationListComponent from './workation/components/WorkationApplicationListComponent'
 import WorkationApplicationComponent from './workation/components/WorkationApplicationComponent'
 import NoticeEnrollFormComponent from './notice/component/NoticeEnrollFormComponent'
 import NoticeDetailComponent from './notice/component/NoticeDetailComponent'
 import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFromComponent'
->>>>>>> Stashed changes
+
 
 function App() {
 
@@ -22,6 +20,8 @@ function App() {
         <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
         <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
+        <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
+        <Route path="application" element={<WorkationApplicationComponent/>}/>
       </Routes>
     </div>
   )
