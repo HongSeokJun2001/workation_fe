@@ -16,6 +16,7 @@ function MemberListComponent() {
     const isSuperAdmin = loginRole === "SUPER";
     const [status, setStatus] = useState("ALL");
     const [target, setTarget] = useState(isSuperAdmin ? "ALL" : "EMPLOYEE");
+    const isEmployeeList = !isSuperAdmin && target === "EMPLOYEE";
 
     useEffect(() => {
 
@@ -35,10 +36,14 @@ function MemberListComponent() {
 
                 const items = response.data;
 
-                const trArr = items.map((item, index) => {
+                const trArr = items.map(item => {
 
                     return (
-                        <MemberItemComponent key={ index } item={ item } />
+                        <MemberItemComponent
+                            key={isEmployeeList ? item.employeeId : item.adminId}
+                            item={item}
+                            isEmployeeList={isEmployeeList}
+                        />
                     );
                 });
 
@@ -82,10 +87,24 @@ function MemberListComponent() {
             <table className="list-area table table-hover">
                 <thead>
                     <tr>
-                        <th width="180">아이디</th>
-                        <th width="150">회사명</th>
-                        <th width="150">권한</th>
-                        <th width="100">상태</th>
+                        {isEmployeeList ? (
+                            <>
+                                <th>사번</th>
+                                <th>이름</th>
+                                <th>부서</th>
+                                <th>직급</th>
+                                <th>상태</th>
+                                <th>워케이션 사용 가능 일수</th>
+                                <th>회원가입 처리 여부</th>
+                            </>
+                        ) : (
+                            <>
+                                <th>로그인 아이디</th>
+                                <th>회사명</th>
+                                <th>권한</th>
+                                <th>상태</th>
+                            </>
+                        )}
                     </tr>
                 </thead>
                 <tbody>{ dataList }</tbody>

@@ -4,17 +4,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { loginMemberApi } from "./auth/api/authApi";
+import EmployeeSignupModal from "./member/components/EmployeeSignupModal";
 
 function Index(props) {
 
     // 실행할 구문
-    const {accessToken, setAccessToken} = props;
+    const {accessToken, setAccessToken, setLoginRole, loginRole} = props;
     const navigate = useNavigate();
 
     // 입력받은 id, pw 저장용 State 형 변수
     const [member, setMember] = useState({loginId : "",
                                           password : "",
                                           loginType : "ADMIN"});
+    const [showSignupModal, setShowSignupModal] = useState(false);
 
     // 입력값이 변할 때마다 실행할 이벤트 핸들러 함수
     const handleChange = e => {
@@ -39,19 +41,27 @@ function Index(props) {
             sessionStorage.setItem("tokenType", loginResponse.tokenType);
             sessionStorage.setItem("loginRole", loginResponse.role);
             setAccessToken(loginResponse.accessToken);
-
-            alert("로그인에 성공했습니다.");
+            setLoginRole(loginResponse.role);
 
             if (loginResponse.role === "SUPER") {
-                navigate("/super");
+                navigate("/admin/super");
             } else if (loginResponse.role === "COMPANY") {
-                navigate("/company");
+                navigate("/admin/company");
             } else {
-                navigate("/");
+                navigate("/lobby");
             }
         } catch (error) {
             console.error("로그인 중 오류 발생:", error);
-            alert("로그인 중 오류가 발생했습니다.");
+
+            if (error.response?.status === 401) {
+                alert(error.response.data || "아이디 또는 비밀번호가 올바르지 않습니다.");
+            } else if (error.response) {
+                alert(`로그인 요청 실패 (${error.response.status})`);
+            } else if (error.request) {
+                alert("서버와 통신할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요.");
+            } else {
+                alert("로그인 요청을 보내는 중 오류가 발생했습니다.");
+            }
             
         }
     };
@@ -62,6 +72,7 @@ function Index(props) {
         sessionStorage.removeItem("tokenType");
         sessionStorage.removeItem("loginRole");
         setAccessToken(null);
+        setLoginRole(null);
         navigate("/");
 
     };
@@ -72,7 +83,7 @@ function Index(props) {
     };
 
     const moveToSignup = () => {
-        alert("직원 계정 생성 기능은 아직 연결되지 않았습니다.");
+        setShowSignupModal(true);
 
     };
 
@@ -83,13 +94,14 @@ function Index(props) {
 
     if(accessToken != null) {
 
+        const loginTitle = loginRole === "EMPLOYEE"
+            ? "직원 로그인"
+            : "관리자 로그인";
+
         // return 구문 - 로그인 후에는 로그아웃 버튼만 보여주기
         return (
             <div>
-                <h2 align="center">관리자 로그인</h2>
-                
-                <br/><br/>
-
+                <h2 align="center">{loginTitle}</h2>
                 <div align="center">
                     <button className="btn btn-danger"
                             onClick={ logoutMember }>
@@ -149,6 +161,10 @@ function Index(props) {
 
                     <br /><br />
                 </form>
+
+                {showSignupModal && (
+                    <EmployeeSignupModal onClose={() => setShowSignupModal(false)} />
+                )}
             </div>
         );
     }
