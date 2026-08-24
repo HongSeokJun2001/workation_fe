@@ -1,11 +1,24 @@
-import { useState } from 'react'
-import './App.css'
+// import { useState } from 'react';
+// import {Routes, Route} from "react-router-dom";
+// import FacilityListComponent from './facility/components/FacilityListComponent';
+// import FacilityDetailComponent from './facility/components/FacilityDetailComponent';
+// import './App.css'
 
-function App() {
+// function App() {
 
-  return (
-    <div></div>
-  )
-}
+//   return (
+//     <div className="content">
+//       <Routes>
+//         {/*시설 목록 */}
+//           <Route path="/" element={ <FacilityListComponent/> } />
+//           <Route path="/facility/list" element={<FacilityListComponent />} />
+//         {/* 시설 상세 조회 (:facilityId 파라미터 전달) */}
+//           <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
 
-export default App
+//         {/* 시설 등록 및 수정 */}
+//       </Routes>
+//     </div>
+//   )
+// }
+
+// export default App
