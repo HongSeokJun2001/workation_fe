@@ -1,3 +1,5 @@
+import FacilityListComponent from './facility/components/FacilityListComponent';
+import FacilityDetailComponent from './facility/components/FacilityDetailComponent';
 import { useState } from 'react'
 import './App.css'
 import { Routes,Route } from 'react-router-dom'
@@ -11,20 +13,26 @@ import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFromCompon
 
 function App() {
 
-  return (
-    <div>
+    return (
+      <div>
 
-      <Routes>
-        <Route path="/notice/list" element={<NoticeListComponent/>}/>
-        <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
-        <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
-        <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
+        <Routes>
+          <Route path="/notice/list" element={<NoticeListComponent/>}/>
+          <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
+          <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
+          <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
-        <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
-        <Route path="application" element={<WorkationApplicationComponent/>}/>
-      </Routes>
-    </div>
-  )
-}
+          <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
+          <Route path="application" element={<WorkationApplicationComponent/>}/>
+
+           {/*시설 목록 */}
+           <Route path="/" element={ <FacilityListComponent/> } />
+           <Route path="/facility/list" element={<FacilityListComponent />} />
+           {/* 시설 상세 조회 (:facilityId 파라미터 전달) */}
+           <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
+        </Routes>
+      </div>
+    )
+  }
 
 export default App
