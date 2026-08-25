@@ -135,6 +135,13 @@ function App() {
                 ? <MemberDetailComponent memberType="EMPLOYEE" />
                 : <Navigate to={roleHome} replace />}
             />
+
+            <Route
+              path="/employee/my-info"
+              element={loginRole === "EMPLOYEE"
+                ? <MemberDetailComponent memberType="EMPLOYEE" selfMode />
+                : <Navigate to={roleHome} replace />}
+            />
             
             <Route path="/notice/list" element={<NoticeListComponent/>}/>
             <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
@@ -150,7 +157,6 @@ function App() {
             <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
             {/* 시설 등록 */}
             <Route path="/facility/enroll" element={<FacilityEnrollFormComponent/>}/>
-
           </Routes>
         </div>
 
