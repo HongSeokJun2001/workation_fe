@@ -138,7 +138,7 @@ function App() {
             
             <Route path="/notice/list" element={<NoticeListComponent/>}/>
             <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
-            <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
+            <Route path="/notice/detail/:noticeId" element={<NoticeDetailComponent/>}/>
             <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
             <Route path="application/list" element={<WorkationApplicationListComponent/>}/>

@@ -26,7 +26,6 @@ const insertNoticeApi = notice => {
         url : `${BASE_URL}`,
         method : "post",
         data : notice
-        // header 추가
     });
 
     return response;
@@ -65,7 +64,7 @@ const deleteNoticeApi = noticeId => {
     const response = axios ({
 
         url : `${BASE_URL}/${noticeId}`,
-        method:"delete"
+        method: "delete"
         // 헤더 추가
     });
 
