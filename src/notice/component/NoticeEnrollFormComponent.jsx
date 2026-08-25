@@ -1,6 +1,7 @@
 
 import {useState} from "react";
 import { useNavigate } from "react-router-dom";
+import { insertNoticeApi } from "../api/noticeApi";
 
 
 
@@ -15,8 +16,6 @@ function NoticeEnrollFormComponent(){
     const [notice, setNotice] = useState({
                                         noticeTitle:"",
                                         noticeContent:"",
-                                        //noticeId?
-                                        noticeWriter: "",
                                         status:"Y"
                                         });
 
@@ -44,14 +43,14 @@ function NoticeEnrollFormComponent(){
 
         try{
 
-            const response = await inserNoticeApi(notice);
+            const response = await insertNoticeApi(notice);
 
             if(response.data == "success"){
                 // 공지사항 작성 성공
                 alert("공지사항 작성에 성공했습니다.");
 
                 //작성 성공일 경우 목록으로 이동
-                navigate("/notice/list")
+                navigate("/notice/list");
 
 
             }else{
@@ -114,7 +113,8 @@ function NoticeEnrollFormComponent(){
                     <button type="reset"       
                             className="btn btn-outline-secondary btn-sm"
                             onClick={ () => { setNotice({noticeTitle : "",
-                                                        noticeContent : ""}); } }>
+                                                        noticeContent : "",
+                                                        status : "Y"}); } }>
                         초기화
                     </button>
 

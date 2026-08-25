@@ -24,14 +24,13 @@ function NoticeListComponent(){
 
                 console.log(response.data);
 
-                //응답데이터를 별도의 변수로 담기
-                const items = response.data;
+                const items = response.data?.list || [];
 
                 const trArr = items.map((item,index)=>{
                     console.log(item);
 
                     return(
-                        <NoticeItemComponent key={index} item={item}/>
+                        <NoticeItemComponent key={item.noticeId ?? index} item={item}/>
                     );
 
                 });
