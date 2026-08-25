@@ -144,8 +144,6 @@ const updateEmployeeApi = (employeeId, employee) => {
     });
 };
 
-// 멤버 탈퇴 처리용
-
 export {
     selectMemberListApi,
     selectCompanyAdminListApi,
