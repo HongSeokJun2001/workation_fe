@@ -14,11 +14,11 @@ import FacilityDetailComponent from './facility/components/FacilityDetailCompone
   return (
     <div>
 
-      <Routes>
-        <Route path="/notice/list" element={<NoticeListComponent/>}/>
-        <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
-        <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
-        <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
+        <Routes>
+          <Route path="/notice/list" element={<NoticeListComponent/>}/>
+          <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
+          <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
+          <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
         <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
         <Route path="application" element={<WorkationApplicationComponent/>}/>
