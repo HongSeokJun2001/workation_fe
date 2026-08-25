@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import './App.css'
 import NoticeListComponent from './notice/component/NoticeListComponent'
+import WorkationApplicationListComponent from './workation/components/WorkationApplicationListComponent'
+import WorkationApplicationComponent from './workation/components/WorkationApplicationComponent'
+import NoticeEnrollFormComponent from './notice/component/NoticeEnrollFormComponent'
+import NoticeDetailComponent from './notice/component/NoticeDetailComponent'
+import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFromComponent'
+import FacilityListComponent from './facility/components/FacilityListComponent';
+import FacilityDetailComponent from './facility/components/FacilityDetailComponent';
 
 import Header from "./common/components/Header";
 import Footer from "./common/components/Footer";
@@ -125,6 +132,20 @@ function App() {
                 ? <MemberDetailComponent memberType="EMPLOYEE" />
                 : <Navigate to={roleHome} replace />}
             />
+            
+            <Route path="/notice/list" element={<NoticeListComponent/>}/>
+            <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
+            <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
+            <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
+
+            <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
+            <Route path="application" element={<WorkationApplicationComponent/>}/>
+
+            {/*시설 목록 */}
+            <Route path="/" element={ <FacilityListComponent/> } />
+            <Route path="/facility/list" element={<FacilityListComponent />} />
+            {/* 시설 상세 조회 (:facilityId 파라미터 전달) */}
+            <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
 
             <Route path="/notice/list" element={<NoticeListComponent/>}/>
           </Routes>
@@ -136,4 +157,4 @@ function App() {
   };
 }
 
-export default App
+ export default App;
