@@ -76,7 +76,7 @@ function NoticeListComponent(){
             {/* 글작성버튼, 스타일 나중에 주기 */}
             <div align="right">
                 <button className="btn btn-outline-secondary btn-sm"
-                        onClick={() => {navigate("/notice/enrollForm")}}>
+                        onClick={() => {navigate("/notice/enroll"); }}>
                         글작성
                 </button>
             </div>
