@@ -177,7 +177,7 @@ function FacilityListComponent() {
 
         {/*시설 등록 버튼(최고관리자용)*/}
         <div align="right">
-            <button className="btn btn-outline-secondary btn-sm" onClick={() => {navigate("/facility/enrollForm");}}>시설 등록</button>
+            <button className="btn btn-outline-secondary btn-sm" onClick={() => {navigate("/facility/enroll");}}>시설 등록</button>
         </div>
 
         <br />

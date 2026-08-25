@@ -14,20 +14,105 @@ function NoticeUpdateFormComponent(){
     // 기본적으로 success 초기화 실패하면 fail로 덮어 씌운 후
     // useEffect 안의 함수 가 다시 실행되도록 유도
 
-    const noticeId = useLocation().state.noticeId;
+    const location = useLocation();
+    const noticeId = location.state?.noticeId;
 
     let navigate = useNavigate();
 
     //기존의 공지사항 정보를 담을 겸, 입력받은 값을 담을 겸 객체 형식의 State 변수
     const [notice, setNotice] = useState({
-        noticeId : "",
-        noticeTitle: "",
-        noticeContent : "",
-        // 작성자 추가
-        createDate : "",
-        status : ""
-    });
+                                            noticeTitle: "",
+                                            noticeContent : "",
+                                            createDate : "",
+                                            status : "Y"
+                                        });
     // 수정하기 페이지 > 기존의 글정보가 먼저 보여져야함 
+    // 이 컴포넌트가 최초로 단 한 번 로딩 된 후 실행할 구문 내에서 상세 조회 먼저 
+    useEffect(()=>{
+
+        const fetchNotice = async () => {
+
+            if (!noticeId) {
+                alert("잘못된 접근입니다.");
+                navigate("/notice/list");
+                return;
+            }
+
+            try{
+
+                const response = await selectNoticeApi(noticeId);
+                setNotice({
+                    ...response.data,
+                    status: response.data.status ?? "Y"
+                });
+
+            }catch(error){
+                console.log("공지사항 수정용 ajax 통신 실패 !")
+
+            }
+        }
+
+        fetchNotice();
+
+    },[noticeId, navigate]);
+
+    // 입력값 변경 시 실행할 이벤트 핸들러 함수
+    const handleChange = e => {
+
+        const newNotice = {...notice};
+
+        newNotice[e.target.name] = e.target.value;
+
+        setNotice(newNotice);
+    }
+
+    // 수정하기 버튼 클릭시 실행할 이벤트 핸들러 함수
+
+    const updateNotice = async e => {
+
+        e.preventDefault();
+        //> 기본이벤트 제거
+
+        try{
+
+            const payload = {
+                ...notice,
+                noticeId,
+                status: notice.status || "Y"
+            };
+
+            const response = await updateNoticeApi(noticeId, payload);
+
+            console.log(response.data);
+
+            if(response.data == "success" || response.data == "sucess"){
+                // > 공지사항 수정 성공일 경우
+
+                alert("공지사항 수정 성공!");
+
+                // 다시 상세 조회 페이지로 이동 
+                navigate(`/notice/detail/${noticeId}`);
+
+            }else{
+
+                //>공지사항 수정 실패일 경우
+
+                alert("공지사항 수정에 실패했습니다.");
+
+                setResult(response.data)
+            }
+
+
+        }catch(error){
+
+            console.log("공지사항 수정용 ajax통신 실패");
+
+        }
+
+
+    }
+
+    
 
     //return 구문
 
@@ -67,7 +152,7 @@ function NoticeUpdateFormComponent(){
                     </button>
                     &nbsp;&nbsp;
                     <button type="button" className="btn btn-outline-secondary btn-sm"
-                            onClick={ () => { navigate(`/notice/detail/${ noticeNo }`); } }>
+                            onClick={ () => { navigate(`/notice/detail/${ noticeId }`); } }>
                         뒤로가기
                     </button>
                     {/* 

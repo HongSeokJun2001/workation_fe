@@ -8,10 +8,21 @@ function FacilityItemComponent(props) {
     // props = {item : {facilityId, facilityName, region, facilityType, description, address, imagePaths, ....}}
     const item = props.item;
 
-    // 대표 이미지 설정 (imagePaths 배열의 첫번째 이미지 사용)
-    const thumbnail = (item.imagePaths && item.imagePaths.length > 0)
-        ? item.imagePaths[0]
-        : "https://via.placeholder.com/300x200?text=No+Image";
+    // 대표 이미지 URL 설정
+    const getImageUrl = (path) => {
+        if (!path) return "https://via.placeholder.com/300x200?text=No+Image";
+        if (path.startsWith("http://") || path.startsWith("https://")) {
+            return path;
+        }
+
+        // 로컬 업로드 경로 처리
+        const cleanPath = path.startsWith("/") ? path : `/${path}`;
+        return `http://localhost:8007/workation${cleanPath}`;
+    };
+
+    const thumbnail = (item.imagePaths && item.imagePaths.length > 0) 
+        ? getImageUrl(item.imagePaths[0])
+        : "https://via.placeholder.com/300x200?text=No+Image"
 
     // return 구문
     return(
