@@ -103,6 +103,12 @@ function Index(props) {
             <div>
                 <h2 align="center">{loginTitle}</h2>
                 <div align="center">
+                    {loginRole === "EMPLOYEE" && (
+                        <button className="btn btn-primary"
+                                onClick={() => navigate('/employee/my-info')}>
+                            정보 수정
+                        </button>
+                    )}
                     <button className="btn btn-danger"
                             onClick={ logoutMember }>
                         로그아웃

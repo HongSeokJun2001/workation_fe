@@ -31,10 +31,10 @@ const selectCompanyAdminListApi = (status = "ALL") => {
     });
 };
 
-const selectEmployeeListApi = (status = "ALL") => {
+const selectEmployeeListApi = (status = "ALL", isProgressed = "ALL") => {
 
     return axios({
-        url : `${ BASE_URL }admin/company/member/employee-list?status=${ status }`,
+        url : `${ BASE_URL }admin/company/member/employee-list?status=${ status }&isProgressed=${ isProgressed }`,
         method : "get",
         headers : {
             Authorization : getAuthorization()
@@ -107,6 +107,17 @@ const selectEmployeeDetailApi = employeeId => {
     });
 };
 
+const selectMyEmployeeDetailApi = () => {
+
+    return axios({
+        url : `${ BASE_URL }employee/my-info`,
+        method : "get",
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
 // 멤버 정보 수정용
 const updateSuperAdminApi = (adminId, admin) => {
 
@@ -144,6 +155,29 @@ const updateEmployeeApi = (employeeId, employee) => {
     });
 };
 
+const approveEmployeeApi = employeeId => {
+
+    return axios({
+        url : `${ BASE_URL }admin/company/member/employee/${ employeeId }/approval`,
+        method : "put",
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
+const updateMyEmployeeApi = employee => {
+
+    return axios({
+        url : `${ BASE_URL }employee/my-info`,
+        method : "put",
+        data : employee,
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
 export {
     selectMemberListApi,
     selectCompanyAdminListApi,
@@ -154,7 +188,10 @@ export {
     selectSuperAdminDetailApi,
     selectCompanyAdminDetailApi,
     selectEmployeeDetailApi,
+    selectMyEmployeeDetailApi,
     updateSuperAdminApi,
     updateCompanyAdminApi,
-    updateEmployeeApi
+    updateEmployeeApi,
+    approveEmployeeApi,
+    updateMyEmployeeApi
 };

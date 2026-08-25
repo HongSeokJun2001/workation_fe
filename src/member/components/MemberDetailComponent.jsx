@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
+    approveEmployeeApi,
     selectCompanyAdminDetailApi,
     selectEmployeeDetailApi,
+    selectMyEmployeeDetailApi,
     selectSuperAdminDetailApi,
     updateCompanyAdminApi,
     updateEmployeeApi,
+    updateMyEmployeeApi,
     updateSuperAdminApi
 } from "../api/memberApi";
 
 function MemberDetailComponent(props) {
 
-    const { memberType } = props;
+    const { memberType, selfMode = false } = props;
     const { adminId, employeeId } = useParams();
     const [member, setMember] = useState(null);
     const [password, setPassword] = useState("");
@@ -27,7 +30,9 @@ function MemberDetailComponent(props) {
                 let response;
 
                 if (memberType === "EMPLOYEE") {
-                    response = await selectEmployeeDetailApi(employeeId);
+                    response = selfMode
+                        ? await selectMyEmployeeDetailApi()
+                        : await selectEmployeeDetailApi(employeeId);
                 } else if (loginRole === "SUPER") {
                     response = await selectSuperAdminDetailApi(adminId);
                 } else {
@@ -92,6 +97,19 @@ function MemberDetailComponent(props) {
         setPasswordMessage("");
     };
 
+    const approveMember = async () => {
+        try {
+            if (memberType === "EMPLOYEE") {
+                await approveEmployeeApi(employeeId);
+            }
+            alert("계정이 승인되었습니다.");
+            window.location.reload();
+        } catch (error) {
+            console.error("계정 승인 실패:", error);
+            alert(error.response?.data || "계정 승인 중 오류가 발생했습니다.");
+        }
+    };
+
     const updateMember = async () => {
         if (password !== "" || confirmPassword !== "") {
             if (!/^(?=.*[^A-Za-z0-9]).{8,15}$/.test(password)) {
@@ -107,10 +125,26 @@ function MemberDetailComponent(props) {
 
         try {
             let response;
-            const requestBody = {...member, password};
+            const requestBody = selfMode
+                ? {
+                    ...member,
+                    password,
+                    empNo: undefined,
+                    employeeName: undefined,
+                    department: undefined,
+                    position: undefined,
+                    workationAvailDays: undefined,
+                    status: undefined,
+                    hireDate: undefined,
+                    resignDate: undefined,
+                    isProgressed: undefined
+                }
+                : { ...member, password };
 
             if (memberType === "EMPLOYEE") {
-                response = await updateEmployeeApi(employeeId, requestBody);
+                response = selfMode
+                    ? await updateMyEmployeeApi(requestBody)
+                    : await updateEmployeeApi(employeeId, requestBody);
             } else if (loginRole === "SUPER") {
                 response = await updateSuperAdminApi(adminId, requestBody);
             } else {
@@ -122,6 +156,7 @@ function MemberDetailComponent(props) {
             setConfirmPassword("");
             setPasswordMessage("");
             alert("계정 정보가 수정되었습니다.");
+            window.location.reload();
         } catch (error) {
             console.error("계정 수정 실패:", error);
             alert(error.response?.data || "계정 수정 중 오류가 발생했습니다.");
@@ -129,7 +164,9 @@ function MemberDetailComponent(props) {
     };
 
     const handleCancel = () => {
-        if (memberType === "EMPLOYEE") {
+        if (selfMode) {
+            window.location.href = "/lobby";
+        } else if (memberType === "EMPLOYEE") {
             window.location.href = "/admin/company/member/list";
         } else if (loginRole === "SUPER") {
             window.location.href = "/admin/super/member/list";
@@ -143,6 +180,10 @@ function MemberDetailComponent(props) {
     }
 
     if (memberType === "EMPLOYEE") {
+        const isSelfEmployeeEdit = selfMode;
+        const isCompanyAdminEmployeeEdit = !selfMode && loginRole === "COMPANY";
+        const isEmployeeReadOnlyField = isSelfEmployeeEdit;
+
         return (
             <div>
                 <h2 align="center">직원 계정 상세 조회</h2>
@@ -151,11 +192,24 @@ function MemberDetailComponent(props) {
                     <tbody>
                         <tr>
                             <th>회사</th>
-                            <td><input value={member.companyLabel || ""} disabled /></td>
+                            <td>
+                                <input
+                                    value={member.companyLabel || ""}
+                                    disabled={isSelfEmployeeEdit || isCompanyAdminEmployeeEdit}
+                                />
+                            </td>
                         </tr>
                         <tr>
                             <th>로그인 아이디</th>
-                            <td><input name="loginId" value={member.loginId || ""} onChange={handleChange} /></td>
+                            <td>
+                                <input
+                                    name="loginId"
+                                    value={member.loginId || ""}
+                                    onChange={isSelfEmployeeEdit ? undefined : handleChange}
+                                    readOnly={isSelfEmployeeEdit}
+                                    disabled={isSelfEmployeeEdit}
+                                />
+                            </td>
                         </tr>
                         <tr>
                             <th>새 비밀번호</th>
@@ -171,11 +225,11 @@ function MemberDetailComponent(props) {
                         </tr>
                         <tr>
                             <th>사번</th>
-                            <td><input name="empNo" value={member.empNo || ""} onChange={handleChange} /></td>
+                            <td><input name="empNo" value={member.empNo || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
                         </tr>
                         <tr>
                             <th>이름</th>
-                            <td><input name="employeeName" value={member.employeeName || ""} onChange={handleChange} /></td>
+                            <td><input name="employeeName" value={member.employeeName || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
                         </tr>
                         <tr>
                             <th>전화번호</th>
@@ -187,20 +241,25 @@ function MemberDetailComponent(props) {
                         </tr>
                         <tr>
                             <th>부서</th>
-                            <td><input name="department" value={member.department || ""} onChange={handleChange} /></td>
+                            <td><input name="department" value={member.department || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
                         </tr>
                         <tr>
                             <th>직급</th>
-                            <td><input name="position" value={member.position || ""} onChange={handleChange} /></td>
+                            <td><input name="position" value={member.position || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
                         </tr>
                         <tr>
                             <th>워케이션 사용 가능 일수</th>
-                            <td><input name="workationAvailDays" value={member.workationAvailDays ?? ""} onChange={handleChange} /></td>
+                            <td><input name="workationAvailDays" value={member.workationAvailDays ?? ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
                         </tr>
                         <tr>
                             <th>상태</th>
                             <td>
-                                <select name="status" value={member.status || "ACTIVE"} onChange={handleChange}>
+                                <select
+                                    name="status"
+                                    value={member.status || "ACTIVE"}
+                                    onChange={isEmployeeReadOnlyField ? undefined : handleChange}
+                                    disabled={isEmployeeReadOnlyField}
+                                >
                                     <option value="ACTIVE">ACTIVE</option>
                                     <option value="LOCKED">LOCKED</option>
                                 </select>
@@ -208,20 +267,27 @@ function MemberDetailComponent(props) {
                         </tr>
                         <tr>
                             <th>입사일</th>
-                            <td><input type="date" name="hireDate" value={member.hireDate || ""} onChange={handleChange} /></td>
+                            <td><input type="date" name="hireDate" value={member.hireDate || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
                         </tr>
-                        <tr>
-                            <th>퇴사일</th>
-                            <td><input type="date" name="resignDate" value={member.resignDate || ""} onChange={handleChange} /></td>
-                        </tr>
-                        <tr>
-                            <th>회원가입 처리 여부</th>
-                            <td><input name="isProgressed" value={member.isProgressed || ""} disabled /></td>
-                        </tr>
+                        {!selfMode && (
+                            <>
+                                <tr>
+                                    <th>퇴사일</th>
+                                    <td><input type="date" name="resignDate" value={member.resignDate || ""} onChange={handleChange} disabled={isEmployeeReadOnlyField} /></td>
+                                </tr>
+                                <tr>
+                                    <th>회원가입 처리 여부</th>
+                                    <td><input name="isProgressed" value={member.isProgressed || ""} disabled /></td>
+                                </tr>
+                            </>
+                        )}
                     </tbody>
                 </table>
 
                 <br />
+                {!selfMode && member.isProgressed === "N" && (
+                    <button type="button" onClick={approveMember}>계정 승인</button>
+                )}
                 <button type="button" onClick={updateMember}>계정 수정</button>
                 <button type="button" onClick={handleCancel}>취소</button>
             </div>

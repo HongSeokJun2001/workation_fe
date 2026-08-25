@@ -132,21 +132,14 @@ function App() {
                 ? <MemberDetailComponent memberType="EMPLOYEE" />
                 : <Navigate to={roleHome} replace />}
             />
+
+            <Route
+              path="/employee/my-info"
+              element={loginRole === "EMPLOYEE"
+                ? <MemberDetailComponent memberType="EMPLOYEE" selfMode />
+                : <Navigate to={roleHome} replace />}
+            />
             
-            <Route path="/notice/list" element={<NoticeListComponent/>}/>
-            <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
-            <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>
-            <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
-
-            <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
-            <Route path="application" element={<WorkationApplicationComponent/>}/>
-
-            {/*시설 목록 */}
-            <Route path="/" element={ <FacilityListComponent/> } />
-            <Route path="/facility/list" element={<FacilityListComponent />} />
-            {/* 시설 상세 조회 (:facilityId 파라미터 전달) */}
-            <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
-
             <Route path="/notice/list" element={<NoticeListComponent/>}/>
             <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
             <Route path="/notice/detail/:noticeNo" element={<NoticeDetailComponent/>}/>

@@ -16,6 +16,7 @@ function MemberListComponent() {
     const isSuperAdmin = loginRole === "SUPER";
     const [status, setStatus] = useState("ALL");
     const [target, setTarget] = useState(isSuperAdmin ? "ALL" : "EMPLOYEE");
+    const [isProgressed, setIsProgressed] = useState("ALL");
     const isEmployeeList = !isSuperAdmin && target === "EMPLOYEE";
 
     useEffect(() => {
@@ -31,7 +32,7 @@ function MemberListComponent() {
                 } else if (target === "COMPANY_ADMIN") {
                     response = await selectCompanyAdminListApi(status);
                 } else {
-                    response = await selectEmployeeListApi(status);
+                    response = await selectEmployeeListApi(status, isProgressed);
                 }
 
                 const items = response.data;
@@ -57,7 +58,7 @@ function MemberListComponent() {
 
         selectMemberList();
         
-    }, [isSuperAdmin, status, target]);
+    }, [isSuperAdmin, status, target, isProgressed]);
     return (
         <div>
             <h2 align="center">계정 목록 조회</h2>
@@ -80,6 +81,13 @@ function MemberListComponent() {
                         <option value="ACTIVE">활성</option>
                         <option value="LOCKED">잠금</option>
                     </select>
+                    {isEmployeeList && (
+                        <select value={isProgressed} onChange={event => setIsProgressed(event.target.value)}>
+                            <option value="ALL">회원가입 처리 여부 전체</option>
+                            <option value="N">회원가입 처리 여부 N</option>
+                            <option value="Y">회원가입 처리 여부 Y</option>
+                        </select>
+                    )}
                 </div>
 
             <br/><br/>
