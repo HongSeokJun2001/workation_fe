@@ -18,7 +18,8 @@ function NoticeItemComponent(props){
             <td>{item.noticeId}</td>
             <td>{item.noticeTitle}</td>
             {/* 여기 시설로 수정  */}
-            <td>{item.admin?.adminId ?? "-"}</td>
+            {/* <td>{item.admin?.adminId ?? "-"}</td> */}
+            <td>관리자</td>
             {/* 작성자 테이블 확인 필요 */}
             <td>{item.viewCount}</td>
             {/* substring 넣기 */}
