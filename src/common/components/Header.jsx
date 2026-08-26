@@ -49,6 +49,9 @@ function Header({ loginRole }) {
                         <div>
                             <Link to="/facility/list">시설목록</Link>
                         </div>
+                        <div>
+                            <Link to="/admin/crew/list">크루관리</Link>
+                        </div>
                     </>
                     
                 )}

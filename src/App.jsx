@@ -9,6 +9,8 @@ import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFromCompon
 import FacilityListComponent from './facility/components/FacilityListComponent';
 import FacilityDetailComponent from './facility/components/FacilityDetailComponent';
 import FacilityEnrollFormComponent from './facility/components/FacilityEnrollFormComponent'
+import CrewListComponent from './crew/components/CrewListComponent';
+import CrewEnrollFormComponent from './crew/components/CrewEnrollFormComponent';
 
 import Header from "./common/components/Header";
 import Footer from "./common/components/Footer";
@@ -143,9 +145,16 @@ function App() {
                 : <Navigate to={roleHome} replace />}
             />
             
-            <Route path="/notice/list" element={<NoticeListComponent/>}/>
-            <Route path="/notice/enroll" element={<NoticeEnrollFormComponent/>}/>
-            <Route path="/notice/detail/:noticeId" element={<NoticeDetailComponent/>}/>
+
+            {/* 공지사항 관련 라우팅 */}
+
+            {/* 공지사항 전체 조회 */}
+            <Route path="admin/notice/list" element={<NoticeListComponent/>}/>
+            {/* 공지사항 작성 */}
+            <Route path="notice/enroll" element={<NoticeEnrollFormComponent/>}/>
+            {/* 공지사항 상세 조회 */}
+            <Route path="notice/detail/:noticeId" element={<NoticeDetailComponent/>}/>
+            {/* 공지사항 수정 */}
             <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
             <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
@@ -157,6 +166,10 @@ function App() {
             <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
             {/* 시설 등록 */}
             <Route path="/facility/enroll" element={<FacilityEnrollFormComponent/>}/>
+
+            {/* 크루 관련 라우팅  */}
+            <Route path="/admin/crew/list" element={<CrewListComponent />} />
+            <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
           </Routes>
         </div>
 

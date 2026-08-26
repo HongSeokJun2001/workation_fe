@@ -50,7 +50,7 @@ function NoticeEnrollFormComponent(){
                 alert("공지사항 작성에 성공했습니다.");
 
                 //작성 성공일 경우 목록으로 이동
-                navigate("/notice/list");
+                navigate("/admin/notice/list");
 
 
             }else{

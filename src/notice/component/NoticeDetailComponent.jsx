@@ -80,7 +80,7 @@ function NoticeDetailComponent(){
                 alert("공지사항 삭제에 성공했습니다.");
 
                 // 공지사항 목록 페이지로 이동
-                navigate("/notice/list");
+                navigate("/admin/notice/list");
             }else{
 
                 //삭제 실패
@@ -113,7 +113,7 @@ function NoticeDetailComponent(){
                     </tr>
                     <tr>
                         <th>작성자</th>
-                        <td>{ notice.admin?.adminId ?? "-" }</td>
+                        <td>관리자</td>
 
                         <th width="130">작성일</th>
                         <td>{ notice.createDate ? notice.createDate.substring(0, 10) : "" }</td>
@@ -136,7 +136,7 @@ function NoticeDetailComponent(){
 
             <div align="center">
                 <button className="btn btn-outline-secondary btn-sm"
-                        onClick={ () => { navigate("/notice/list"); } }>
+                        onClick={ () => { navigate("/admin/notice/list"); } }>
                     목록으로
                 </button>
                 &nbsp;&nbsp;

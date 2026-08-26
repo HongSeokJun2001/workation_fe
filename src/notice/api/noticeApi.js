@@ -5,11 +5,12 @@ const BASE_URL = "http://localhost:8007/workation/notices"
 
 // 공지사항 목록조회
 
-const selectNoticeListApi=()=>{
+const selectNoticeListApi = cpage => {
 
     const response = axios({
 
         url : `${BASE_URL}`,
+        params : { cpage },
         method:"get"
         // headers : 추가 ***
     });
