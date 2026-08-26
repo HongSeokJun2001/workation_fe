@@ -7,6 +7,7 @@ import {
 } from "../api/memberApi";
 
 import MemberItemComponent from "./MemberItemComponent";
+import CompanyAdminCreateModal from "./CompanyAdminCreateModal";
 
 function MemberListComponent() {
 
@@ -17,6 +18,7 @@ function MemberListComponent() {
     const [status, setStatus] = useState("ALL");
     const [target, setTarget] = useState(isSuperAdmin ? "ALL" : "EMPLOYEE");
     const [isProgressed, setIsProgressed] = useState("ALL");
+    const [showCompanyAdminCreateModal, setShowCompanyAdminCreateModal] = useState(false);
     const isEmployeeList = !isSuperAdmin && target === "EMPLOYEE";
 
     useEffect(() => {
@@ -90,6 +92,14 @@ function MemberListComponent() {
                     )}
                 </div>
 
+                {((!isSuperAdmin && target === "COMPANY_ADMIN") || (isSuperAdmin && (target === "SUPER" || target === "COMPANY"))) && (
+                    <div align="center">
+                        <button type="button" onClick={() => setShowCompanyAdminCreateModal(true)}>
+                            {isSuperAdmin && target === "SUPER" ? "최고관리자 계정 추가" : "본사관리자 계정 추가"}
+                        </button>
+                    </div>
+                )}
+
             <br/><br/>
 
             <table className="list-area table table-hover">
@@ -119,6 +129,15 @@ function MemberListComponent() {
             </table>
 
             <br/><br/>
+
+            {showCompanyAdminCreateModal && (
+                <CompanyAdminCreateModal
+                    onClose={() => setShowCompanyAdminCreateModal(false)}
+                    onCreated={() => setStatus("ALL")}
+                    isSuperAdmin={isSuperAdmin}
+                    isCompanyAdminCreation={target === "COMPANY"}
+                />
+            )}
         </div>
     );
 }
