@@ -11,17 +11,25 @@ function FacilityItemComponent(props) {
     // 대표 이미지 URL 설정
     const getImageUrl = (path) => {
         if (!path) return "https://via.placeholder.com/300x200?text=No+Image";
-        if (path.startsWith("http://") || path.startsWith("https://")) {
-            return path;
+        
+        const actualPath = typeof path === 'object' ? path.filePath : path;
+
+        if(!actualPath || typeof actualPath !== 'string') {
+            return "https://via.placeholder.com/300x200?text=No+Image";
+        }
+
+        if(actualPath.startsWith("http://") || actualPath.startsWith("https://")) {
+            return actualPath;
         }
 
         // 로컬 업로드 경로 처리
-        const cleanPath = path.startsWith("/") ? path : `/${path}`;
+        const cleanPath = actualPath.startsWith("/") ? actualPath : `/${actualPath}`;
         return `http://localhost:8007/workation${cleanPath}`;
     };
 
-    const thumbnail = (item.imagePaths && item.imagePaths.length > 0) 
-        ? getImageUrl(item.imagePaths[0])
+    const images = item.imageList || item.imagePaths || [];
+    const thumbnail = (images && images.length > 0) 
+        ? getImageUrl(images[0])
         : "https://via.placeholder.com/300x200?text=No+Image"
 
     // return 구문
