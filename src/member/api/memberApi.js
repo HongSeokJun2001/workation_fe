@@ -18,6 +18,17 @@ const selectMemberListApi = (status = "ALL", target = "ALL") => {
     return response;
 };
 
+const selectActiveCompanyListApi = () => {
+
+    return axios({
+        url : `${ BASE_URL }admin/super/company-list`,
+        method : "get",
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
 
 // 본사관리자 -> 목록 조회용
 const selectCompanyAdminListApi = (status = "ALL") => {
@@ -25,6 +36,42 @@ const selectCompanyAdminListApi = (status = "ALL") => {
     return axios({
         url : `${ BASE_URL }admin/company/member/admin-list?status=${ status }`,
         method : "get",
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
+const createCompanyAdminApi = admin => {
+
+    return axios({
+        url : `${ BASE_URL }admin/company/member/admin`,
+        method : "post",
+        data : admin,
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
+const createCompanyAdminBySuperApi = admin => {
+
+    return axios({
+        url : `${ BASE_URL }admin/super/member/company-admin`,
+        method : "post",
+        data : admin,
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
+const createSuperAdminApi = admin => {
+
+    return axios({
+        url : `${ BASE_URL }admin/super/member/admin`,
+        method : "post",
+        data : admin,
         headers : {
             Authorization : getAuthorization()
         }
@@ -70,6 +117,42 @@ const signupEmployeeApi = employee => {
         url : `${ BASE_URL }public/employee/signup`,
         method : "post",
         data : employee
+    });
+};
+
+const requestEmployeeLoginIdApi = employee => {
+
+    return axios({
+        url : `${ BASE_URL }public/employee/recovery/login-id/request`,
+        method : "post",
+        data : employee
+    });
+};
+
+const requestEmployeePasswordResetApi = employee => {
+
+    return axios({
+        url : `${ BASE_URL }public/employee/recovery/password/request`,
+        method : "post",
+        data : employee
+    });
+};
+
+const verifyEmployeeRecoveryApi = verification => {
+
+    return axios({
+        url : `${ BASE_URL }public/employee/recovery/verify`,
+        method : "post",
+        data : verification
+    });
+};
+
+const resetEmployeePasswordApi = resetRequest => {
+
+    return axios({
+        url : `${ BASE_URL }public/employee/recovery/password/reset`,
+        method : "post",
+        data : resetRequest
     });
 };
 
@@ -180,11 +263,19 @@ const updateMyEmployeeApi = employee => {
 
 export {
     selectMemberListApi,
+    selectActiveCompanyListApi,
     selectCompanyAdminListApi,
+    createCompanyAdminApi,
+    createCompanyAdminBySuperApi,
+    createSuperAdminApi,
     selectEmployeeListApi,
     checkCompanyApi,
     checkEmployeeLoginIdApi,
     signupEmployeeApi,
+    requestEmployeeLoginIdApi,
+    requestEmployeePasswordResetApi,
+    verifyEmployeeRecoveryApi,
+    resetEmployeePasswordApi,
     selectSuperAdminDetailApi,
     selectCompanyAdminDetailApi,
     selectEmployeeDetailApi,

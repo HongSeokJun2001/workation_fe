@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { loginMemberApi } from "./auth/api/authApi";
+import EmployeeAccountRecoveryModal from "./member/components/EmployeeAccountRecoveryModal";
 import EmployeeSignupModal from "./member/components/EmployeeSignupModal";
 
 function Index(props) {
@@ -17,6 +18,7 @@ function Index(props) {
                                           password : "",
                                           loginType : "ADMIN"});
     const [showSignupModal, setShowSignupModal] = useState(false);
+    const [showRecoveryModal, setShowRecoveryModal] = useState(false);
 
     // 입력값이 변할 때마다 실행할 이벤트 핸들러 함수
     const handleChange = e => {
@@ -88,7 +90,7 @@ function Index(props) {
     };
 
     const moveToFindAccount = () => {
-        alert("아이디/비밀번호 찾기 기능은 아직 연결되지 않았습니다.");
+        setShowRecoveryModal(true);
 
     };
 
@@ -129,7 +131,7 @@ function Index(props) {
                     <button type="button" onClick={() => selectLoginType("ADMIN")}>관리자로그인</button>
                     <button type="button" onClick={() => selectLoginType("EMPLOYEE")}>직원로그인</button>
                     <button type="button" onClick={moveToSignup}>직원 계정 생성</button>
-                    <button type="button" onClick={moveToFindAccount}>아이디/비번 찾기</button>
+                    <button type="button" onClick={moveToFindAccount}>직원 아이디/비번 찾기</button>
                 </div>
 
                 <br /><br />
@@ -170,6 +172,9 @@ function Index(props) {
 
                 {showSignupModal && (
                     <EmployeeSignupModal onClose={() => setShowSignupModal(false)} />
+                )}
+                {showRecoveryModal && (
+                    <EmployeeAccountRecoveryModal onClose={() => setShowRecoveryModal(false)} />
                 )}
             </div>
         );
