@@ -18,6 +18,7 @@ import MemberDetailComponent from "./member/components/MemberDetailComponent";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Index from "./index";
+import FacilityUpdateFormComponent from './facility/components/FacilityUpdateFormComponent'
 
 function App() {
 
@@ -157,6 +158,8 @@ function App() {
             <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent/>} />
             {/* 시설 등록 */}
             <Route path="/facility/enroll" element={<FacilityEnrollFormComponent/>}/>
+            {/* 시설 수정 */}
+            <Route path="/facility/update" element={<FacilityUpdateFormComponent/>}/>
           </Routes>
         </div>
 

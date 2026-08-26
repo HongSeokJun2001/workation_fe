@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8007/workation/api/facilities";
+const BASE_URL = "http://localhost:8007/workation";
 
 // 워케이션 시설 목록 조회용
 const selectFacilityListApi = cpage => {
 
     const response = axios({
-        url : `${BASE_URL}`,
+        url : `${BASE_URL}/facilities`,
         method : "get",
         params : {
             cpage : cpage
@@ -20,7 +20,7 @@ const selectFacilityListApi = cpage => {
 const searchFacilityListApi = (cpage, keyword) => {
 
     const response = axios({
-        url : `${BASE_URL}/search`,
+        url : `${BASE_URL}/facilities/search`,
         method : "get",
         params : {
             cpage : cpage,
@@ -35,7 +35,7 @@ const searchFacilityListApi = (cpage, keyword) => {
 const insertFacilityApi = formData => {
 
     const response = axios({
-        url : `${BASE_URL}`,
+        url : `${BASE_URL}/facilities`,
         method : "post",
         data : formData,
         headers : {
@@ -50,7 +50,7 @@ const insertFacilityApi = formData => {
 const selectFacilityApi = facilityId => {
     
     const response = axios({
-        url : `${BASE_URL}/${facilityId}`,
+        url : `${BASE_URL}/facilities/${facilityId}`,
         method : "get"
     });
 
@@ -61,7 +61,7 @@ const selectFacilityApi = facilityId => {
 const selectFacilityFormApi = facilityId => {
 
     const response = axios({
-        url : `${BASE_URL}/${facilityId}/form`,
+        url : `${BASE_URL}/facilities/${facilityId}/form`,
         method : "get"
     });
 
@@ -72,7 +72,7 @@ const selectFacilityFormApi = facilityId => {
 const updateFacilityApi = (facilityId, formData) => {
     
     const response = axios({
-        url : `${BASE_URL}/${facilityId}`,
+        url : `${BASE_URL}/facilities/${facilityId}`,
         method : "put",
         data : formData,
         headers : {
@@ -87,7 +87,7 @@ const updateFacilityApi = (facilityId, formData) => {
 const deleteFacilityApi = facilityId => {
 
     const response = axios({
-        url : `${BASE_URL}/${facilityId}`,
+        url : `${BASE_URL}/facilities/${facilityId}`,
         method : "delete"
     });
 

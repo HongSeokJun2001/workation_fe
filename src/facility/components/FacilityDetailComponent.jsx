@@ -5,21 +5,22 @@ import { selectFacilityApi, deleteFacilityApi, BASE_URL } from "../api/facilityA
 function FacilityDetailComponent() {
 
     // 실행할 구문
-    //URL 파라미터에서 facilityId 추출
+    // URL 파라미터에서 facilityId 추출
     const {facilityId} = useParams();
     const navigate = useNavigate();
 
     // FacilityResponseDto 구조에 맞춘 State 초기화
-    const [facility, setFacility] = useState({facilityId : "",
-                                              facilityType : "",
-                                              facilityName : "",
-                                              region : "",
-                                              address : "",
-                                              description : "",
-                                              status : "",
-                                              roomCount : "",
-                                              imagePaths : []
-                                            });
+    const [facility, setFacility] = useState({
+        facilityId : "",
+        facilityType : "",
+        facilityName : "",
+        region : "",
+        address : "",
+        description : "",
+        status : "",
+        roomCount : "",
+        imageList : []
+    });
 
     // 컴포넌트 마운트 시 단일 시설 정보 조회
     useEffect(() => {
@@ -38,7 +39,7 @@ function FacilityDetailComponent() {
             }
         };
         selectFacility();
-    }, [facilityId]);
+    }, [facilityId, navigate]);
 
     // 시설 삭제 처리 함수
     const deleteFacility = async () => {
@@ -47,7 +48,7 @@ function FacilityDetailComponent() {
         try {
             const response = await deleteFacilityApi(facilityId);
 
-            if (response.data == "success" || response.status === 200) {
+            if (response.status === 200 && response.data) {
                 alert("시설 정보가 성공적으로 삭제되었습니다.");
                 navigate("/facility/list");
             } else {
@@ -96,13 +97,33 @@ function FacilityDetailComponent() {
                     <tr>
                         <th className="table-light">시설 이미지</th>
                         <td colSpan="3">
-                            {facility.imagePaths && facility.imagePaths.length > 0 ? (
-                                <div style={{display: "flex", gap: "15px", flexWrap: "wrap"}}>
-                                    {facility.imagePaths.map((path, index) => (
-                                        <img key={index} src={`http://localhost:8007/workation${path}`} alt={`시설 이미지 ${index + 1}`} style={{width: "200px", height: "150px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd"}}/>
-                                    ))}
-                                </div>
-                            ) : ("등록된 시설 이미지가 없습니다.")}
+                            {(() => {
+                                const images = facility.imageList || facility.imagePaths || [];
+
+                                if (images.length === 0) return "등록된 시설 이미지가 없습니다.";
+
+                                return (
+                                    <div style={{display: "flex", gap: "15px", flexWrap: "wrap"}}>
+                                        {images.map((item, index) => {
+                                            const path = typeof item === 'object' && item !== null ? item.filePath : item;
+                                            if (!path) return null;
+
+                                            const src = path.startsWith("http") 
+                                                ? path 
+                                                : `${BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
+
+                                            return (
+                                                <img 
+                                                    key={index} 
+                                                    src={src} 
+                                                    alt={`시설 이미지 ${index + 1}`} 
+                                                    style={{width: "200px", height: "150px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd"}}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            })()}
                         </td>
                     </tr>
                 </tbody>
@@ -116,20 +137,18 @@ function FacilityDetailComponent() {
                     목록으로
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn btn-outline-warning btn-sm" onClick={() => navigate("/facility/updateForm", {state : {facilityId}})}>
+                <button className="btn btn-outline-warning btn-sm" onClick={() => navigate("/facility/update", {state : {facilityId}})}>
                     수정하기
                 </button>
                 &nbsp;&nbsp;
                 <button className="btn btn-outline-danger btn-sm" onClick={deleteFacility}>
                     삭제하기
                 </button>
-
             </div>
 
             <br /><br />
         </div>
     );
-
 }
 
 export default FacilityDetailComponent;
