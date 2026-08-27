@@ -21,6 +21,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Index from "./index";
 import FacilityUpdateFormComponent from './facility/components/FacilityUpdateFormComponent'
+import CompanyListComponent from './member/components/CompanyListComponent'
+import CompanyDetailComponent from './member/components/CompanyDetailComponent'
 
 function App() {
 
@@ -101,6 +103,20 @@ function App() {
                     setLoginRole={setLoginRole}
                     loginRole={loginRole}
                   />
+                : <Navigate to={roleHome} replace />}
+            />
+
+            <Route
+              path="/admin/super/company/list"
+              element={loginRole === "SUPER"
+                ? <CompanyListComponent />
+                : <Navigate to={roleHome} replace />}
+            />
+
+            <Route
+              path="/admin/super/company/:companyId"
+              element={loginRole === "SUPER"
+                ? <CompanyDetailComponent />
                 : <Navigate to={roleHome} replace />}
             />
 

@@ -5,10 +5,10 @@ import { getAuthorization } from "../../common/api/commonApi";
 const BASE_URL = "http://localhost:8007/workation/";
 
 // 슈퍼관리자 -> 목록 조회용
-const selectMemberListApi = (status = "ALL", target = "ALL") => {
+const selectMemberListApi = (status = "ALL", target = "ALL", cpage = 1) => {
 
     const response = axios({
-        url : `${ BASE_URL }admin/super/member/list?status=${ status }&target=${ target }`,
+        url : `${ BASE_URL }admin/super/member/list?status=${ status }&target=${ target }&cpage=${ cpage }`,
         method : "get",
         headers : {
             Authorization : getAuthorization()
@@ -31,10 +31,10 @@ const selectActiveCompanyListApi = () => {
 
 
 // 본사관리자 -> 목록 조회용
-const selectCompanyAdminListApi = (status = "ALL") => {
+const selectCompanyAdminListApi = (status = "ALL", cpage = 1) => {
 
     return axios({
-        url : `${ BASE_URL }admin/company/member/admin-list?status=${ status }`,
+        url : `${ BASE_URL }admin/company/member/admin-list?status=${ status }&cpage=${ cpage }`,
         method : "get",
         headers : {
             Authorization : getAuthorization()
@@ -78,10 +78,10 @@ const createSuperAdminApi = admin => {
     });
 };
 
-const selectEmployeeListApi = (status = "ALL", isProgressed = "ALL") => {
+const selectEmployeeListApi = (status = "ALL", isProgressed = "ALL", cpage = 1) => {
 
     return axios({
-        url : `${ BASE_URL }admin/company/member/employee-list?status=${ status }&isProgressed=${ isProgressed }`,
+        url : `${ BASE_URL }admin/company/member/employee-list?status=${ status }&isProgressed=${ isProgressed }&cpage=${ cpage }`,
         method : "get",
         headers : {
             Authorization : getAuthorization()
