@@ -5,12 +5,14 @@ import WorkationApplicationListComponent from './workation/components/WorkationA
 import WorkationApplicationComponent from './workation/components/WorkationApplicationComponent'
 import NoticeEnrollFormComponent from './notice/component/NoticeEnrollFormComponent'
 import NoticeDetailComponent from './notice/component/NoticeDetailComponent'
-import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFromComponent'
+import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFormComponent'
 import FacilityListComponent from './facility/components/FacilityListComponent';
 import FacilityDetailComponent from './facility/components/FacilityDetailComponent';
 import FacilityEnrollFormComponent from './facility/components/FacilityEnrollFormComponent'
-import CrewListComponent from './crew/components/CrewListComponent';
+
+
 import CrewEnrollFormComponent from './crew/components/CrewEnrollFormComponent';
+import CrewListComponents from './crew/components/CrewListComponents';
 
 import Header from "./common/components/Header";
 import Footer from "./common/components/Footer";
@@ -189,7 +191,7 @@ function App() {
               
               
             {/* 크루 관련 라우팅  */}
-            <Route path="/admin/crew/list" element={<CrewListComponent />} />
+            <Route path="/admin/crew/list" element={<CrewListComponents />} />
             <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
             
           </Routes>
