@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { selectFacilityListApi, searchFacilityListApi } from "../api/facilityApi";
-
 import FacilityItemComponent from "./FacilityItemComponent";
+import "../css/FacilityListComponent.css";
 
 function FacilityListComponent() {
 
     // 실행할 구문
     let navigate = useNavigate();
+
+    const loginRole = sessionStorage.getItem("loginRole");
 
     // 입력된 검색어를 담아둘 State
     const [keyword, setKeyword] = useState("");
@@ -19,6 +21,7 @@ function FacilityListComponent() {
     // QueryString에서 검색어 및 페이징 번호 추출
     const searchKeyword = searchParams.get("keyword") || "";
     const cpage = parseInt(searchParams.get("cpage")) || 1;
+    
 
     // 데이터 목록 및 페이징 버튼 UI를 담을 State
     const [dataList, setDataList] = useState([]);
@@ -159,45 +162,45 @@ function FacilityListComponent() {
     };
 
     // return 구문
-    return(
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
-        <h2 align="center">워케이션 시설 목록</h2>
+    return (
+        <div className="facility-list-container">
+            <h2 className="facility-list-title">워케이션 시설 목록</h2>
 
-        <br /><br />
+            {/* 검색창 영역 */}
+            <div className="search-area">
+                <form onSubmit={handleClick}>
+                    <input 
+                        type="text" 
+                        name="keyword" 
+                        placeholder="시설명 또는 지역을 입력하세요" 
+                        value={keyword} 
+                        onChange={handleChange} 
+                        className="search-input"
+                    />
+                    <button type="submit" className="btn btn-primary btn-sm">검색</button>
+                </form>
+            </div>
 
-        {/* 검색창 영역 */}
-        <div align="center" className="search-area">
-            <form onSubmit={handleClick}>
-                <input type="text" name="keyword" placeholder="시설명 또는 지역을 입력하세요" value={keyword} onChange={handleChange} style={{padding: "6px 12px", width: "300px", marginRight: "8px"}}/>
-                <button type="submit" className="btn btn-primary btn-sm">검색</button>
-            </form>
+            {/* 시설 등록 버튼(최고관리자용) */}
+            {loginRole === "SUPER" && (
+                <div className="enroll-btn-area">
+                    <button className="btn btn-outline-secondary btn-sm" onClick={() => {navigate("/facility/enroll");}}>
+                        시설 등록
+                    </button>
+                </div>
+            )}
+
+            {/* 워케이션 시설 목록 */}
+            <div className="facility-list-area">
+                {dataList}
+            </div>
+
+            {/* 페이징바 영역 */}
+            <div className="paging-area">
+                {pageList}
+            </div>
         </div>
-
-        <br /><br />
-
-        {/*시설 등록 버튼(최고관리자용)*/}
-        <div align="right">
-            <button className="btn btn-outline-secondary btn-sm" onClick={() => {navigate("/facility/enroll");}}>시설 등록</button>
-        </div>
-
-        <br />
-
-        {/*워케이션 시설 목록 */}
-        <div className="facility-list-area" style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px", justifyContent: "center", margin: "0 auto", maxWidth: "1000px"}}>
-            {dataList}
-        </div>
-
-        <br /><br />
-
-        {/*페이징바 영역 */}
-        <div align="center" className="paging-area" style={{display: "flex", justifyContent: "center", gap: "4px"}}>
-            {pageList}
-        </div>
-
-        <br /><br />
-    </div>
     );
-    
 }
 
 export default FacilityListComponent;
