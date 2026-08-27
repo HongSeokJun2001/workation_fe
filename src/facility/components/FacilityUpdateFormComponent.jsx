@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { selectFacilityFormApi, updateFacilityApi } from "../api/facilityApi";
+import "../css/FacilityUpdateFormComponent.css";
 
 function FacilityUpdateFormComponent() {
 
@@ -126,17 +128,22 @@ function FacilityUpdateFormComponent() {
 
     // return 구문
     return (
-        <div className="container my-4" style={{maxWidth: "700px"}}>
-            <h2 className="text-center mb-4">시설 정보 수정</h2>
+        <div className="facility-update-container">
+            <h2 className="update-title">시설 정보 수정</h2>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data">
-                <div className="mb-3">
-                    <label className="form-label fw-bold">시설명</label>
-                    <input type="text" className="form-control" name="facilityName" value={facility.facilityName} onChange={handleChange} placeholder="시설명을 입력하세요" required/>
+                <div className="form-group">
+                    <label className="form-label">시설명</label>
+                    <input type="text" 
+                           className="form-control" 
+                           name="facilityName" 
+                           value={facility.facilityName} 
+                           onChange={handleChange} 
+                           placeholder="시설명을 입력하세요" required/>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-bold">시설 유형</label>
+                <div className="form-group">
+                    <label className="form-label">시설 유형</label>
                     <select className="form-select" name="facilityType" value={facility.facilityType} onChange={handleChange}>
                         <option value="RESORT">RESORT</option>
                         <option value="HOTEL">HOTEL</option>
@@ -144,49 +151,68 @@ function FacilityUpdateFormComponent() {
                     </select>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-bold">지역 (예: 경남, 서울)</label>
-                    <input type="text" className="form-control" name="region" value={facility.region} onChange={handleChange} placeholder="지역을 입력하세요" required/>
+                <div className="form-group">
+                    <label className="form-label">지역 (예: 경남, 서울)</label>
+                    <input type="text" 
+                           className="form-control" 
+                           name="region" 
+                           value={facility.region} 
+                           onChange={handleChange} 
+                           placeholder="지역을 입력하세요" required/>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-bold">상세 주소</label>
-                    <input type="text" className="form-control" name="address" value={facility.address} onChange={handleChange} placeholder="상세주소를 입력하세요" required/>
+                <div className="form-group">
+                    <label className="form-label">상세 주소</label>
+                    <input type="text" 
+                           className="form-control" 
+                           name="address" 
+                           value={facility.address} 
+                           onChange={handleChange} 
+                           placeholder="상세주소를 입력하세요" required/>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-bold">수용 객실 수</label>
-                    <input type="number" className="form-control" name="roomCount" value={facility.roomCount} onChange={handleChange} placeholder="객실 수를 입력하세요" required/>
+                <div className="form-group">
+                    <label className="form-label">수용 객실 수</label>
+                    <input type="number" 
+                           className="form-control" 
+                           name="roomCount" 
+                           value={facility.roomCount} 
+                           onChange={handleChange} 
+                           placeholder="객실 수를 입력하세요" required/>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-bold">시설 설명</label>
-                    <textarea className="form-control" name="description" rows="4" value={facility.description} onChange={handleChange} placeholder="시설 상세 설명을 입력하세요"></textarea>
+                <div className="form-group">
+                    <label className="form-label">시설 설명</label>
+                    <textarea className="form-control" 
+                              name="description" rows="4" 
+                              value={facility.description} 
+                              onChange={handleChange} 
+                              placeholder="시설 상세 설명을 입력하세요">        
+                    </textarea>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label fw-bold">운영 상태</label>
+                <div className="form-group">
+                    <label className="form-label">운영 상태</label>
                     <select className="form-select" name="status" value={facility.status} onChange={handleChange}>
                         <option value="ACTIVE">운영중</option>
                         <option value="INACTIVE">휴업 또는 점검</option>
                     </select>
                 </div>
 
-                {/* 기존 등록 이미지 표시 및 삭제 버튼 추가 */}
-                <div className="mb-3">
-                    <label className="form-label fw-bold">현재 등록된 이미지</label>
+                {/* 기존 등록 이미지 표시 및 삭제 버튼 */}
+                <div className="form-group">
+                    <label className="form-label">현재 등록된 이미지</label>
                     <div>
                         {existingImages.length > 0 ? (
-                            <div className="d-flex gap-2 flex-wrap">
+                            <div className="existing-img-area">
                                 {existingImages.map((imgItem, index) => {
                                     const imagePath = typeof imgItem === 'string' ? imgItem : imgItem.filePath;
                                     const imageId = typeof imgItem === 'object' ? imgItem.imageId : null;
 
                                     return (
-                                        <div key={index} className="position-relative" style={{display: "inline-block"}}>
-                                            <img src={`http://localhost:8007/workation${imagePath}`} alt={`기존 이미지 ${index + 1}`} style={{width: "120px", height: "90px", objectFit: "cover", borderRadius: "6px", border: "1px solid #ddd"}}/>
-                                            {/* 삭제 버튼 */}
-                                            <button type="button" className="btn btn-danger btn-sm position-absolute top-0 end-0" style={{padding : "1px 5px", fontSize: "11px", borderRadius: "50%"}} onClick={() => handleDeleteExistingImage(imageId, index)}>X</button>
+                                        <div key={index} className="img-item">
+                                            <img src={`http://localhost:8007/workation${imagePath}`} alt={`기존 이미지 ${index + 1}`} className="img-preview"/>
+                                            <button type="button" className="img-delete-btn" onClick={() => handleDeleteExistingImage(imageId, index)}>X</button>
                                         </div>    
                                     );
                                 })}
@@ -198,12 +224,15 @@ function FacilityUpdateFormComponent() {
                 </div>
 
                 {/* 새 이미지 첨부 */}
-                <div className="mb-3">
-                    <label className="form-label fw-bold">새 이미지 파일 추가 첨부</label>
-                    <input type="file" className="form-control" multiple accept="image/*" onChange={handleFileChange}/>
+                <div className="form-group">
+                    <label className="form-label">새 이미지 파일 추가 첨부</label>
+                    <input type="file" 
+                           className="form-control" 
+                           multiple accept="image/*" 
+                           onChange={handleFileChange}/>
                 </div>
 
-                <div className="d-flex justify-content-center gap-2 mt-4">
+                <div className="btn-group">
                     <button type="submit" className="btn btn-warning">
                         수정완료
                     </button>
