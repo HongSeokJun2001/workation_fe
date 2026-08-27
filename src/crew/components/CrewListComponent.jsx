@@ -1,6 +1,23 @@
 
+import {useNavigate} from "react-router-dom";
+
+
 
 function CrewListComponent() {
+
+  //실행할 구문
+
+  const navigate = useNavigate();
+
+  const onNavigateToEnroll = () => {
+    navigate("/crew/enroll");
+  };
+
+  const onNavigateToUpdate = (crew) => {
+    navigate("/crew/update", { state: { crew } });
+  };  
+
+
 
 
     return (
@@ -8,15 +25,12 @@ function CrewListComponent() {
             <div className="crew-community-container">
       
         {/* 상단, 크루만들기(글작성) 버튼 */}
+
         <div>
           <h2>크루 커뮤니티</h2>
           <p>함께 워케이션을 떠날 크루를 찾거나 만들어보세요</p>
+          <button onClick={onNavigateToEnroll}>+ 크루 만들기</button>
         </div>
-
-        <br/><br/>
-
-        <button //onClick={onNavigateToEnroll}
-        >+ 크루 만들기</button>
 
         <br/><br/>
 
@@ -49,21 +63,20 @@ function CrewListComponent() {
       <div className="crew-list-section">
         <h3>모집 중인 크루</h3>
         
-        
-          {/* <article key={crew.id} className="crew-card" style={{ border: '1px solid #ccc', margin: '10px 0', padding: '15px' }}> */}
+        {/* key={crew.id} */}
+          <article className="crew-card" style={{ border: '1px solid #ccc', margin: '10px 0', padding: '15px' }}>
 
             {/* 카드 상단: 제목, 모집상태, 작성자 전용 버튼(수정/삭제) */}
             <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
-                <span>상태 </span>
+                <span>상태</span>
                 <strong>제목</strong>
               </div>
               
               {/* 본인이 작성자인 경우 수정/삭제 버튼 노출 */}
               {/* {crew.authorId === currentUserId ? ( */}
                 <div className="author-actions">
-                  <button 
-                //   onClick={() => onNavigateToUpdate(crew)}
+                  <button onClick={() => onNavigateToUpdate(crew)}
                   >수정</button>
                   <button 
                 //   onClick={() => handleDelete(crew.id)}
@@ -93,7 +106,7 @@ function CrewListComponent() {
             <div className="card-footer">
               <span>모집 현황: 0 / 0 명</span>
             </div>
-          {/* </article> */}
+          </article>
         
       </div>
 
