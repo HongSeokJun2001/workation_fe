@@ -50,7 +50,7 @@ function Header({ loginRole }) {
                             <Link to="/facility/list">시설목록</Link>
                         </div>
                         <div>
-                            <Link to="/admin/crew/list">크루관리</Link>
+                            <Link to="/admin/super/company/list">고객사관리</Link>
                         </div>
                     </>
                     
@@ -58,6 +58,9 @@ function Header({ loginRole }) {
 
                 {!isSuperAdmin && (
                     <>
+                        <div>
+                            <Link to="/admin/crew/list">크루관리</Link>
+                        </div>
                         <div>
                             <Link to="/facility/list">시설목록</Link>
                         </div>

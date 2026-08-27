@@ -18,6 +18,8 @@ function MemberListComponent() {
     const [status, setStatus] = useState("ALL");
     const [target, setTarget] = useState(isSuperAdmin ? "ALL" : "EMPLOYEE");
     const [isProgressed, setIsProgressed] = useState("ALL");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageInfo, setPageInfo] = useState(null);
     const [showCompanyAdminCreateModal, setShowCompanyAdminCreateModal] = useState(false);
     const isEmployeeList = !isSuperAdmin && target === "EMPLOYEE";
 
@@ -30,14 +32,15 @@ function MemberListComponent() {
                 let response;
 
                 if (isSuperAdmin) {
-                    response = await selectMemberListApi(status, target);
+                    response = await selectMemberListApi(status, target, currentPage);
                 } else if (target === "COMPANY_ADMIN") {
-                    response = await selectCompanyAdminListApi(status);
+                    response = await selectCompanyAdminListApi(status, currentPage);
                 } else {
-                    response = await selectEmployeeListApi(status, isProgressed);
+                    response = await selectEmployeeListApi(status, isProgressed, currentPage);
                 }
 
-                const items = response.data;
+                const items = response.data.list || [];
+                setPageInfo(response.data.pi);
 
                 const trArr = items.map(item => {
 
@@ -60,31 +63,36 @@ function MemberListComponent() {
 
         selectMemberList();
         
-    }, [isSuperAdmin, status, target, isProgressed]);
+    }, [isSuperAdmin, status, target, isProgressed, currentPage]);
+
+    const changeFilter = setter => event => {
+        setter(event.target.value);
+        setCurrentPage(1);
+    };
     return (
         <div>
             <h2 align="center">계정 목록 조회</h2>
 
                 <div align="center">
                     {isSuperAdmin ? (
-                        <select value={target} onChange={event => setTarget(event.target.value)}>
+                        <select value={target} onChange={changeFilter(setTarget)}>
                             <option value="ALL">최고관리자 + 본사관리자</option>
                             <option value="SUPER">최고관리자</option>
                             <option value="COMPANY">본사관리자</option>
                         </select>
                     ) : (
-                        <select value={target} onChange={event => setTarget(event.target.value)}>
+                        <select value={target} onChange={changeFilter(setTarget)}>
                             <option value="EMPLOYEE">직원</option>
                             <option value="COMPANY_ADMIN">본사관리자</option>
                         </select>
                     )}
-                    <select value={status} onChange={event => setStatus(event.target.value)}>
+                    <select value={status} onChange={changeFilter(setStatus)}>
                         <option value="ALL">전체</option>
                         <option value="ACTIVE">활성</option>
                         <option value="LOCKED">잠금</option>
                     </select>
                     {isEmployeeList && (
-                        <select value={isProgressed} onChange={event => setIsProgressed(event.target.value)}>
+                        <select value={isProgressed} onChange={changeFilter(setIsProgressed)}>
                             <option value="ALL">회원가입 처리 여부 전체</option>
                             <option value="N">회원가입 처리 여부 N</option>
                             <option value="Y">회원가입 처리 여부 Y</option>
@@ -128,6 +136,28 @@ function MemberListComponent() {
                 <tbody>{ dataList }</tbody>
             </table>
 
+            {pageInfo && pageInfo.maxPage > 0 && (
+                <div align="center">
+                    <button type="button" disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(pageInfo.currentPage - 1)}>
+                        이전
+                    </button>
+                    {Array.from({ length: pageInfo.endPage - pageInfo.startPage + 1 }, (_, index) => {
+                        const page = pageInfo.startPage + index;
+                        return (
+                            <button type="button" key={page} disabled={page === currentPage}
+                                    onClick={() => setCurrentPage(page)}>
+                                {page}
+                            </button>
+                        );
+                    })}
+                    <button type="button" disabled={currentPage === pageInfo.maxPage}
+                            onClick={() => setCurrentPage(pageInfo.currentPage + 1)}>
+                        다음
+                    </button>
+                </div>
+            )}
+
             <br/><br/>
 
             {showCompanyAdminCreateModal && (
@@ -135,7 +165,7 @@ function MemberListComponent() {
                     onClose={() => setShowCompanyAdminCreateModal(false)}
                     onCreated={() => setStatus("ALL")}
                     isSuperAdmin={isSuperAdmin}
-                    isCompanyAdminCreation={target === "COMPANY"}
+                    isCompanyAdminCreation={target === "COMPANY" || target === "COMPANY_ADMIN"}
                 />
             )}
         </div>
