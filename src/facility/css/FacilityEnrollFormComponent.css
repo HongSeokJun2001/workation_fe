@@ -1,0 +1,31 @@
+/* 시설 등록 폼 메인 컨테이너 */
+.facility-enroll-container {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* 제목 */
+.enroll-title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* 입력 필드 그룹 */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+/* 버튼 그룹 */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}

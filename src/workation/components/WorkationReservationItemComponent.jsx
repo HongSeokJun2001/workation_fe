@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-function WorkationItemComponent({ item }) {
+function WorkationReservationItemComponent({ item }) {
     let navigate = useNavigate();
 
     return (
         <tr 
             style={{ cursor: "pointer" }}
             onClick={() => {
-                navigate(`/application/detail/${item.workationId}`);
+                navigate(`/reservation/detail/${item.reservationId}`);
             }}
         >
             <td>{item.crew.crewName }</td>
@@ -19,4 +19,4 @@ function WorkationItemComponent({ item }) {
     );
 }
 
-export default WorkationItemComponent;
+export default WorkationReservationItemComponent;

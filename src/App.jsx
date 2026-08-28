@@ -3,6 +3,7 @@ import './App.css'
 import NoticeListComponent from './notice/component/NoticeListComponent'
 import WorkationApplicationListComponent from './workation/components/WorkationApplicationListComponent'
 import WorkationApplicationComponent from './workation/components/WorkationApplicationComponent'
+import WorkationReservationListComponent from './workation/components/WorkationReservationListComponent'
 import NoticeEnrollFormComponent from './notice/component/NoticeEnrollFormComponent'
 import NoticeDetailComponent from './notice/component/NoticeDetailComponent'
 import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFormComponent'
@@ -23,6 +24,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Index from "./index";
 import FacilityUpdateFormComponent from './facility/components/FacilityUpdateFormComponent'
+import CompanyListComponent from './member/components/CompanyListComponent'
+import CompanyDetailComponent from './member/components/CompanyDetailComponent'
 
 function App() {
 
@@ -41,6 +44,7 @@ function App() {
                 <Route path="/" element={<Index accessToken={accessToken} setAccessToken={setAccessToken} setLoginRole={setLoginRole}/>}/>
                 <Route path="/facility/list" element={<FacilityListComponent />} />
                 <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent />} />
+                <Route path="application" element={<WorkationApplicationComponent/>}/>
             </Routes>
             
           
@@ -107,6 +111,20 @@ function App() {
             />
 
             <Route
+              path="/admin/super/company/list"
+              element={loginRole === "SUPER"
+                ? <CompanyListComponent />
+                : <Navigate to={roleHome} replace />}
+            />
+
+            <Route
+              path="/admin/super/company/:companyId"
+              element={loginRole === "SUPER"
+                ? <CompanyDetailComponent />
+                : <Navigate to={roleHome} replace />}
+            />
+
+            <Route
               path="/admin/super/member/list"
               element={loginRole === "SUPER"
                 ? <MemberListComponent />
@@ -160,8 +178,7 @@ function App() {
             {/* 공지사항 수정 */}
             <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
-            <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
-            <Route path="application" element={<WorkationApplicationComponent/>}/>
+            
 
             {/*시설 목록 */}
             <Route path="/facility/list" element={<FacilityListComponent />} />
@@ -180,6 +197,11 @@ function App() {
 
             {/* 크루 생성 (모집글 작성) */}
             <Route path="/crew/enroll" element={<CrewEnrollFormComponent />} />
+            <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
+
+            {/* 워케이션 관련 라우팅 */}
+            <Route path="admin/application/list" element={<WorkationApplicationListComponent />} />
+            <Route path="admin/reservation/list" element={<WorkationReservationListComponent />} />
             
           </Routes>
         </div>

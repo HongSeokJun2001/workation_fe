@@ -1,0 +1,133 @@
+/* 카드 컨테이너 */
+.facility-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.facility-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* 썸네일 이미지 영역 */
+.card-thumbnail-box {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+.card-thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 최고관리자용 운영 상태 뱃지 추가 */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ACTIVE: 운영중 (초록) */
+.status-badge.status-active {
+    background-color: #28a745;
+}
+
+/* INACTIVE: 휴업/중지 (빨강) */
+.status-badge.status-inactive {
+    background-color: #dc3545;
+}
+
+.status-badge.status-default {
+    background-color: #6c757d;
+}
+
+/* 정보 컨텐츠 영역 */
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* 태그 (지역, 유형) */
+.card-tags {
+    margin-bottom: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.tag-region {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007bff;
+    background-color: #e7f1ff;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.tag-type {
+    font-size: 12px;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+/* 시설 제목 */
+.card-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 시설 설명 */
+.card-description {
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    height: 38px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* 주소 정보 */
+.card-address {
+    font-size: 12px;
+    color: #888;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 8px;
+    margin-top: auto; /* 하단 고정 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

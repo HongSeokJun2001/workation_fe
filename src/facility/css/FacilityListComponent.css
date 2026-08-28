@@ -1,0 +1,92 @@
+/* 메인 컨테이너 */
+.facility-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 제목 */
+.facility-list-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 검색 영역 */
+.search-area {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.search-input {
+    padding: 6px 12px;
+    width: 300px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 시설 등록 버튼 영역 */
+.enroll-btn-area {
+    text-align: right;
+    margin-bottom: 16px;
+}
+
+/* 시설 목록 그리드 레이아웃 */
+.facility-list-area {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+/* 페이징바 영역 */
+.paging-area {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* 검색 및 정렬 툴바 영역 */
+.list-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* 정렬 버튼 그룹 */
+.sort-btn-area {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sort-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: #888;
+    cursor: pointer;
+    padding: 2px 6px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.sort-btn:hover {
+    color: #333;
+}
+
+/* 활성화된 정렬 버튼 */
+.sort-btn.active {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.sort-divider {
+    color: #ddd;
+    font-size: 12px;
+}
