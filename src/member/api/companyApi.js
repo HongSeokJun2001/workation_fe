@@ -43,8 +43,22 @@ const updateCompanyApi = (companyId, company) => {
     });
 };
 
+// 고객사 등록
+const createCompanyApi = company => {
+
+    return axios({
+        url : `${ BASE_URL }admin/super/new-company`,
+        method : "post",
+        data : company,
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
 export {
     selectCompanyListApi,
     selectCompanyDetailApi,
-    updateCompanyApi
+    updateCompanyApi,
+    createCompanyApi
 };
