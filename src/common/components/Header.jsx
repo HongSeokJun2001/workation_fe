@@ -52,6 +52,12 @@ function Header({ loginRole }) {
                         <div>
                             <Link to="/admin/super/company/list">고객사관리</Link>
                         </div>
+                        <div>
+                            <Link to="/admin/application/list">워케이션신청목록</Link>
+                        </div>
+                        <div>
+                            <Link to="/admin/reservation/list">예약목록</Link>
+                        </div>
                     </>
                     
                 )}
@@ -63,6 +69,9 @@ function Header({ loginRole }) {
                         </div>
                         <div>
                             <Link to="/facility/list">시설목록</Link>
+                        </div>
+                        <div>
+                            <Link to="/application">워케이션신청</Link>
                         </div>
                     </>
                     

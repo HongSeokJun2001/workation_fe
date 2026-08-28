@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { selectApplicationListApi } from "../api/workationApi";
+import { getApplicationListApi } from "../api/workationApi";
 import WorkationItemComponent from "./WorkationItemComponent";
 
 function WorkationApplicationListComponent() {
@@ -13,7 +13,7 @@ function WorkationApplicationListComponent() {
     const fetchData = async () => {
         try {
 
-            const response = await selectApplicationListApi(cpage);
+            const response = await getApplicationListApi(cpage);
         
             //console.log("백엔드에서 넘어온 전체 response.data:", response.data);
             
@@ -115,6 +115,8 @@ function WorkationApplicationListComponent() {
     return (
         <div>
 
+            <br /><br />
+
             <h2 align="center">워케이션 승인 목록</h2>
 
             <br /><br />
@@ -123,11 +125,11 @@ function WorkationApplicationListComponent() {
                 <table className="list-area table table-hover">
                     <thead>
                         <tr>
-                            <th width="200">크루</th>
-                            <th width="450">신청기간</th>
-                            <th width="300">장소</th>
-                            <th width="200">예약상태</th>
-                            <th width="200">예약신청일</th>
+                            <th style={{ width: "15%" }}>크루</th>
+                            <th style={{ width: "35%" }}>신청기간</th>
+                            <th style={{ width: "20%" }}>시설</th>
+                            <th style={{ width: "15%" }}>예약상태</th>
+                            <th style={{ width: "15%" }}>예약신청일</th>
                         </tr>
                     </thead>
                     <tbody>{ dataList }</tbody>
