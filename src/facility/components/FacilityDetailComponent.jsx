@@ -7,6 +7,19 @@ function FacilityDetailComponent() {
     const { facilityId } = useParams();
     const navigate = useNavigate();
 
+    // 시설 유형
+    const FACILITY_TYPE_MAP = {
+        RESORT: "리조트",
+        HOTEL: "호텔",
+        OFFICE: "오피스",
+        "GLAMPING/CAMPING": "글램핑/캠핑",
+        HANOK: "한옥",
+        PENSION: "펜션",
+        SHARE_HOUSE: "쉐어하우스",
+        COWORKING_SPACE: "코워킹스페이스",
+        CAFE: "워크 카페"
+    };
+
     const loginRole = sessionStorage.getItem("loginRole");
 
     const [facility, setFacility] = useState({
@@ -137,7 +150,9 @@ function FacilityDetailComponent() {
                         <td className="info-value">{facility.facilityName}</td>
                         <th className="info-label">시설 유형</th>
                         <td className="info-value">
-                            <span className="type-tag">{facility.facilityType}</span>
+                            <span className="type-tag">
+                                {FACILITY_TYPE_MAP[facility.facilityType] || facility.facilityType}
+                            </span>
                         </td>
                     </tr>
                     <tr>

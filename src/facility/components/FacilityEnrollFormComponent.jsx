@@ -94,9 +94,15 @@ function FacilityEnrollFormComponent() {
                 <div className="form-group">
                     <label className="form-label">시설 유형</label>
                     <select className="form-select" name="facilityType" value={facility.facilityType} onChange={handleChange}>
-                        <option value="RESORT">RESORT</option>
-                        <option value="HOTEL">HOTEL</option>
-                        <option value="OFFICE">OFFICE</option>
+                        <option value="RESORT">리조트</option>
+                        <option value="HOTEL">호텔</option>
+                        <option value="OFFICE">오피스</option>
+                        <option value="GLAMPING/CAMPING">글램핑/캠핑</option>
+                        <option value="HANOK">한옥</option>
+                        <option value="PENSION">펜션</option>
+                        <option value="SHARE_HOUSE">쉐어하우스</option>
+                        <option value="COWORKING_SPACE">코워킹스페이스</option>
+                        <option value="CAFE">워크 카페</option>
                     </select>
                 </div>
 

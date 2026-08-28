@@ -9,7 +9,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
-    height: 100%; /* 카드 높이 균일화 */
+    height: 100%;
 }
 
 .facility-card:hover {
@@ -17,10 +17,11 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-/* 썸네일 이미지 영역 (높이 고정) */
+/* 썸네일 이미지 영역 */
 .card-thumbnail-box {
+    position: relative;
     width: 100%;
-    height: 200px; /* 이미지 영역 고정 */
+    height: 200px;
     flex-shrink: 0;
     overflow: hidden;
     background-color: #f5f5f5;
@@ -29,8 +30,36 @@
 .card-thumbnail-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* 비율 유지하며 꽉 채움 */
+    object-fit: cover;
     display: block;
+}
+
+/* 최고관리자용 운영 상태 뱃지 추가 */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ACTIVE: 운영중 (초록) */
+.status-badge.status-active {
+    background-color: #28a745;
+}
+
+/* INACTIVE: 휴업/중지 (빨강) */
+.status-badge.status-inactive {
+    background-color: #dc3545;
+}
+
+.status-badge.status-default {
+    background-color: #6c757d;
 }
 
 /* 정보 컨텐츠 영역 */
