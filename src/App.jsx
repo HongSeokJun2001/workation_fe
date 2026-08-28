@@ -3,6 +3,7 @@ import './App.css'
 import NoticeListComponent from './notice/component/NoticeListComponent'
 import WorkationApplicationListComponent from './workation/components/WorkationApplicationListComponent'
 import WorkationApplicationComponent from './workation/components/WorkationApplicationComponent'
+import WorkationReservationListComponent from './workation/components/WorkationReservationListComponent'
 import NoticeEnrollFormComponent from './notice/component/NoticeEnrollFormComponent'
 import NoticeDetailComponent from './notice/component/NoticeDetailComponent'
 import NoticeUpdateFormComponent from './notice/component/NoticeUpdateFormComponent'
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/" element={<Index accessToken={accessToken} setAccessToken={setAccessToken} setLoginRole={setLoginRole}/>}/>
                 <Route path="/facility/list" element={<FacilityListComponent />} />
                 <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent />} />
+                <Route path="application" element={<WorkationApplicationComponent/>}/>
             </Routes>
             
           
@@ -176,8 +178,7 @@ function App() {
             {/* 공지사항 수정 */}
             <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
 
-            <Route path="application/list" element={<WorkationApplicationListComponent/>}/>
-            <Route path="application" element={<WorkationApplicationComponent/>}/>
+            
 
             {/*시설 목록 */}
             <Route path="/facility/list" element={<FacilityListComponent />} />
@@ -193,6 +194,10 @@ function App() {
             {/* 크루 관련 라우팅  */}
             <Route path="/admin/crew/list" element={<CrewListComponents />} />
             <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
+
+            {/* 워케이션 관련 라우팅 */}
+            <Route path="admin/application/list" element={<WorkationApplicationListComponent />} />
+            <Route path="admin/reservation/list" element={<WorkationReservationListComponent />} />
             
           </Routes>
         </div>

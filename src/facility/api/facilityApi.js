@@ -94,5 +94,16 @@ const deleteFacilityApi = facilityId => {
     return response;
 }
 
-export {selectFacilityListApi, searchFacilityListApi, insertFacilityApi, selectFacilityApi, selectFacilityFormApi, updateFacilityApi, deleteFacilityApi};
+// 워케이션 신청 시설 목록 조회용
+const selectFacilityAllListApi = () => {
+
+    const response = axios({
+        url: `${BASE_URL}/facilities/all`,
+        method: "get"
+    });
+
+    return response;
+};
+
+export {selectFacilityListApi, searchFacilityListApi, insertFacilityApi, selectFacilityApi, selectFacilityFormApi, updateFacilityApi, deleteFacilityApi, selectFacilityAllListApi};
 export {BASE_URL};
