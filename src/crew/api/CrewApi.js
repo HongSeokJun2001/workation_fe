@@ -3,13 +3,16 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8007/workation/crews";
 
-// 크루 목록 조회
-const selectCrewListApi = () =>{
+// 크루 조회 Api
+const selectCrewListApi = cpage =>{
 
     const response = axios({
 
         url: `${BASE_URL}`,
-        method: "GET"
+        method: "get",
+        params: {
+            cpage: cpage
+        }
         // headers: {
         //     "Content-Type": "application/json",
         // }
@@ -19,5 +22,39 @@ const selectCrewListApi = () =>{
     return response;
 }
 
-export { selectCrewListApi };
+// 크루 검색 Api
+const searchCrewListApi = (cpage, keyword) => {
 
+    const response = axios({
+
+        url: `${BASE_URL}/search`,
+        method: "get",
+        params: {
+            cpage: cpage,
+            keyword: keyword
+        }
+        
+    });
+
+    return response;
+}
+
+
+const insertCrewApi = crewData => {
+
+
+    const response = axios({
+
+        url : `${BASE_URL}`,
+        data : crewData,
+        method : "post",
+        headers: {
+            "Content-Type": "application/json",
+        }
+
+    });
+
+    return response;
+}
+
+export { selectCrewListApi, searchCrewListApi, insertCrewApi };

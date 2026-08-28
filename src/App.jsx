@@ -175,8 +175,11 @@ function App() {
               
               
             {/* 크루 관련 라우팅  */}
+            {/* 크루 조회 */}
             <Route path="/admin/crew/list" element={<CrewListComponents />} />
-            <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
+
+            {/* 크루 생성 (모집글 작성) */}
+            <Route path="/crew/enroll" element={<CrewEnrollFormComponent />} />
             
           </Routes>
         </div>
