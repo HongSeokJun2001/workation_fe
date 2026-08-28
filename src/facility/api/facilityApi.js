@@ -1,15 +1,20 @@
 import axios from "axios";
+import { getAuthorization } from "../../common/api/commonApi";
 
 const BASE_URL = "http://localhost:8007/workation";
 
 // 워케이션 시설 목록 조회용
-const selectFacilityListApi = cpage => {
+const selectFacilityListApi = (cpage, sort = "LATEST") => {
 
     const response = axios({
         url : `${BASE_URL}/facilities`,
         method : "get",
         params : {
-            cpage : cpage
+            cpage : cpage,
+            sort : sort
+        },
+        headers : {
+            "Authorization" : getAuthorization()
         }
     });
 
@@ -17,14 +22,18 @@ const selectFacilityListApi = cpage => {
 };
 
 // 워케이션 시설 검색용
-const searchFacilityListApi = (cpage, keyword) => {
+const searchFacilityListApi = (cpage, keyword, sort = "LATEST") => {
 
     const response = axios({
         url : `${BASE_URL}/facilities/search`,
         method : "get",
         params : {
             cpage : cpage,
-            keyword : keyword
+            keyword : keyword,
+            sort : sort
+        },
+        headers : {
+            "Authorization" : getAuthorization()
         }
     });
 
@@ -39,7 +48,8 @@ const insertFacilityApi = formData => {
         method : "post",
         data : formData,
         headers : {
-            "Content-Type" : "multipart/form-data"
+            "Content-Type" : "multipart/form-data",
+            "Authorization" : getAuthorization()
         }
     });
 
@@ -51,7 +61,10 @@ const selectFacilityApi = facilityId => {
     
     const response = axios({
         url : `${BASE_URL}/facilities/${facilityId}`,
-        method : "get"
+        method : "get",
+        headers : {
+            "Authorization" : getAuthorization()
+        }
     });
 
     return response;
@@ -62,7 +75,10 @@ const selectFacilityFormApi = facilityId => {
 
     const response = axios({
         url : `${BASE_URL}/facilities/${facilityId}/form`,
-        method : "get"
+        method : "get",
+        headers : {
+            "Authorization" : getAuthorization()
+        }
     });
 
     return response;
@@ -76,7 +92,8 @@ const updateFacilityApi = (facilityId, formData) => {
         method : "put",
         data : formData,
         headers : {
-            "Content-Type" : "multipart/form-data"
+            "Content-Type" : "multipart/form-data",
+            "Authorization" : getAuthorization()
         }
     });
 
@@ -88,7 +105,10 @@ const deleteFacilityApi = facilityId => {
 
     const response = axios({
         url : `${BASE_URL}/facilities/${facilityId}`,
-        method : "delete"
+        method : "delete",
+        headers : {
+            "Authorization" : getAuthorization()
+        }
     });
 
     return response;
