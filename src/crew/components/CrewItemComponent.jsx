@@ -34,7 +34,7 @@ function CrewItemComponent(props) {
 
 
                 <p>
-                    크루장 : {item.employee?.employeeId ?? "-"}
+                    크루장 : {item.employee?.employeeName ?? "-"}
                 </p>
 
 

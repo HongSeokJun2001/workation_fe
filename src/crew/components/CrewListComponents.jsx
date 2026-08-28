@@ -1,11 +1,11 @@
 import { useState,useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import CrewItemComponent from "./CrewItemComponent";
 // import ReplyComponent from "./ReplyComponent";
 
 
-import { selectCrewListApi } from "../api/CrewApi";
+import { selectCrewListApi,searchCrewListApi } from "../api/CrewApi";
 
 
 function CrewListComponents() {
@@ -20,7 +20,13 @@ function CrewListComponents() {
     const [joinedCrews, setJoinedCrews] = useState([1]);
 
     // 검색어
-    const [searchKeyword, setSearchKeyword] = useState("");
+    const [keyword, setKeyword] = useState("");
+    // 검색어 또한 쿼리스트링으로 처리해야 페이징 처리까지 완전히 적용 된다.
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // 검색어 또한 쿼리스트링으로 처리
+    const searchKeyword = searchParams.get("keyword") || "";
+    // or 연산자로 최초 진입시 "" 로 초기화
 
     // 워케이션 신청 중인 크루 ID
     const [applyingWorkcation, setApplyingWorkcation] = useState(null);
@@ -29,9 +35,15 @@ function CrewListComponents() {
     const [toast, setToast] = useState("");
 
 
-    // 나중에 useEffect를 사용하여 서버에서 크루 데이터를 가져오도록 구현
 
-    const [crews,setCrews] = useState([]);
+    // 크루 목록을 저장할 상태값 설정
+    const [crews,setCrews] = useState([]); // 크루 목록을 저장할 상태값 설정
+
+    // 상황에 맞는 페이징바를 나타내는 Link컴포넌트를 배열에 차곡차곡 담아둘 State형 변수
+    const [pageList,setPageList] = useState([]); // 페이징바를 나타내는 Link컴포넌트를 배열에 차곡차곡 담아둘 State형 변수
+
+    // cpage 값이 새로고침 되는것을 막기 위해 queryString을 사용하여 cpage 값을 가져오
+    const cpage = parseInt(searchParams.get("cpage")) || 1;
 
     // Toast 출력
     const showToast = (msg) => {
@@ -80,61 +92,188 @@ function CrewListComponents() {
     // };
 
     // 검색
-    const filteredCrews = crews.filter((crew) => {
+    // const filteredCrews = crews.filter((crew) => {
 
-        const keyword = searchKeyword.toLowerCase();
+    //     const keyword = searchKeyword.toLowerCase();
 
-        return (
-            crew.crewName.toLowerCase().includes(keyword) ||
-            crew.crewContent.toLowerCase().includes(keyword)
-        );
-    });
+    //     return (
+    //         crew.crewName.toLowerCase().includes(keyword) ||
+    //         crew.crewContent.toLowerCase().includes(keyword)
+    //     );
+    // });
 
 
     useEffect(() => {
-        // 크루 데이터를 서버에서 가져오는 로직을 여기에 추가
-        // 예: fetchCrewData();
+        // 크루 목록 조회 API 호출
+        if(searchKeyword == "") {
 
-        const setCrewList = async () => {
+            setCrewList();
 
-            try {
+        }else {
 
-                const response = await selectCrewListApi();
+            // 검색어가 있을 경우, 검색어를 포함한 크루 목록을 가져오는 로직
 
-                consol.log(response.data);
+            searchCrewList();
+        }
+    }, [cpage, searchKeyword]);
 
-                setCrews(response.data);
 
-            //     const items = response.data;
+    // 크루 목록 조회 함수
+    const setCrewList = async () => {
 
-            //     const crewArr = items.map((item, index) => {
-            //         return (
+        try {
 
-            //             <CrewItemComponent
-            //                     key={index}
-            //                     item={item}
-            //                     joining={joining}
-            //                     setJoining={setJoining}
-            //                 />
-            //         )
-                            
-            // });
-                
-                setCrews(items);
+            const response = await selectCrewListApi(cpage);
 
-            } catch (error) {
-                console.log("크루 조회 ajax 통신 실패 !");
-            }
-        };
+            handleResponse(response);
 
-        setCrewList();
+        } catch (error) {
+            
+            console.log("크루 조회 ajax 통신 실패 !");
+            console.log(error);
+        }
+    };
+
+    // 검색어 입력 내용이 변경 될 때 마다 실행할 이벤트 핸들러 함수
+    const handleChange = (e) => {
+
+        setKeyword(e.target.value);
+    };
+
+    // 검색 버튼 클릭 시 실행할 이벤트 핸들러 함수
+    const handleClick = () => {
+
+        e.preventDefault();
+        setSearchParams({ cpage: 1, keyword: keyword });
+
+    };
+
+    // 검색 요청 함수
+    const searchCrewList = async () => {
+
+        try{
+
+            const response = await searchCrewListApi(cpage, searchKeyword);
+
+            handleResponse(response);
+
+
+        }catch(error){
+
+            console.log("검색어 포함 크루 조회 ajax 통신 실패 !");
+            console.log(error);
+
+        }
+    }
+
+
+    // list, pi값을 각각 출력해주는 후처리 공통 함수
+
+    const handleResponse = response => {
+
+        // console.log("서버에 들어온 데이터 : " + response.data);
+
+        const items = response.data?.list || [];
+
+        const pageInfo = response.data?.pi;
         
-    }, []);
+        // 서버에서 받은 list 데이터를 그대로 crews 상태값에 저장
+        setCrews(items);
+
+        // pagination 처리
+        // paging-area에 들어갈 데이터 후처리
+        // console.log("pageInfo : " + pageInfo);
+
+        // pageInfo.starPage ~ pageInfo.endPage까지 1씩 증가시키면서 페이징바 버튼 생성        
+        const btnArr = [];
+
+        if(cpage ==1 ){
+
+            btnArr.push(
+                <button
+                    key="prev"
+                    className="btn btn-info btn-sm  "
+                    disabled
+                >
+                    &lt;
+                </button>
+            );
+        }else {
+
+            btnArr.push(
+                <button
+                    key="prev"
+                    className="btn btn-info btn-sm  "
+                    onClick={() => {
+                        setSearchParams({ cpage: cpage - 1 });
+                    }}
+                >
+                    &lt;
+                </button>
+            );
+        }
+
+        for(let p = pageInfo.startPage; p <= pageInfo.endPage; p++) {
+
+            if(cpage == p) {
+
+                btnArr.push(
+                    <button
+                        key={p}
+                        className="btn btn-info btn-sm  "
+                        disabled
+                    >
+                        {p}
+                    </button>
+                );
+                
+            } else {
 
 
+                btnArr.push(
+                    <button
+                        key={p}
+                        className="btn btn-outline-info btn-sm  "
+                        onClick={() => {
+                            setSearchParams({ cpage: p, keyword: searchKeyword });
+                        }}
+                    >
+                        {p}
+                    </button>
+                );
+            }
 
+        }
 
+        if(cpage == pageInfo.maxPage) {
 
+            btnArr.push(
+                <button
+                    key="next"
+                    className="btn btn-info btn-sm  "
+                    disabled
+                >
+                    &gt;
+                </button>
+            );
+        }else {
+
+            btnArr.push(
+                <button
+                    key="next"
+                    className="btn btn-outline-info btn-sm  "
+                    onClick={() => {
+                        setSearchParams({ cpage: cpage + 1 , keyword: searchKeyword });
+                    }}
+                >
+                    &gt;
+                </button>
+            );
+        }
+
+        setPageList(btnArr);
+
+    };
 
     return (
         <div>
@@ -160,30 +299,42 @@ function CrewListComponents() {
                     </p>
                 </div>
 
+            </div>
+
+            {/* 검색창 */}
+            <div align="center" className="search-area">
+                <form>
+                    <input
+                    type="text" name="keyword"
+                    value={ keyword }
+                    onChange={handleChange}
+                    placeholder="크루명 또는 크루 소개를 검색해주세요."
+                    />
+                    <button type="submit" onClick={handleClick}>
+                        검색
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setKeyword("")}>
+                        검색 초기화
+                    </button>
+                </form>
+                
+            </div>
+
+            {/* 크루 모집 작성 폼 */}
+
+            <div>
+
                 <button
                     onClick={() => navigate("/crew/enroll")}
                 >
                     + 크루 만들기
                 </button>
-
             </div>
 
+            
 
-            {/* 검색창 */}
-            <div>
-                <input
-                    type="text"
-                    value={searchKeyword}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                    placeholder="크루명 또는 크루 소개를 검색해주세요."
-                />
-
-                <button
-                    onClick={() => setSearchKeyword("")}
-                >
-                    검색 초기화
-                </button>
-            </div>
 
 
             {/* 내가 참여한 크루 */}
@@ -264,27 +415,21 @@ function CrewListComponents() {
 
                 <div>
 
-                    {filteredCrews
-                        .filter((crew) =>
-                            !joinedCrews.includes(crew.crewId)
-                        )
-                        .map((crew) => (
-
-                            <CrewItemComponent
-                                key={crew.crewId}
-                                item={crew}
-                                joining={joining}
-                                setJoining={setJoining}
-                            />
-
-                        ))}
+                    {crews.map((crew) => (
+                        <CrewItemComponent
+                            key={crew.crewId}
+                            item={crew}
+                            joining={joining}
+                            setJoining={setJoining}
+                        />
+                    ))}
 
                 </div>
 
             </div>
 
 
-            {/* 크루 신청 */}
+            {/* 크루 신청
             {joining !== null && (
 
                 <div>
@@ -311,7 +456,14 @@ function CrewListComponents() {
 
                 </div>
 
-            )}
+            )} */}
+
+            {/* 페이징바 */}
+            <div align="center" className="paging-area">
+                {pageList}
+            </div>
+
+            <br /><br />
 
 
         </div>
