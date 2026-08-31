@@ -26,6 +26,8 @@ import Index from "./index";
 import FacilityUpdateFormComponent from './facility/components/FacilityUpdateFormComponent'
 import CompanyListComponent from './member/components/CompanyListComponent'
 import CompanyDetailComponent from './member/components/CompanyDetailComponent'
+import WorkationApplicationDetailComponent from './workation/components/WorkationApplicationDetailComponent'
+import WorkationReservationDetailComponent from './workation/components/WorkationReservationDetailComponent'
 
 function App() {
 
@@ -44,7 +46,8 @@ function App() {
                 <Route path="/" element={<Index accessToken={accessToken} setAccessToken={setAccessToken} setLoginRole={setLoginRole}/>}/>
                 <Route path="/facility/list" element={<FacilityListComponent />} />
                 <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent />} />
-                <Route path="application" element={<WorkationApplicationComponent/>}/>
+                <Route path="/application" element={<WorkationApplicationComponent/>}/>
+                <Route path="/reservation/:reservationId" element={<WorkationReservationDetailComponent/>} />
             </Routes>
             
           
@@ -200,8 +203,12 @@ function App() {
             <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
 
             {/* 워케이션 관련 라우팅 */}
+            <Route path="/application" element={<WorkationApplicationComponent/>}/>
             <Route path="admin/application/list" element={<WorkationApplicationListComponent />} />
+            <Route path='admin/application/detail/:workationId' element={<WorkationApplicationDetailComponent/>} />
             <Route path="admin/reservation/list" element={<WorkationReservationListComponent />} />
+            <Route path="/reservation/:reservationId" element={<WorkationReservationDetailComponent/>} />
+
             
           </Routes>
         </div>

@@ -15,7 +15,7 @@ function WorkationApplicationListComponent() {
 
             const response = await getApplicationListApi(cpage);
         
-            //console.log("백엔드에서 넘어온 전체 response.data:", response.data);
+            console.log("백엔드에서 넘어온 전체 response.data:", response.data);
             
             setRawList(response.data.list || []);
 
@@ -125,7 +125,7 @@ function WorkationApplicationListComponent() {
                 <table className="list-area table table-hover">
                     <thead>
                         <tr>
-                            <th style={{ width: "15%" }}>크루</th>
+                            <th style={{ width: "15%" }}>크루장</th>
                             <th style={{ width: "35%" }}>신청기간</th>
                             <th style={{ width: "20%" }}>시설</th>
                             <th style={{ width: "15%" }}>예약상태</th>

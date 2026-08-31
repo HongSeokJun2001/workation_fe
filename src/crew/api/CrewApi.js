@@ -1,6 +1,8 @@
 
 import axios from "axios";
 
+import { getAuthorization } from "../../common/api/commonApi";
+
 const BASE_URL = "http://localhost:8007/workation/crews";
 
 // 크루 조회 Api
@@ -57,4 +59,18 @@ const insertCrewApi = crewData => {
     return response;
 }
 
-export { selectCrewListApi, searchCrewListApi, insertCrewApi };
+// 워케이션신청시 크루장이 본인 크루 가져오는 코드
+const selectCrewLeaderListApi = () => {
+    
+    const response = axios({
+        url : `${BASE_URL}/leader`,
+        method : "get",
+        headers: {
+            Authorization: getAuthorization()
+        }
+    });
+
+    return response
+}
+
+export { selectCrewListApi, searchCrewListApi, insertCrewApi, selectCrewLeaderListApi };
