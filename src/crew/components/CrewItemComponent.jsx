@@ -1,7 +1,7 @@
 
 import { useState } from "react";
-// import CrewListComponents from "./CrewListComponents";
 import ReplyComponent from "./ReplyComponent";
+import { deleteCrewApi } from "../api/CrewApi";
 
 function CrewItemComponent(props) {
 
@@ -9,10 +9,39 @@ function CrewItemComponent(props) {
 
     const [replyOpen, setReplyOpen] = useState(false);
 
+    const handleJoin = props.onJoin;
+
+    const joinedCrews = props.joinedCrews;
+
+    const isJoined = joinedCrews.some(
+        (crew) => crew.crewId === item.crewId
+    );
 
 
-    const joining = props.joining;
-    const setJoining = props.setJoining;
+
+    // 크루 글 삭제 실행 구문 
+    const deleteCrew = async () => {
+        try{
+            const response = await deleteCrewApi(item.crewId);
+            console.log(response.data);
+
+            if(response.data == "success"){
+
+                alert("크루글 삭제 성공");
+
+                props.onDeleteSuccess(item.crewId);
+
+            }else{
+
+                alert("크루 글 삭제 실패");
+            }
+
+        }catch(error){
+
+            console.log("크루 모집 글 삭제 ajax 통신 실패 !");
+
+        }
+    };
 
 
     return (
@@ -45,7 +74,7 @@ function CrewItemComponent(props) {
 
                 <p>
                     작성일 :{" "}
-                    {item.createDate?.substring(0, 10) ?? "-"}
+                    {item.createdDate?.substring(0, 10) ?? "-"}
                 </p>
 
 
@@ -66,21 +95,42 @@ function CrewItemComponent(props) {
 
             </div>
 
+            <div>
+
+                <button onClick={() => props.onUpdate(item.crewId)}>
+                    수정하기
+                </button>     
+                <button onClick={deleteCrew}>
+                    삭제하기
+                </button>       
+
+            </div>
+
+
+
 
 
             {/* 크루 신청 */}
             <div>
+                {isJoined ? (
+                        <>
+                            <button disabled>
+                                신청 완료
+                            </button>
 
-                <button
-                    onClick={() => setJoining(item.crewId)}
-                    disabled={joining === item.crewId}
-                >
-                    {joining === item.crewId
-                        ? "신청 중"
-                        : "크루 신청"}
-                </button>           
-
+                            <button onClick={() => props.onLeave(item.crewId)}>
+                                탈퇴하기
+                            </button>
+                        </>
+                    ) : (
+                        <button onClick={() => props.onJoin(item.crewId)}>
+                            크루 신청
+                        </button>
+                    )}
             </div>
+
+
+
 
             {/* 댓글 */}
             <div>

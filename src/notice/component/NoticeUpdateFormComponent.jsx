@@ -47,7 +47,7 @@ function NoticeUpdateFormComponent(){
                 });
 
             }catch(error){
-                console.log("공지사항 수정용 ajax 통신 실패 !")
+                console.log("공지사항 상세조회용 ajax 통신 실패 !")
 
             }
         }
@@ -99,7 +99,7 @@ function NoticeUpdateFormComponent(){
 
                 alert("공지사항 수정에 실패했습니다.");
 
-                setResult(response.data)
+                setResult(response.data);
             }
 
 
