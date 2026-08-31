@@ -8,21 +8,67 @@
 /* 제목 */
 .facility-list-title {
     text-align: center;
-    margin-bottom: 20px;
-}
-
-/* 검색 영역 */
-.search-area {
-    text-align: center;
     margin-bottom: 24px;
 }
 
+/* 검색 및 필터 통합 영역 */
+.search-area {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 인라인 지역 선택 드롭다운 */
+.region-select-inline {
+    height: 38px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    border: 1px solid #17a2b8;
+    border-radius: 4px;
+    background-color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.region-select-inline:hover {
+    border-color: #138496;
+}
+
+.region-select-inline:focus {
+    box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.25);
+}
+
+/* 검색 입력창 */
 .search-input {
-    padding: 6px 12px;
-    width: 300px;
-    margin-right: 8px;
+    height: 38px;
+    padding: 0 12px;
+    width: 320px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: #007bff;
+}
+
+/* 검색 버튼 */
+.search-btn {
+    height: 38px;
+    padding: 0 16px;
+    font-size: 14px;
+    white-space: nowrap;
 }
 
 /* 시설 등록 버튼 영역 */
@@ -63,6 +109,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    margin-bottom: 16px;
 }
 
 .sort-btn {
@@ -89,4 +136,22 @@
 .sort-divider {
     color: #ddd;
     font-size: 12px;
+}
+
+/* 데이터 없음 안내 영역 스타일 */
+.no-data-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px dashed #ddd;
+    margin: 20px 0;
+}
+
+.no-data-msg {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
 }

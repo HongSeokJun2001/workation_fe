@@ -4,14 +4,15 @@ import { getAuthorization } from "../../common/api/commonApi";
 const BASE_URL = "http://localhost:8007/workation";
 
 // 워케이션 시설 목록 조회용
-const selectFacilityListApi = (cpage, sort = "LATEST") => {
+const selectFacilityListApi = (cpage, sort = "LATEST", region = "ALL") => {
 
     const response = axios({
         url : `${BASE_URL}/facilities`,
         method : "get",
         params : {
             cpage : cpage,
-            sort : sort
+            sort : sort,
+            region: region
         },
         headers : {
             "Authorization" : getAuthorization()
@@ -22,7 +23,7 @@ const selectFacilityListApi = (cpage, sort = "LATEST") => {
 };
 
 // 워케이션 시설 검색용
-const searchFacilityListApi = (cpage, keyword, sort = "LATEST") => {
+const searchFacilityListApi = (cpage, keyword, sort = "LATEST", region = "ALL") => {
 
     const response = axios({
         url : `${BASE_URL}/facilities/search`,
@@ -30,7 +31,8 @@ const searchFacilityListApi = (cpage, keyword, sort = "LATEST") => {
         params : {
             cpage : cpage,
             keyword : keyword,
-            sort : sort
+            sort : sort,
+            region: region
         },
         headers : {
             "Authorization" : getAuthorization()
