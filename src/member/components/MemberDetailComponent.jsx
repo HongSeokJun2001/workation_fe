@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
     approveEmployeeApi,
     selectCompanyAdminDetailApi,
@@ -12,333 +11,394 @@ import {
     updateMyEmployeeApi,
     updateSuperAdminApi
 } from "../api/memberApi";
+import { selectCompanyListApi } from "../api/companyApi";
+import "../styles/MemberDetail.css";
 
-function MemberDetailComponent(props) {
-
-    const { memberType, selfMode = false } = props;
+function MemberDetailComponent({ memberType, selfMode }) {
     const { adminId, employeeId } = useParams();
-    const [member, setMember] = useState(null);
+    const navigate = useNavigate();
+    const loginRole = sessionStorage.getItem("loginRole");
+
+    const isEmployee = memberType === "EMPLOYEE" || selfMode;
+    const isSuperAdmin = loginRole === "SUPER";
+    const targetId = isEmployee ? employeeId : adminId;
+
+    const [member, setMember] = useState({});
+    const [companyList, setCompanyList] = useState([]);
+    
+    // 비밀번호 제어 State
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordMessage, setPasswordMessage] = useState("");
-    const loginRole = sessionStorage.getItem("loginRole");
+    const [confirmMessage, setConfirmMessage] = useState("");
+    const [isValidPassword, setIsValidPassword] = useState(false);
 
+    // 1. 상세 정보 및 회사 목록 조회
     useEffect(() => {
-
-        const selectMemberDetail = async () => {
+        const fetchDetail = async () => {
             try {
-                let response;
-
-                if (memberType === "EMPLOYEE") {
-                    response = selfMode
-                        ? await selectMyEmployeeDetailApi()
-                        : await selectEmployeeDetailApi(employeeId);
-                } else if (loginRole === "SUPER") {
-                    response = await selectSuperAdminDetailApi(adminId);
+                let res;
+                if (selfMode) {
+                    res = await selectMyEmployeeDetailApi();
+                } else if (isEmployee) {
+                    res = await selectEmployeeDetailApi(targetId);
+                } else if (isSuperAdmin) {
+                    res = await selectSuperAdminDetailApi(targetId);
                 } else {
-                    response = await selectCompanyAdminDetailApi(adminId);
+                    res = await selectCompanyAdminDetailApi(targetId);
                 }
-
-                setMember(response.data);
+                setMember(res.data);
             } catch (error) {
-                console.error("계정 상세 조회 실패:", error);
-                alert("계정 상세 조회 중 오류가 발생했습니다.");
+                console.error("상세 정보 조회 실패:", error);
             }
         };
 
-        selectMemberDetail();
-    }, [adminId, employeeId, loginRole, memberType]);
-
-    const handleChange = e => {
-        setMember({...member, [e.target.name]: e.target.value});
-    };
-
-    const handlePasswordChange = e => {
-        const value = e.target.value;
-        setPassword(value);
-
-        if (value === "") {
-            setPasswordMessage("");
-            return;
-        }
-
-        if (!/^(?=.*[^A-Za-z0-9]).{8,15}$/.test(value)) {
-            setPasswordMessage("비밀번호는 8~15자이며 특수문자를 포함해야 합니다.");
-            return;
-        }
-
-        if (confirmPassword !== "" && value !== confirmPassword) {
-            setPasswordMessage("비밀번호가 일치하지 않습니다.");
-            return;
-        }
-
-        setPasswordMessage("");
-    };
-
-    const handleConfirmPasswordChange = e => {
-        const value = e.target.value;
-        setConfirmPassword(value);
-
-        if (value === "" || password === "") {
-            setPasswordMessage("");
-            return;
-        }
-
-        if (password !== value) {
-            setPasswordMessage("비밀번호가 일치하지 않습니다.");
-            return;
-        }
-
-        if (!/^(?=.*[^A-Za-z0-9]).{8,15}$/.test(password)) {
-            setPasswordMessage("비밀번호는 8~15자이며 특수문자를 포함해야 합니다.");
-            return;
-        }
-
-        setPasswordMessage("");
-    };
-
-    const approveMember = async () => {
-        try {
-            if (memberType === "EMPLOYEE") {
-                await approveEmployeeApi(employeeId);
-            }
-            alert("계정이 승인되었습니다.");
-            window.location.reload();
-        } catch (error) {
-            console.error("계정 승인 실패:", error);
-            alert(error.response?.data || "계정 승인 중 오류가 발생했습니다.");
-        }
-    };
-
-    const updateMember = async () => {
-        if (password !== "" || confirmPassword !== "") {
-            if (!/^(?=.*[^A-Za-z0-9]).{8,15}$/.test(password)) {
-                setPasswordMessage("비밀번호는 8~15자이며 특수문자를 포함해야 합니다.");
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                setPasswordMessage("비밀번호가 일치하지 않습니다.");
-                return;
-            }
-        }
-
-        try {
-            let response;
-            const requestBody = selfMode
-                ? {
-                    ...member,
-                    password,
-                    empNo: undefined,
-                    employeeName: undefined,
-                    department: undefined,
-                    position: undefined,
-                    workationAvailDays: undefined,
-                    status: undefined,
-                    hireDate: undefined,
-                    resignDate: undefined,
-                    isProgressed: undefined
+        const fetchCompanies = async () => {
+            if (isSuperAdmin && !isEmployee) {
+                try {
+                    const res = await selectCompanyListApi();
+                    setCompanyList(res.data || []);
+                } catch (err) {
+                    console.error("회사 목록 조회 실패:", err);
                 }
-                : { ...member, password };
+            }
+        };
 
-            if (memberType === "EMPLOYEE") {
-                response = selfMode
-                    ? await updateMyEmployeeApi(requestBody)
-                    : await updateEmployeeApi(employeeId, requestBody);
-            } else if (loginRole === "SUPER") {
-                response = await updateSuperAdminApi(adminId, requestBody);
+        if (targetId || selfMode) {
+            fetchDetail();
+            fetchCompanies();
+        }
+    }, [targetId, isEmployee, selfMode, isSuperAdmin]);
+
+    // 2. 실시간 비밀번호 유효성 및 일치 여부 검증
+    useEffect(() => {
+        const pwdRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,15}$/;
+
+        if (!password) {
+            setPasswordMessage("");
+            setIsValidPassword(true);
+        } else if (!pwdRegex.test(password)) {
+            setPasswordMessage("비밀번호는 8~15자이며, 특수문자를 최소 1개 포함해야 합니다.");
+            setIsValidPassword(false);
+        } else {
+            setPasswordMessage("유효한 비밀번호 형식입니다.");
+            setIsValidPassword(true);
+        }
+
+        if (!confirmPassword) {
+            setConfirmMessage("");
+        } else if (password !== confirmPassword) {
+            setConfirmMessage("비밀번호가 일치하지 않습니다.");
+        } else {
+            setConfirmMessage("비밀번호가 일치합니다.");
+        }
+    }, [password, confirmPassword]);
+
+    const handleChange = (e) => {
+        setMember({ ...member, [e.target.name]: e.target.value });
+    };
+
+    // 3. 직원 계정 승인
+    const handleApprove = async () => {
+        try {
+            await approveEmployeeApi(member.employeeId);
+            alert("계정이 승인되었습니다.");
+            navigate(-1);
+        } catch (error) {
+            alert(error.response?.data || "계정 승인에 실패했습니다.");
+        }
+    };
+
+    // 4. 정보 수정 제출
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (password) {
+            if (!isValidPassword) {
+                alert("비밀번호 조건을 확인해주세요.");
+                return;
+            }
+            if (password !== confirmPassword) {
+                alert("비밀번호 확인이 일치하지 않습니다.");
+                return;
+            }
+        }
+
+        try {
+            const requestBody = { ...member, password: password || undefined };
+
+            if (selfMode) {
+                await updateMyEmployeeApi(requestBody);
+            } else if (isEmployee) {
+                await updateEmployeeApi(member.employeeId, requestBody);
+            } else if (isSuperAdmin) {
+                await updateSuperAdminApi(member.adminId, requestBody);
             } else {
-                response = await updateCompanyAdminApi(adminId, requestBody);
+                await updateCompanyAdminApi(member.adminId, requestBody);
             }
 
-            setMember(response.data);
-            setPassword("");
-            setConfirmPassword("");
-            setPasswordMessage("");
-            alert("계정 정보가 수정되었습니다.");
-            window.location.reload();
+            alert("정보가 변경되었습니다.");
+            navigate(-1);
         } catch (error) {
-            console.error("계정 수정 실패:", error);
-            alert(error.response?.data || "계정 수정 중 오류가 발생했습니다.");
+            alert(error.response?.data || "수정 중 오류가 발생했습니다.");
         }
     };
-
-    const handleCancel = () => {
-        if (selfMode) {
-            window.location.href = "/lobby";
-        } else if (memberType === "EMPLOYEE") {
-            window.location.href = "/admin/company/member/list";
-        } else if (loginRole === "SUPER") {
-            window.location.href = "/admin/super/member/list";
-        } else {
-            window.location.href = "/admin/company/member/list";
-        }
-    };
-
-    if (member == null) {
-        return <div>조회 중입니다.</div>;
-    }
-
-    if (memberType === "EMPLOYEE") {
-        const isSelfEmployeeEdit = selfMode;
-        const isCompanyAdminEmployeeEdit = !selfMode && loginRole === "COMPANY";
-        const isEmployeeReadOnlyField = isSelfEmployeeEdit;
-
-        return (
-            <div>
-                <h2 align="center">직원 계정 상세 조회</h2>
-
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>회사</th>
-                            <td>
-                                <input
-                                    value={member.companyLabel || ""}
-                                    disabled={isSelfEmployeeEdit || isCompanyAdminEmployeeEdit}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>로그인 아이디</th>
-                            <td>
-                                <input
-                                    name="loginId"
-                                    value={member.loginId || ""}
-                                    onChange={isSelfEmployeeEdit ? undefined : handleChange}
-                                    readOnly={isSelfEmployeeEdit}
-                                    disabled={isSelfEmployeeEdit}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>새 비밀번호</th>
-                            <td><input type="password" value={password} onChange={handlePasswordChange} /></td>
-                        </tr>
-                        <tr>
-                            <th>비밀번호 확인</th>
-                            <td><input type="password" value={confirmPassword} onChange={handleConfirmPasswordChange} /></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>{passwordMessage}</td>
-                        </tr>
-                        <tr>
-                            <th>사번</th>
-                            <td><input name="empNo" value={member.empNo || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                        </tr>
-                        <tr>
-                            <th>이름</th>
-                            <td><input name="employeeName" value={member.employeeName || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                        </tr>
-                        <tr>
-                            <th>전화번호</th>
-                            <td><input name="phone" value={member.phone || ""} onChange={handleChange} /></td>
-                        </tr>
-                        <tr>
-                            <th>이메일</th>
-                            <td><input name="email" value={member.email || ""} onChange={handleChange} /></td>
-                        </tr>
-                        <tr>
-                            <th>부서</th>
-                            <td><input name="department" value={member.department || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                        </tr>
-                        <tr>
-                            <th>직급</th>
-                            <td><input name="position" value={member.position || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                        </tr>
-                        <tr>
-                            <th>워케이션 사용 가능 일수</th>
-                            <td><input name="workationAvailDays" value={member.workationAvailDays ?? ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                        </tr>
-                        <tr>
-                            <th>상태</th>
-                            <td>
-                                <select
-                                    name="status"
-                                    value={member.status || "ACTIVE"}
-                                    onChange={isEmployeeReadOnlyField ? undefined : handleChange}
-                                    disabled={isEmployeeReadOnlyField}
-                                >
-                                    <option value="ACTIVE">ACTIVE</option>
-                                    <option value="LOCKED">LOCKED</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>입사일</th>
-                            <td><input type="date" name="hireDate" value={member.hireDate || ""} onChange={isEmployeeReadOnlyField ? undefined : handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                        </tr>
-                        {!selfMode && (
-                            <>
-                                <tr>
-                                    <th>퇴사일</th>
-                                    <td><input type="date" name="resignDate" value={member.resignDate || ""} onChange={handleChange} disabled={isEmployeeReadOnlyField} /></td>
-                                </tr>
-                                <tr>
-                                    <th>회원가입 처리 여부</th>
-                                    <td><input name="isProgressed" value={member.isProgressed || ""} disabled /></td>
-                                </tr>
-                            </>
-                        )}
-                    </tbody>
-                </table>
-
-                <br />
-                {!selfMode && member.isProgressed === "N" && (
-                    <button type="button" onClick={approveMember}>계정 승인</button>
-                )}
-                <button type="button" onClick={updateMember}>계정 수정</button>
-                <button type="button" onClick={handleCancel}>취소</button>
-            </div>
-        );
-    }
 
     return (
-        <div>
-            <h2 align="center">관리자 계정 상세 조회</h2>
+        <div className="detail-container">
+            <div className="detail-header">
+                <h2>{selfMode ? "내 정보 수정" : isEmployee ? "직원 계정 상세 정보" : "관리자 계정 상세 정보"}</h2>
+            </div>
 
-            <table>
-                <tbody>
-                    <tr>
-                        <th>회사</th>
-                        <td><input value={member.companyLabel || ""} disabled /></td>
-                    </tr>
-                    <tr>
-                        <th>로그인 아이디</th>
-                        <td><input name="loginId" value={member.loginId || ""} onChange={handleChange} /></td>
-                    </tr>
-                    <tr>
-                        <th>새 비밀번호</th>
-                        <td><input type="password" value={password} onChange={handlePasswordChange} /></td>
-                    </tr>
-                    <tr>
-                        <th>비밀번호 확인</th>
-                        <td><input type="password" value={confirmPassword} onChange={handleConfirmPasswordChange} /></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>{passwordMessage}</td>
-                    </tr>
-                    <tr>
-                        <th>권한</th>
-                        <td><input value={member.role || ""} disabled /></td>
-                    </tr>
-                    <tr>
-                        <th>상태</th>
-                        <td>
-                            <select name="status" value={member.status || "ACTIVE"} onChange={handleChange}>
-                                <option value="ACTIVE">ACTIVE</option>
-                                <option value="LOCKED">LOCKED</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <form className="detail-form" onSubmit={handleSubmit}>
+                {isEmployee ? (
+                    <>
+                        {/* 직원 이름 수정 비활성화 */}
+                        <div className="form-group">
+                            <label>이름</label>
+                            <input
+                                type="text"
+                                name="employeeName"
+                                value={member.employeeName || ""}
+                                onChange={handleChange}
+                                disabled
+                            />
+                        </div>
 
-            <br />
-            <button type="button" onClick={updateMember}>계정 수정</button>
-            <button type="button" onClick={handleCancel}>취소</button>
+                        {/* 로그인 ID (직원 본인 및 관리자 모두 수정 가능) */}
+                        <div className="form-group">
+                            <label>로그인 ID</label>
+                            <input
+                                type="text"
+                                name="loginId"
+                                value={member.loginId || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        {/* 사번 (본인은 수정 불가) */}
+                        <div className="form-group">
+                            <label>사번</label>
+                            <input
+                                type="text"
+                                name="empNo"
+                                value={member.empNo || ""}
+                                onChange={handleChange}
+                                disabled={selfMode}
+                            />
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>부서</label>
+                                <input
+                                    type="text"
+                                    name="department"
+                                    value={member.department || ""}
+                                    onChange={handleChange}
+                                    disabled={selfMode}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>직급</label>
+                                <input
+                                    type="text"
+                                    name="position"
+                                    value={member.position || ""}
+                                    onChange={handleChange}
+                                    disabled={selfMode}
+                                />
+                            </div>
+                        </div>
+
+                        {/* 전화번호 (본인 및 관리자 수정 가능) */}
+                        <div className="form-group">
+                            <label>전화번호</label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value={member.phone || ""}
+                                onChange={handleChange}
+                                placeholder="010-0000-0000"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>이메일</label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={member.email || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        {/* 입사일 / 퇴사일 (본인은 수정 불가) */}
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>입사일</label>
+                                <input
+                                    type="date"
+                                    name="hireDate"
+                                    value={member.hireDate || ""}
+                                    onChange={handleChange}
+                                    disabled={selfMode}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>퇴사일</label>
+                                <input
+                                    type="date"
+                                    name="resignDate"
+                                    value={member.resignDate || ""}
+                                    onChange={handleChange}
+                                    disabled={selfMode}
+                                />
+                            </div>
+                        </div>
+
+                        {/* 워케이션 사용가능일수 (관리자만 수정) */}
+                        {!selfMode && (
+                            <div className="form-group">
+                                <label>워케이션 사용가능일수</label>
+                                <input
+                                    type="number"
+                                    name="workationDays"
+                                    value={member.workationDays ?? 0}
+                                    onChange={handleChange}
+                                    min="0"
+                                />
+                            </div>
+                        )}
+
+                        {/* 회원가입 승인 상태 */}
+                        {!selfMode && (
+                            <div className="form-group">
+                                <label>회원가입 승인 상태</label>
+                                <input
+                                    type="text"
+                                    value={member.isProgressed === "Y" ? "승인 완료 (Y)" : "미승인 (N)"}
+                                    disabled
+                                />
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    /* 관리자 계정 정보 수정 영역 */
+                    <>
+                        <div className="form-group">
+                            <label>로그인 아이디</label>
+                            <input
+                                type="text"
+                                name="loginId"
+                                value={member.loginId || ""}
+                                onChange={handleChange}
+                                disabled={!isSuperAdmin}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>소속 회사</label>
+                            {isSuperAdmin ? (
+                                <select
+                                    name="companyId"
+                                    value={member.companyId || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">회사 선택</option>
+                                    {companyList.map((comp) => (
+                                        <option key={comp.companyId} value={comp.companyId}>
+                                            {comp.companyName}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    type="text"
+                                    value={member.companyName || ""}
+                                    disabled
+                                />
+                            )}
+                        </div>
+
+                        <div className="form-group">
+                            <label>계정 권한</label>
+                            <input
+                                type="text"
+                                value={member.role || "COMPANY_ADMIN"}
+                                disabled
+                            />
+                        </div>
+                    </>
+                )}
+
+                {/* 비밀번호 변경 영역 */}
+                <div className="form-group">
+                    <label>비밀번호 변경 (변경시에만 입력)</label>
+                    <input
+                        type="password"
+                        placeholder="8~15자, 특수문자 포함"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    {passwordMessage && (
+                        <span className={`msg-comment ${isValidPassword ? "success" : "error"}`}>
+                            {passwordMessage}
+                        </span>
+                    )}
+                </div>
+
+                <div className="form-group">
+                    <label>비밀번호 확인</label>
+                    <input
+                        type="password"
+                        placeholder="새 비밀번호 재입력"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    {confirmMessage && (
+                        <span className={`msg-comment ${password === confirmPassword ? "success" : "error"}`}>
+                            {confirmMessage}
+                        </span>
+                    )}
+                </div>
+
+                {!selfMode && (
+                    <div className="form-group">
+                        <label>계정 상태</label>
+                        <select
+                            name="status"
+                            value={member.status || "ACTIVE"}
+                            onChange={handleChange}
+                        >
+                            <option value="ACTIVE">활성 (ACTIVE)</option>
+                            <option value="LOCKED">잠금 (LOCKED)</option>
+                        </select>
+                    </div>
+                )}
+
+                <div className="btn-group-detail">
+                    {isEmployee && member.isProgressed === "N" && !selfMode && (
+                        <button
+                            type="button"
+                            className="btn-approve-custom"
+                            onClick={handleApprove}
+                        >
+                            승인하기
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        className="btn-secondary-custom"
+                        onClick={() => navigate(-1)}
+                    >
+                        취소
+                    </button>
+                    <button type="submit" className="btn-primary-custom">
+                        저장하기
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }

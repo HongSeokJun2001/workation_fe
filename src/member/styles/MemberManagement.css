@@ -1,0 +1,265 @@
+/* src/member/components/MemberManagement.css */
+
+:root {
+  --primary-green: #0d8a52;
+  --primary-green-hover: #0a6f42;
+  --bg-main: #f8faf9;
+  --bg-card: #ffffff;
+  --border-color: #e1f0e8;
+  --border-light: #edf4f0;
+  --text-dark: #111111;
+  --text-medium: #444444;
+  --text-muted: #888888;
+  --text-light: #aaaaaa;
+
+  /* Badges */
+  --badge-green-bg: #dcfce7;
+  --badge-green-text: #15803d;
+  --badge-purple-bg: #efe8ff;
+  --badge-purple-text: #7c3aed;
+  --badge-gray-bg: #f1f1f1;
+  --badge-gray-text: #555555;
+  --badge-red-bg: #fee2e2;
+  --badge-red-text: #b91c1c;
+  --badge-amber-bg: #fef3c7;
+  --badge-amber-text: #b45309;
+}
+
+/* Page Layout */
+.member-container {
+  padding: 32px 40px;
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Header Section */
+.member-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.member-title-area h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 6px 0;
+}
+
+.member-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.btn-add-account {
+  background-color: var(--primary-green);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-add-account:hover {
+  background-color: var(--primary-green-hover);
+}
+
+/* Filter Bar */
+.member-filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  background-color: #ffffff;
+  font-size: 13px;
+  color: var(--text-medium);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+  border-color: var(--primary-green);
+}
+
+/* Table Card Layout */
+.member-table-card {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.member-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.member-table th {
+  padding: 16px 20px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.member-table td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f4f8f5;
+}
+
+.member-table tr:last-child td {
+  border-bottom: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Member Profile Cell */
+.member-profile-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #cceee0;
+  color: var(--primary-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.member-name {
+  font-weight: 600;
+  color: #333333;
+}
+
+.member-empno {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.member-email {
+  color: #555555;
+}
+
+.member-dept {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Status & Role Badges */
+.badge-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.badge-role-emp {
+  background-color: var(--badge-gray-bg);
+  color: var(--badge-gray-text);
+}
+
+.badge-role-admin {
+  background-color: var(--badge-purple-bg);
+  color: var(--badge-purple-text);
+}
+
+.badge-status-active {
+  background-color: var(--badge-green-bg);
+  color: var(--badge-green-text);
+}
+
+.badge-status-locked {
+  background-color: var(--badge-red-bg);
+  color: var(--badge-red-text);
+}
+
+.badge-status-pending {
+  background-color: var(--badge-amber-bg);
+  color: var(--badge-amber-text);
+}
+
+/* Action Button */
+.btn-action-edit {
+  border: 1px solid #7be0ad;
+  background-color: #ffffff;
+  color: var(--primary-green);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-action-edit:hover {
+  background-color: #eaf8f1;
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+
+.page-btn {
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #64748b;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+}
+
+.page-btn.active {
+  background-color: var(--primary-green);
+  color: #ffffff;
+  border-color: var(--primary-green);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
