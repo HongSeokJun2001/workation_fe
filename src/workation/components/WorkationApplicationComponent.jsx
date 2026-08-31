@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'; // useEffect 추가
-import axios from 'axios'; // axios 추가
+import React, { useState, useEffect } from 'react'; 
+import axios from 'axios';
 import { insertApplicationApi } from "../api/workationApi";
 import { selectFacilityAllListApi } from '../../facility/api/facilityApi';
+import { selectCrewLeaderListApi } from '../../crew/api/CrewApi';
+
 import { useNavigate } from "react-router-dom";
 
 function WorkationApplicationComponent() {
@@ -11,7 +13,9 @@ function WorkationApplicationComponent() {
     const [facilityList, setFacilityList] = useState([]);
     const [selectedFacility, setSelectedFacility] = useState('');
 
+    const [crewList, setCrewList] = useState([]);
     const [selectedCrew, setSelectedCrew] = useState("");
+
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [region, setRegion] = useState(''); 
@@ -35,6 +39,24 @@ function WorkationApplicationComponent() {
 
                 console.error("시설 목록을 불러오는 중 오류 발생:", error);
                 setFacilityList([]);
+
+            });
+        
+        selectCrewLeaderListApi()
+            .then(response => {
+
+                console.log("크루 목록 API 응답:", response.data);
+
+                const data = response.data.list
+                    ? response.data.list
+                    : response.data;
+                
+                setCrewList(Array.isArray(data) ? data : []);
+            })
+            .catch(error => {
+
+                console.error("크루 목록을 불러오는 중 오류 발생:", error);
+                setCrewList([]);
 
             });
 
@@ -63,11 +85,6 @@ function WorkationApplicationComponent() {
         }
     };
 
-    // 시설 선택 변경 핸들러
-    const handleFacilityChange = (e) => {
-        setSelectedFacility(e.target.value);
-    };
-
     // 신청하기 핸들러
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -94,7 +111,6 @@ function WorkationApplicationComponent() {
                 startDate: startDate,
                 endDate: endDate
             },
-            endDate: endDate,
             region: selectedFacility ? null : region,
             purpose: purpose
         };
@@ -137,9 +153,12 @@ function WorkationApplicationComponent() {
                                     value={selectedCrew}
                                     onChange={(e) => setSelectedCrew(e.target.value)}
                                 >
-                                    <option value="">크루 선택</option>
-                                    <option value="1">개발 A팀 크루</option>
-                                    <option value="2">디자인 B팀 크루</option>
+                                    <option value="">크루를 선택해 주세요</option>
+                                    {crewList.map((crew) => (
+                                        <option key={crew.crewId} value={crew.crewId}>
+                                            {crew.crewName}
+                                        </option>
+                                    ))}
                                 </select>
                             </td>
                         </tr>
@@ -150,7 +169,7 @@ function WorkationApplicationComponent() {
                                     id="facility-select" 
                                     className="form-select"
                                     value={selectedFacility} 
-                                    onChange={handleFacilityChange}
+                                    onChange={(e) => setSelectedFacility(e.target.value)}
                                 >
                                     <option value="">시설을 선택해 주세요</option>
                                     {facilityList.map((facility) => (
