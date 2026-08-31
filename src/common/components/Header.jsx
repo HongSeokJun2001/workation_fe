@@ -65,7 +65,7 @@ function Header({ loginRole }) {
                 {!isSuperAdmin && (
                     <>
                         <div>
-                            <Link to="/admin/crew/list">크루관리</Link>
+                            <Link to="/crew/list">크루관리</Link>
                         </div>
                         <div>
                             <Link to="/facility/list">시설목록</Link>

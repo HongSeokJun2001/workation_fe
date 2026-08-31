@@ -6,7 +6,7 @@ import { insertCrewApi } from '../api/CrewApi';
 
 function CrewEnrollFormComponent() {
 
-  const LISTURL = "/admin/crew/list";
+  const LISTURL = "/crew/list";
 
   const [crewData, setCrewData] = useState({crewName:"",
     capacity : "",

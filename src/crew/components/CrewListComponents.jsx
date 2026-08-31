@@ -2,22 +2,24 @@ import { useState,useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 import CrewItemComponent from "./CrewItemComponent";
-// import ReplyComponent from "./ReplyComponent";
 
-
-import { selectCrewListApi,searchCrewListApi } from "../api/CrewApi";
-
+import {
+    selectCrewListApi,
+    searchCrewListApi,
+    joinCrewApi,
+    leaveCrewApi,
+    selectMyCrewListApi
+} from "../api/CrewApi";
 
 function CrewListComponents() {
 
     const navigate = useNavigate();
 
-
     // 크루 신청 중인 크루 ID
     const [joining, setJoining] = useState(null);
 
     // 내가 참여한 크루
-    const [joinedCrews, setJoinedCrews] = useState([1]);
+    const [joinedCrews, setJoinedCrews] = useState([]);
 
     // 검색어
     const [keyword, setKeyword] = useState("");
@@ -34,15 +36,13 @@ function CrewListComponents() {
     // 알림 메시지
     const [toast, setToast] = useState("");
 
-
-
     // 크루 목록을 저장할 상태값 설정
     const [crews,setCrews] = useState([]); // 크루 목록을 저장할 상태값 설정
 
     // 상황에 맞는 페이징바를 나타내는 Link컴포넌트를 배열에 차곡차곡 담아둘 State형 변수
     const [pageList,setPageList] = useState([]); // 페이징바를 나타내는 Link컴포넌트를 배열에 차곡차곡 담아둘 State형 변수
 
-    // cpage 값이 새로고침 되는것을 막기 위해 queryString을 사용하여 cpage 값을 가져오
+    // cpage 값이 새로고침 되는것을 막기 위해 queryString을 사용하여 cpage 값을 가져오기
     const cpage = parseInt(searchParams.get("cpage")) || 1;
 
     // Toast 출력
@@ -55,54 +55,6 @@ function CrewListComponents() {
         }, 3000);
     };
 
-
-    // 크루 참여
-    const handleJoin = (crewId) => {
-
-
-        setJoinedCrews((prev) => [...prev, crewId]);
-
-        setJoining(null);
-
-        showToast("크루 참여 신청이 완료되었습니다!");
-    };
-
-
-
-
-    // 크루 탈퇴
-    const handleLeave = (crewId) => {
-
-        setJoinedCrews((prev) =>
-            prev.filter((id) => id !== crewId)
-        );
-
-        showToast("크루에서 탈퇴했습니다.");
-    };
-
-
-    // // 워케이션 신청
-    // const handleWorkcation = () => {
-
-    //     setApplyingWorkcation(null);
-
-    //     showToast(
-    //         "워케이션 신청이 완료되었습니다! 관리자 승인 후 확정됩니다."
-    //     );
-    // };
-
-    // 검색
-    // const filteredCrews = crews.filter((crew) => {
-
-    //     const keyword = searchKeyword.toLowerCase();
-
-    //     return (
-    //         crew.crewName.toLowerCase().includes(keyword) ||
-    //         crew.crewContent.toLowerCase().includes(keyword)
-    //     );
-    // });
-
-
     useEffect(() => {
         // 크루 목록 조회 API 호출
         if(searchKeyword == "") {
@@ -112,10 +64,19 @@ function CrewListComponents() {
         }else {
 
             // 검색어가 있을 경우, 검색어를 포함한 크루 목록을 가져오는 로직
-
             searchCrewList();
         }
     }, [cpage, searchKeyword]);
+
+    useEffect(() => {
+        selectMyCrewListApi(1)
+            .then(response => {
+                setJoinedCrews(response.data.map(history => history.crew?.crewId));
+            })
+            .catch(error => {
+                console.log("가입 크루 조회 ajax 통신 실패", error);
+            });
+    }, []);
 
 
     // 크루 목록 조회 함수
@@ -150,22 +111,71 @@ function CrewListComponents() {
 
     // 검색 요청 함수
     const searchCrewList = async () => {
-
         try{
 
             const response = await searchCrewListApi(cpage, searchKeyword);
 
             handleResponse(response);
 
-
         }catch(error){
 
             console.log("검색어 포함 크루 조회 ajax 통신 실패 !");
-            console.log(error);
 
         }
     }
 
+    // 크루 모집 글 수정 함수
+    const handleUpdate = crewId => {
+
+        navigate("/crew/update", {
+        state: {
+            crewId: crewId
+        }
+    });
+        
+    }
+
+    // 크루 모집 글 삭제될 때 자동으로 새로고침 될 수 있는 함수
+    const handleDeleteSuccess = crewId => {
+
+    setCrews(prev =>
+        prev.filter(crew => crew.crewId !== crewId)
+    );
+
+    };
+
+
+    // 크루 참여 함수
+    const handleJoin = async crewId => {
+    try {
+        const response = await joinCrewApi(crewId);
+        if (response.data == "success") {
+            alert("크루 신청 성공");
+            // 가입한 크루 목록에 추가
+            setJoinedCrews((prev) => [...prev, crewId]);
+        } else {
+            alert("크루 신청 실패");
+        }
+    } catch (error) {
+        console.log("크루 신청 ajax 통신 실패", error);
+        }
+    };
+
+    // 크루 탈퇴 함수
+    const handleLeave = async crewId => {
+        try {
+            const response = await leaveCrewApi(crewId);
+
+            if (response.data === "success") {
+                setJoinedCrews(prev => prev.filter(id => id !== crewId));
+                showToast("크루에서 탈퇴했습니다.");
+            } else {
+                alert("크루 탈퇴 실패");
+            }
+        } catch (error) {
+            console.log("크루 탈퇴 ajax 통신 실패", error);
+        }
+    };
 
     // list, pi값을 각각 출력해주는 후처리 공통 함수
 
@@ -183,7 +193,6 @@ function CrewListComponents() {
         // pagination 처리
         // paging-area에 들어갈 데이터 후처리
         // console.log("pageInfo : " + pageInfo);
-
         // pageInfo.starPage ~ pageInfo.endPage까지 1씩 증가시키면서 페이징바 버튼 생성        
         const btnArr = [];
 
@@ -214,9 +223,7 @@ function CrewListComponents() {
         }
 
         for(let p = pageInfo.startPage; p <= pageInfo.endPage; p++) {
-
             if(cpage == p) {
-
                 btnArr.push(
                     <button
                         key={p}
@@ -228,7 +235,6 @@ function CrewListComponents() {
                 );
                 
             } else {
-
 
                 btnArr.push(
                     <button
@@ -242,7 +248,6 @@ function CrewListComponents() {
                     </button>
                 );
             }
-
         }
 
         if(cpage == pageInfo.maxPage) {
@@ -270,9 +275,7 @@ function CrewListComponents() {
                 </button>
             );
         }
-
         setPageList(btnArr);
-
     };
 
     return (
@@ -284,7 +287,6 @@ function CrewListComponents() {
                     ✓ {toast}
                 </div>
             )}
-
 
             {/* 제목 + 크루 만들기 */}
             <div>
@@ -333,45 +335,33 @@ function CrewListComponents() {
                 </button>
             </div>
 
-            
-
-
-
             {/* 내가 참여한 크루 */}
             {joinedCrews.length > 0 && (
                 <div>
-
                     <p>
-                        내가 참여한 크루
+                        내가 가입한 크루
                     </p>
-
-
                     <div>
-
                         {crews
                             .filter((crew) =>
                                 joinedCrews.includes(crew.crewId)
                             )
                             .map((crew) => (
-
                                 <div key={crew.crewId}>
 
                                     <div>
                                         <p>
                                             {crew.crewName}
                                         </p>
-
                                         <p>
                                             회사 :{" "}
                                             {crew.company?.companyName ?? "-"}
                                         </p>
-
                                         <p>
                                             마감일 :{" "}
                                             {crew.endDate?.substring(0, 10) ?? "-"}
                                         </p>
                                     </div>
-
 
                                     <div>
 
@@ -384,8 +374,6 @@ function CrewListComponents() {
                                         >
                                             워케이션 신청
                                         </button>
-
-
                                         <button
                                             onClick={() =>
                                                 handleLeave(crew.crewId)
@@ -393,78 +381,37 @@ function CrewListComponents() {
                                         >
                                             탈퇴
                                         </button>
-
                                     </div>
-
                                 </div>
                             ))}
-
                     </div>
-
                 </div>
             )}
 
-
             {/* 모집 중인 크루 */}
             <div>
-
                 <p>
                     모집 중인 크루
                 </p>
-
-
                 <div>
-
                     {crews.map((crew) => (
                         <CrewItemComponent
                             key={crew.crewId}
                             item={crew}
-                            joining={joining}
-                            setJoining={setJoining}
+                            joinedCrews={joinedCrews}
+                            onJoin={handleJoin}
+                            onLeave={handleLeave}
+                            onUpdate={handleUpdate}
+                            onDeleteSuccess={handleDeleteSuccess}
                         />
                     ))}
-
                 </div>
-
             </div>
-
-
-            {/* 크루 신청
-            {joining !== null && (
-
-                <div>
-
-                    <h3>
-                        크루 신청
-                    </h3>
-
-                    <button
-                        onClick={() =>
-                            handleJoin(joining)
-                        }
-                    >
-                        신청
-                    </button>
-
-                    <button
-                        onClick={() => {
-                            setJoining(null);
-                        }}
-                    >
-                        취소
-                    </button>
-
-                </div>
-
-            )} */}
-
             {/* 페이징바 */}
             <div align="center" className="paging-area">
                 {pageList}
             </div>
-
             <br /><br />
-
 
         </div>
     );

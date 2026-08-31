@@ -14,6 +14,7 @@ import FacilityEnrollFormComponent from './facility/components/FacilityEnrollFor
 
 import CrewEnrollFormComponent from './crew/components/CrewEnrollFormComponent';
 import CrewListComponents from './crew/components/CrewListComponents';
+import CrewUpdateFormComponent from './crew/components/CrewUpdateFormComponent';
 
 import Header from "./common/components/Header";
 import Footer from "./common/components/Footer";
@@ -45,6 +46,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Index accessToken={accessToken} setAccessToken={setAccessToken} setLoginRole={setLoginRole}/>}/>
                 <Route path="/facility/list" element={<FacilityListComponent />} />
+                <Route path="/crew/list" element={<CrewListComponents />} />
                 <Route path="/facility/detail/:facilityId" element={<FacilityDetailComponent />} />
                 <Route path="/application" element={<WorkationApplicationComponent/>}/>
                 <Route path="/reservation/:reservationId" element={<WorkationReservationDetailComponent/>} />
@@ -193,14 +195,13 @@ function App() {
             <Route path="/facility/update" element={<FacilityUpdateFormComponent/>}/>
               
               
-              
             {/* 크루 관련 라우팅  */}
             {/* 크루 조회 */}
-            <Route path="/admin/crew/list" element={<CrewListComponents />} />
+            <Route path="/crew/list" element={<CrewListComponents />} />
 
             {/* 크루 생성 (모집글 작성) */}
             <Route path="/crew/enroll" element={<CrewEnrollFormComponent />} />
-            <Route path="/admin/crew/enroll" element={<CrewEnrollFormComponent />} />
+            <Route path="/crew/update" element={<CrewUpdateFormComponent />} />
 
             {/* 워케이션 관련 라우팅 */}
             <Route path="/application" element={<WorkationApplicationComponent/>}/>
