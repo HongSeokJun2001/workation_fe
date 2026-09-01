@@ -152,7 +152,7 @@ const selectCrewLeaderListApi = () => {
     return response
 }
 
-export { selectCrewListApi, searchCrewListApi, insertCrewApi, updateCrewApi,
+export { selectCrewListApi, selectCrewApi, searchCrewListApi, insertCrewApi, updateCrewApi,
     deleteCrewApi,
     joinCrewApi,
     leaveCrewApi,
