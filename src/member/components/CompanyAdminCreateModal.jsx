@@ -4,9 +4,10 @@ import { Alert, Button, Form, Modal } from "react-bootstrap";
 import {
     createCompanyAdminApi,
     createCompanyAdminBySuperApi,
-    createSuperAdminApi,
-    selectActiveCompanyListApi
+    createSuperAdminApi
 } from "../api/memberApi";
+import { selectActiveCompanyListApi } from "../api/companyApi";
+import "../styles/AdminCreateModal.css";
 
 function CompanyAdminCreateModal({ onClose, onCreated, isSuperAdmin = false, isCompanyAdminCreation = false }) {
 
@@ -70,42 +71,47 @@ function CompanyAdminCreateModal({ onClose, onCreated, isSuperAdmin = false, isC
     };
 
     return (
-        <Modal show onHide={onClose} centered>
-            <Form onSubmit={createCompanyAdmin}>
+        <Modal show onHide={onClose} centered className="admin-create-modal">
+            <Form className="admin-create-form" onSubmit={createCompanyAdmin}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{isCompanyAdminCreation ? "본사관리자" : "최고관리자"} 계정 추가</Modal.Title>
+                    <div>
+                        <span className="admin-create-kicker">ADMIN ACCOUNT</span>
+                        <Modal.Title>{isCompanyAdminCreation ? "본사관리자" : "최고관리자"} 계정 추가</Modal.Title>
+                    </div>
                 </Modal.Header>
                 <Modal.Body>
-                    {isSuperAdmin && isCompanyAdminCreation && (
+                    <div className="admin-create-fields">
+                        {isSuperAdmin && isCompanyAdminCreation && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>회사 선택</Form.Label>
+                                <Form.Select name="companyId" value={admin.companyId} onChange={handleChange}>
+                                    <option value="">회사를 선택해주세요</option>
+                                    {companies.map(company => (
+                                        <option key={company.companyId} value={company.companyId}>
+                                            {company.companyName} ({company.businessNo})
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        )}
                         <Form.Group className="mb-3">
-                            <Form.Label>회사 선택</Form.Label>
-                            <Form.Select name="companyId" value={admin.companyId} onChange={handleChange}>
-                                <option value="">회사를 선택해주세요</option>
-                                {companies.map(company => (
-                                    <option key={company.companyId} value={company.companyId}>
-                                        {company.companyName} ({company.businessNo})
-                                    </option>
-                                ))}
-                            </Form.Select>
+                            <Form.Label>로그인 아이디</Form.Label>
+                            <Form.Control name="loginId" value={admin.loginId} onChange={handleChange} />
                         </Form.Group>
-                    )}
-                    <Form.Group className="mb-3">
-                        <Form.Label>로그인 아이디</Form.Label>
-                        <Form.Control name="loginId" value={admin.loginId} onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>비밀번호</Form.Label>
-                        <Form.Control type="password" name="password" value={admin.password} onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>비밀번호 확인</Form.Label>
-                        <Form.Control type="password" name="confirmPassword" value={admin.confirmPassword} onChange={handleChange} />
-                    </Form.Group>
-                    {message && <Alert className="mt-3" variant="danger">{message}</Alert>}
+                        <Form.Group className="mb-3">
+                            <Form.Label>비밀번호</Form.Label>
+                            <Form.Control type="password" name="password" value={admin.password} onChange={handleChange} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>비밀번호 확인</Form.Label>
+                            <Form.Control type="password" name="confirmPassword" value={admin.confirmPassword} onChange={handleChange} />
+                        </Form.Group>
+                    </div>
+                    {message && <Alert className="admin-create-alert mt-3" variant="danger">{message}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button type="button" variant="secondary" onClick={onClose}>닫기</Button>
-                    <Button type="submit" variant="primary">생성</Button>
+                    <Button type="button" className="admin-create-cancel" onClick={onClose}>닫기</Button>
+                    <Button type="submit" className="admin-create-submit">생성</Button>
                 </Modal.Footer>
             </Form>
         </Modal>
