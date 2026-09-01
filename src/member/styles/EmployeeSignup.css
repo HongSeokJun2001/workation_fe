@@ -1,0 +1,222 @@
+.employee-signup-modal .modal-dialog {
+  max-width: 620px;
+}
+
+.employee-signup-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid #e1f0e8;
+  border-radius: 8px;
+  box-shadow: 0 14px 36px #11111124;
+}
+
+.employee-signup-modal .modal-header {
+  align-items: flex-start;
+  padding: 20px 24px;
+  border-color: #edf4f0;
+  background: #f5fbf7;
+}
+
+.employee-signup-modal .modal-title {
+  color: #111111;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.employee-signup-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #0d6f42;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.employee-signup-brand-mark {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 8px;
+  background: #0d8a52;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.employee-signup-caption {
+  margin: 4px 0 0;
+  color: #888888;
+  font-size: 13px;
+}
+
+.employee-signup-modal .modal-body {
+  padding: 24px;
+}
+
+.employee-signup-steps {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.employee-signup-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #aaaaaa;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.employee-signup-step-number {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f1f1f1;
+}
+
+.employee-signup-step.active {
+  color: #0d8a52;
+}
+
+.employee-signup-step.active .employee-signup-step-number {
+  background: #0d8a52;
+  color: #ffffff;
+}
+
+.employee-signup-step-line {
+  width: 32px;
+  height: 1px;
+  background: #d8dfda;
+}
+
+.employee-signup-fields {
+  padding: 18px;
+  border: 1px solid #edf4f0;
+  border-radius: 8px;
+  background: #fcfefd;
+}
+
+.employee-signup-form .form-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.employee-signup-form .required::after {
+  margin-left: 3px;
+  color: #d14343;
+  content: "*";
+}
+
+.employee-signup-form .form-control {
+  min-height: 42px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  color: #333333;
+  font-size: 14px;
+}
+
+.employee-signup-form .form-control:focus {
+  border-color: #0d8a52;
+  box-shadow: 0 0 0 0.2rem rgba(13, 138, 82, 0.12);
+}
+
+.employee-signup-inline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.employee-signup-message {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.employee-signup-modal .modal-footer {
+  gap: 8px;
+  padding: 18px 24px;
+  border-color: #edf4f0;
+  background: #fcfefd;
+}
+
+.employee-signup-secondary,
+.employee-signup-check,
+.employee-signup-primary {
+  min-width: 84px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.employee-signup-secondary {
+  border: 0;
+  background: #f1f1f1;
+  color: #555555;
+}
+
+.employee-signup-check {
+  border: 1px solid #7be0ad;
+  background: #ffffff;
+  color: #0d8a52;
+}
+
+.employee-signup-primary {
+  border: 0;
+  background: #0d8a52;
+  color: #ffffff;
+}
+
+.employee-signup-primary:hover,
+.employee-signup-primary:focus {
+  background: #0a6f42;
+  color: #ffffff;
+}
+
+.employee-recovery-mode {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 4px;
+  border-radius: 8px;
+  background: #f1f5f2;
+}
+
+.employee-recovery-mode .btn {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #777777;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.employee-recovery-mode .btn.active {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(17, 17, 17, 0.1);
+  color: #0d8a52;
+}
+
+.employee-recovery-result {
+  margin: 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+@media (max-width: 576px) {
+  .employee-signup-modal .modal-dialog {
+    margin: 12px;
+  }
+
+  .employee-signup-step-line {
+    width: 16px;
+  }
+}
