@@ -8,12 +8,17 @@ function Header({ loginRole }) {
 
     const isAdmin = loginRole === "SUPER" || loginRole === "COMPANY";
     const isSuperAdmin = loginRole === "SUPER";
+    const isCompanyAdmin = loginRole === "COMPANY";
+    const isMember = loginRole === "MEMBER";
+    // const isGuest = loginRole === null;
 
     const lobbyPath = loginRole === "SUPER"
         ? "/admin/super"
         : loginRole === "COMPANY"
             ? "/admin/company"
-            : "/lobby";
+            : loginRole === "MEMBER"
+                ? "/lobby"
+                : "/";
 
     const memberListPath = loginRole === "SUPER"
         ? "/admin/super/member/list"
@@ -34,6 +39,9 @@ function Header({ loginRole }) {
                 <div>
                     <Link to={lobbyPath}>HOME</Link>
                 </div>
+                <div>
+                    <Link to="/facility/list">시설목록</Link>
+                </div>
 
                 {isAdmin && (
                     <div>
@@ -46,35 +54,37 @@ function Header({ loginRole }) {
                         <div>
                             <Link to="/admin/notice/list">공지사항관리</Link>
                         </div>
-                        <div>
-                            <Link to="/facility/list">시설목록</Link>
-                        </div>
+                        
                         <div>
                             <Link to="/admin/super/company/list">고객사관리</Link>
                         </div>
-                        <div>
-                            <Link to="/admin/application/list">워케이션신청목록</Link>
-                        </div>
+                        
                         <div>
                             <Link to="/admin/reservation/list">예약목록</Link>
                         </div>
                     </>
-                    
                 )}
 
-                {!isSuperAdmin && (
+                {isCompanyAdmin && (
                     <>
                         <div>
                             <Link to="/crew/list">크루관리</Link>
                         </div>
                         <div>
-                            <Link to="/facility/list">시설목록</Link>
+                            <Link to="/admin/application/list">워케이션신청목록</Link>
+                        </div>
+                    </>
+                )}
+
+                {isMember && (
+                    <>
+                        <div>
+                            <Link to="/crew/list">크루관리</Link>
                         </div>
                         <div>
                             <Link to="/application">워케이션신청</Link>
                         </div>
                     </>
-                    
                 )}
             </div>
         </div>
