@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getApplicationDetailApi } from "../api/workationApi";
+import { cancelApplicationApi, approveApplicationApi, getApplicationDetailApi } from "../api/workationApi";
 
 function WorkationApplicationDetailComponent() {
 
@@ -53,6 +53,55 @@ function WorkationApplicationDetailComponent() {
 
     let purposeInfo = application.purpose || "-";
 
+    // 취소하기 핸들러
+    const handelCancel = async (e) => {
+        e.preventDefault();
+
+        const reason = prompt("반려 사유를 입력해주세요:");
+
+        if (reason === null) return;
+
+        if (!reason.trim()) {
+            alert("반려 사유를 입력해야 합니다.");
+            return;
+        }
+
+        try {
+            const response = await cancelApplicationApi(workationId, reason);
+            if( response.data === "success" || response.data === 1 ){
+                alert("워케이션 취소가 완료되었습니다.");
+                navigate("/admin/application/list");
+            }
+        } catch (error) {
+            console.error("취소 실패:", error);
+            alert("취소 처리 중 오류가 발생했습니다.");
+        }
+        
+    };
+
+    // 승인하기 핸들러
+    const handleApproval = async (e) => {
+        e.preventDefault();
+
+        const isConfirm = window.confirm("워케이션 신청을 승인하시겠습니까?");
+
+        if(!isConfirm){
+            return;
+        }
+
+        try {
+            const response = await approveApplicationApi(workationId);
+            if( response.data === "success" || response.data === 1 ){
+                alert("워케이션 승인이 완료되었습니다.");
+                navigate("/admin/application/list");
+            }
+        } catch (error) {
+            console.error("승인 실패:", error);
+            alert("승인 처리 중 오류가 발생했습니다.");
+        }
+
+    }
+
     return (
 
         <div>
@@ -103,8 +152,8 @@ function WorkationApplicationDetailComponent() {
                 >
                     목록으로
                 </button>   
-                <button>취소하기</button>
-                <button>승인하기</button> 
+                <button type="button" onClick={handelCancel}>취소하기</button>
+                <button type="button" onClick={handleApproval}>승인하기</button> 
             </div>
         </div>
 
