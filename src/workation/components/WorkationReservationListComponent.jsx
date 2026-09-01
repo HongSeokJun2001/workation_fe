@@ -30,7 +30,7 @@ function WorkationReservationListComponent() {
             }
             
         } catch (error) {
-            console.error("워케이션 신청 리스트 불러오기 실패:", error);
+            console.error("워케이션 예약 리스트 불러오기 실패:", error);
         }
     };
 
@@ -121,7 +121,7 @@ function WorkationReservationListComponent() {
 
             <br /><br />
 
-            <h2 align="center">워케이션 예약 목록</h2>
+            <h2 align="center">워케이션 에약 목록</h2>
 
             <br /><br />
 
@@ -129,7 +129,7 @@ function WorkationReservationListComponent() {
                 <table className="list-area table table-hover">
                     <thead>
                         <tr>
-                            <th style={{ width: "15%" }}>크루</th>
+                            <th style={{ width: "15%" }}>크루장</th>
                             <th style={{ width: "35%" }}>신청기간</th>
                             <th style={{ width: "20%" }}>시설</th>
                             <th style={{ width: "15%" }}>예약상태</th>

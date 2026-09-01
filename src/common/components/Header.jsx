@@ -60,7 +60,7 @@ function Header({ loginRole }) {
                         </div>
                         
                         <div>
-                            <Link to="/admin/reservation/list">예약목록</Link>
+                            <Link to="/reservation/list">예약목록</Link>
                         </div>
                     </>
                 )}
