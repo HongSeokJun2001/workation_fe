@@ -1,9 +1,11 @@
 import "./index.css";
+import "./common/styles/Login.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { loginMemberApi } from "./auth/api/authApi";
+import { selectPlatformStatsApi } from "./common/api/platformApi";
 import EmployeeAccountRecoveryModal from "./member/components/EmployeeAccountRecoveryModal";
 import EmployeeSignupModal from "./member/components/EmployeeSignupModal";
 
@@ -19,6 +21,19 @@ function Index(props) {
                                           loginType : "ADMIN"});
     const [showSignupModal, setShowSignupModal] = useState(false);
     const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+    const [stats, setStats] = useState({ companyCount: 0, facilityCount: 0 });
+
+    useEffect(() => {
+        selectPlatformStatsApi()
+            .then(response => setStats({
+                companyCount: response.data.companyCount ?? 0,
+                facilityCount: response.data.facilityCount ?? 0
+            }))
+            .catch(error => console.error("플랫폼 통계 조회 실패:", error));
+    }, []);
+
+    // 10 단위로 내림 후 + 표기
+    const formatCount = count => `${Math.floor((count ?? 0) / 10) * 10}+`;
 
     // 입력값이 변할 때마다 실행할 이벤트 핸들러 함수
     const handleChange = e => {
@@ -75,6 +90,7 @@ function Index(props) {
         sessionStorage.removeItem("loginRole");
         setAccessToken(null);
         setLoginRole(null);
+        setMember({loginId : "", password : "", loginType : "ADMIN"});
         navigate("/");
 
     };
@@ -102,19 +118,23 @@ function Index(props) {
 
         // return 구문 - 로그인 후에는 로그아웃 버튼만 보여주기
         return (
-            <div>
-                <h2 align="center">{loginTitle}</h2>
-                <div align="center">
-                    {loginRole === "EMPLOYEE" && (
-                        <button className="btn btn-primary"
-                                onClick={() => navigate('/employee/my-info')}>
-                            정보 수정
+            <div className="login-session">
+                <div className="login-session-card">
+                    <h2>{loginTitle}</h2>
+                    <div className="login-session-actions">
+                        {loginRole === "EMPLOYEE" && (
+                            <button type="button"
+                                    className="login-session-edit"
+                                    onClick={() => navigate('/employee/my-info')}>
+                                정보 수정
+                            </button>
+                        )}
+                        <button type="button"
+                                className="login-session-logout"
+                                onClick={ logoutMember }>
+                            로그아웃
                         </button>
-                    )}
-                    <button className="btn btn-danger"
-                            onClick={ logoutMember }>
-                        로그아웃
-                    </button>
+                    </div>
                 </div>
             </div>
         );
@@ -122,53 +142,91 @@ function Index(props) {
 
         // return 구문 - 로그인 전에는 로그인 폼만 보여주기
         return (
-            <div>
-                <h2 align="center">{member.loginType === "ADMIN" ? "관리자 로그인" : "직원 로그인"}</h2>
-
-                <br /><br />
-
-                <div align="center">
-                    <button type="button" onClick={() => selectLoginType("ADMIN")}>관리자로그인</button>
-                    <button type="button" onClick={() => selectLoginType("EMPLOYEE")}>직원로그인</button>
-                    <button type="button" onClick={moveToSignup}>직원 계정 생성</button>
-                    <button type="button" onClick={moveToFindAccount}>직원 아이디/비번 찾기</button>
-                </div>
-
-                <br /><br />
-
-                <form id="login-form">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <th>아이디</th>
-                                <td>
-                                    <input type="text" name="loginId" 
-                                            value={member.loginId}
-                                            onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>비밀번호</th>
-                                <td>
-                                    <input type="password" name="password" 
-                                            value={member.password}
-                                            onChange={handleChange} />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <br /><br />
-
-                    <div align="center">
-                        <button className="btn btn-primary"
-                                onClick={ loginMember }>
-                            로그인
-                        </button>
+            <div className="login-page">
+                <section className="login-visual">
+                    <div>
+                        <div className="login-brand">
+                            <span className="login-brand-mark">W</span>
+                            워케이션 크루
+                        </div>
+                        <p className="login-brand-caption">Crew-based B2B Workation Platform</p>
                     </div>
 
-                    <br /><br />
-                </form>
+                    <div className="login-visual-copy">
+                        <h1>
+                            일과 쉼이 만나는
+                            <span>크루 워케이션</span>
+                        </h1>
+                        <p>
+                            함께 떠날 크루를 먼저 만들고, 검증된 공간을<br />
+                            기업 복지로 무료 대여하세요.
+                        </p>
+
+                        <div className="login-stats">
+                            <div>
+                                <div className="login-stat-value">{formatCount(stats.companyCount)}</div>
+                                <div className="login-stat-label">협약 기업</div>
+                            </div>
+                            <div>
+                                <div className="login-stat-value">{formatCount(stats.facilityCount)}</div>
+                                <div className="login-stat-label">검증 공간</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="login-panel">
+                    <div className="login-form-area">
+                        <h2>로그인</h2>
+                        <p className="login-form-caption">계정에 로그인하여 워케이션을 시작하세요</p>
+
+                        <div className="login-type-group">
+                            <button type="button"
+                                    className={member.loginType === "ADMIN" ? "active" : ""}
+                                    onClick={() => selectLoginType("ADMIN")}>
+                                관리자 로그인
+                            </button>
+                            <button type="button"
+                                    className={member.loginType === "EMPLOYEE" ? "active" : ""}
+                                    onClick={() => selectLoginType("EMPLOYEE")}>
+                                직원 로그인
+                            </button>
+                        </div>
+
+                        <form id="login-form" onSubmit={loginMember}>
+                            <div className="login-field">
+                                <label htmlFor="loginId">아이디</label>
+                                <input id="loginId"
+                                       type="text"
+                                       name="loginId"
+                                       value={member.loginId}
+                                       onChange={handleChange}
+                                       placeholder="아이디를 입력하세요" />
+                            </div>
+
+                            <div className="login-field">
+                                <label htmlFor="password">비밀번호</label>
+                                <input id="password"
+                                       type="password"
+                                       name="password"
+                                       value={member.password}
+                                       onChange={handleChange}
+                                       placeholder="비밀번호를 입력하세요" />
+                            </div>
+
+                            <button type="submit" className="login-submit">
+                                로그인
+                            </button>
+                        </form>
+
+                        <div className="login-links">
+                            계정이 없으신가요?
+                            <button type="button" onClick={moveToSignup}>직원 계정 만들기</button>
+                            <span className="divider">|</span>
+                            <button type="button" onClick={moveToFindAccount}>아이디/비밀번호 찾기</button>
+                        </div>
+                    </div>
+                </section>
 
                 {showSignupModal && (
                     <EmployeeSignupModal onClose={() => setShowSignupModal(false)} />
