@@ -6,6 +6,9 @@ import { selectNoticeApi, deleteNoticeApi } from "../api/noticeApi";
 
 function NoticeDetailComponent(){
 
+    const loginRole = sessionStorage.getItem("loginRole");
+    const canManageNotice = loginRole === "SUPER";
+
     //실행할 구문
     //pahtVariable 방식으로 얻어온 글번호 셋팅
     const { noticeId } = useParams();
@@ -139,16 +142,20 @@ function NoticeDetailComponent(){
                         onClick={ () => { navigate("/admin/notice/list"); } }>
                     목록으로
                 </button>
-                &nbsp;&nbsp;
-                <button className="btn btn-outline-warning btn-sm"
-                        onClick={ () => { navigate("/notice/updateForm", {state : {noticeId}}); } }>
-                    수정하기
-                </button>
-                &nbsp;&nbsp;
-                <button className="btn btn-outline-danger btn-sm"
-                        onClick={ deleteNotice }>
-                    삭제하기
-                </button>
+                {canManageNotice && (
+                    <>
+                        &nbsp;&nbsp;
+                        <button className="btn btn-outline-warning btn-sm"
+                                onClick={ () => { navigate("/notice/updateForm", {state : {noticeId}}); } }>
+                            수정하기
+                        </button>
+                        &nbsp;&nbsp;
+                        <button className="btn btn-outline-danger btn-sm"
+                                onClick={ deleteNotice }>
+                            삭제하기
+                        </button>
+                    </>
+                )}
             </div>
 
             <br /><br />

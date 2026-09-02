@@ -6,6 +6,21 @@ import { deleteCrewApi } from "../api/CrewApi";
 function CrewItemComponent(props) {
 
     const item = props.item;
+    const loginRole = sessionStorage.getItem("loginRole") || "EMPLOYEE";
+    const currentToken = sessionStorage.getItem("accessToken");
+
+    let currentLoginId = null;
+    try {
+        if (currentToken && currentToken.split('.').length === 3) {
+            const payload = JSON.parse(atob(currentToken.split('.')[1]));
+            currentLoginId = payload.sub ?? null;
+        }
+    } catch (e) {
+        currentLoginId = null;
+    }
+
+    const isOwner = loginRole === "EMPLOYEE" && item.employee?.loginId && currentLoginId && item.employee.loginId === currentLoginId;
+    const canManageCrew = loginRole === "SUPER" || isOwner;
 
     const [replyOpen, setReplyOpen] = useState(false);
 
@@ -95,16 +110,16 @@ function CrewItemComponent(props) {
 
             </div>
 
-            <div>
-
-                <button onClick={() => props.onUpdate(item.crewId)}>
-                    수정하기
-                </button>     
-                <button onClick={deleteCrew}>
-                    삭제하기
-                </button>       
-
-            </div>
+            {canManageCrew && (
+                <div>
+                    <button onClick={() => props.onUpdate(item.crewId)}>
+                        수정하기
+                    </button>
+                    <button onClick={deleteCrew}>
+                        삭제하기
+                    </button>
+                </div>
+            )}
 
 
 
@@ -123,8 +138,11 @@ function CrewItemComponent(props) {
                             </button>
                         </>
                     ) : (
-                        <button onClick={() => props.onJoin(item.crewId)}>
-                            크루 신청
+                        <button
+                            onClick={() => props.onJoin(item.crewId)}
+                            disabled={loginRole !== "EMPLOYEE" || isOwner}
+                        >
+                            {loginRole === "EMPLOYEE" ? (isOwner ? "작성자 본인" : "크루 신청") : "신청 불가"}
                         </button>
                     )}
             </div>
