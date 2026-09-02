@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getApplicationListApi } from "../api/workationApi";
-import WorkationItemComponent from "./WorkationItemComponent";
+import WorkationApplicationItemComponent from "./WorkationApplicationItemComponent";
 
 function WorkationApplicationListComponent() {
 
@@ -42,7 +42,7 @@ function WorkationApplicationListComponent() {
 
     if (rawList.length > 0) {
         dataList = rawList.map((item, index) => (
-            <WorkationItemComponent key={item.workationId || index} item={item}/>
+            <WorkationApplicationItemComponent key={item.workationId || index} item={item}/>
         ));
     } else {
         dataList = (
@@ -117,7 +117,7 @@ function WorkationApplicationListComponent() {
 
             <br /><br />
 
-            <h2 align="center">워케이션 승인 목록</h2>
+            <h2 align="center">워케이션 신청/예약 목록</h2>
 
             <br /><br />
 
@@ -127,7 +127,7 @@ function WorkationApplicationListComponent() {
                         <tr>
                             <th style={{ width: "15%" }}>크루장</th>
                             <th style={{ width: "35%" }}>신청기간</th>
-                            <th style={{ width: "20%" }}>시설</th>
+                            <th style={{ width: "20%" }}>시설 및 장소</th>
                             <th style={{ width: "15%" }}>예약상태</th>
                             <th style={{ width: "15%" }}>예약신청일</th>
                         </tr>

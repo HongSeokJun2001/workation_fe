@@ -15,6 +15,22 @@ function WorkationItemComponent({ item }) {
         return String(date).substring(0, 10);
     };
 
+    let statusInfo = "신청 대기";
+    if(item?.status === "CONFIRM"){
+        statusInfo = "예약 완료";
+    } else if(item?.status === "CANCELLED"){
+        statusInfo = "워케이션 취소";
+    } else if(item?.status === "COMPLETED"){
+        statusInfo = "워케이션 완료";
+    }
+
+    let facilityInfo = "-";
+    if(item?.facilityName){
+        facilityInfo = item?.facilityName;
+    } else if (item?.region){
+        facilityInfo = item?.region;
+    }
+
     return (
         <tr 
             style={{ cursor: "pointer" }}
@@ -30,9 +46,9 @@ function WorkationItemComponent({ item }) {
                     : "일정 미정"}
             </td>
 
-            <td>{item?.facilityName || "시설 미선택"}</td>
+            <td>{facilityInfo}</td>
 
-            <td>신청중</td>
+            <td>{statusInfo}</td>
 
             <td>{formatDate(item?.createdDate)}</td>
         </tr>

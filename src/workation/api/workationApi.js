@@ -5,7 +5,7 @@ const BASE_URL = "http://localhost:8007/workation/application"
 
 const RES_URL = "http://localhost:8007/workation/reservation"
 
-const getApplicationListApi = cpage =>{
+const getApplicationListApi = async (cpage) =>{
 
     const response = axios({
 
@@ -88,7 +88,7 @@ const getReservationListApi = cpage => {
 
     const response = axios({
 
-        url : `${RES_URL}/list`,
+        url : `${BASE_URL}/member/list`,
         method:"get",
         params : {
             cpage : cpage
@@ -100,10 +100,10 @@ const getReservationListApi = cpage => {
     return response;
 }
 
-const getReservationDetailApi = reservationId => {
+const getReservationDetailApi = workationId => {
 
     const response = axios({
-        url : `${BASE_URL}/${reservationId}`,
+        url : `${BASE_URL}/member/${workationId}`,
         method : "get", 
         headers : {
             "Authorization" : getAuthorization()
@@ -114,16 +114,16 @@ const getReservationDetailApi = reservationId => {
     return response
 }
 
-const cancelReservationApi = (reservationId) => {
+const cancelReservationApi = (workationId, reason) => {
 
     const response = axios ({
 
-        url : `${BASE_URL}/cancel/${reservationId}`,
+        url : `${RES_URL}/cancel/${workationId}`,
         method : "PUT",
+        data: { reason },
         headers: {
             "Authorization": getAuthorization()
         }
-
     });
 
     return response;

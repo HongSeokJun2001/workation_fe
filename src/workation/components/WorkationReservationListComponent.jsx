@@ -15,7 +15,7 @@ function WorkationReservationListComponent() {
 
             const response = await getReservationListApi(cpage);
         
-            //console.log("백엔드에서 넘어온 전체 response.data:", response.data);
+            console.log("백엔드에서 넘어온 전체 response.data:", response.data);
             
             setRawList(response.data.list || []);
 
@@ -121,7 +121,7 @@ function WorkationReservationListComponent() {
 
             <br /><br />
 
-            <h2 align="center">워케이션 에약 목록</h2>
+            <h2 align="center">워케이션 예약 목록</h2>
 
             <br /><br />
 
