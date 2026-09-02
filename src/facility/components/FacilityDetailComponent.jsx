@@ -7,7 +7,14 @@ function FacilityDetailComponent() {
     const { facilityId } = useParams();
     const navigate = useNavigate();
 
-    // 시설 유형
+    // 이미지 로딩 실패 시 사용할 Inline SVG
+    const FALLBACK_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'><rect width='100%' height='100%' fill='%23e9ecef'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23868e96' font-size='12'>이미지 없음</text></svg>";
+
+    const handleImageError = (e) => {
+        e.target.onerror = null;
+        e.target.src = FALLBACK_IMAGE;
+    };
+
     const FACILITY_TYPE_MAP = {
         RESORT: "리조트",
         HOTEL: "호텔",
@@ -34,6 +41,26 @@ function FacilityDetailComponent() {
         imageList: []
     });
 
+    // 더미 댓글/리뷰 데이터 (via.placeholder.com 대신 SVG 적용)
+    const [reviewList] = useState([
+        {
+            reviewId: 1,
+            employeeName: "김워케",
+            rating: 5,
+            content: "시설이 너무 깔끔하고 인터넷 속도가 빨라서 업무하기 최적이었습니다! 조용하고 뷰도 좋네요.",
+            createdDate: "2026-08-28",
+            images: [FALLBACK_IMAGE, FALLBACK_IMAGE]
+        },
+        {
+            reviewId: 2,
+            employeeName: "이이용",
+            rating: 4,
+            content: "주차 공간이 약간 협소하긴 했지만, 주변 편의시설이 잘 갖춰져 있어서 전반적으로 만족스럽습니다.",
+            createdDate: "2026-08-25",
+            images: []
+        }
+    ]);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -59,6 +86,7 @@ function FacilityDetailComponent() {
         return rawImages.map((item) => {
             const path = typeof item === "object" && item !== null ? item.filePath : item;
             if (!path) return "";
+            if (path.includes("via.placeholder.com")) return FALLBACK_IMAGE;
             return path.startsWith("http")
                 ? path
                 : `${BASE_URL}${path.startsWith("/") ? path : "/" + path}`;
@@ -108,19 +136,18 @@ function FacilityDetailComponent() {
             <div className="image-section">
                 {images.length > 0 ? (
                     <div>
-                        {/* 대표 메인 이미지 */}
                         <div className="main-image-box" onClick={() => openModal(0)}>
                             <img 
                                 src={images[0]} 
                                 alt="대표 시설 이미지" 
                                 className="main-image"
+                                onError={handleImageError}
                             />
                             <div className="image-count-badge">
                                 📷 사진 전체보기 ({images.length})
                             </div>
                         </div>
 
-                        {/* 하단 썸네일 리스트 */}
                         {images.length > 1 && (
                             <div className="thumbnail-list">
                                 {images.map((imgSrc, idx) => (
@@ -130,6 +157,7 @@ function FacilityDetailComponent() {
                                         alt={`썸네일 ${idx + 1}`}
                                         className={`thumbnail-item ${idx === 0 ? "active" : ""}`}
                                         onClick={() => openModal(idx)}
+                                        onError={handleImageError}
                                     />
                                 ))}
                             </div>
@@ -182,13 +210,40 @@ function FacilityDetailComponent() {
                 </tbody>
             </table>
 
-            {/* 3. 하단 작업 버튼 영역 */}
+            {/* 3. 댓글 / 이용후기 섹션 추가 */}
+            <div className="review-section">
+                <h3 className="review-title">💬 이용 후기 ({reviewList.length})</h3>
+                {reviewList.length > 0 ? (
+                    <div className="review-list">
+                        {reviewList.map((review) => (
+                            <div key={review.reviewId} className="review-card">
+                                <div className="review-header">
+                                    <span className="review-author">{review.employeeName}</span>
+                                    <span className="review-stars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+                                    <span className="review-date">{review.createdDate}</span>
+                                </div>
+                                <p className="review-content">{review.content}</p>
+                                {review.images && review.images.length > 0 && (
+                                    <div className="review-images">
+                                        {review.images.map((img, i) => (
+                                            <img key={i} src={img} alt="리뷰 썸네일" className="review-img" onError={handleImageError} />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="no-review">등록된 후기가 없습니다.</p>
+                )}
+            </div>
+
+            {/* 4. 하단 작업 버튼 영역 */}
             <div className="action-buttons">
                 <button className="btn-list" onClick={() => navigate("/facility/list")}>
                     목록으로
                 </button>
 
-                {/* 최고관리자일 때만 수정/삭제 버튼 표시 */}
                 {loginRole === "SUPER" && (
                     <>
                         <button 
@@ -204,7 +259,7 @@ function FacilityDetailComponent() {
                 )}
             </div>
 
-            {/* 4. 이미지 전체화면 확대 모달 */}
+            {/* 5. 이미지 전체화면 확대 모달 */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -220,6 +275,7 @@ function FacilityDetailComponent() {
                                 src={images[currentIndex]}
                                 alt={`확대 이미지 ${currentIndex + 1}`}
                                 className="modal-image"
+                                onError={handleImageError}
                             />
 
                             {images.length > 1 && (

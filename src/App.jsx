@@ -207,8 +207,8 @@ function App() {
             <Route path="/application" element={<WorkationApplicationComponent/>}/>
             <Route path="admin/application/list" element={<WorkationApplicationListComponent />} />
             <Route path='admin/application/detail/:workationId' element={<WorkationApplicationDetailComponent/>} />
-            <Route path="admin/reservation/list" element={<WorkationReservationListComponent />} />
-            <Route path="/reservation/:reservationId" element={<WorkationReservationDetailComponent/>} />
+            <Route path="reservation/list" element={<WorkationReservationListComponent />} />
+            <Route path="reservation/detail/:reservationId" element={<WorkationReservationDetailComponent/>} />
 
             
           </Routes>

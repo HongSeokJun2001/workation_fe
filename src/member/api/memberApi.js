@@ -18,18 +18,6 @@ const selectMemberListApi = (status = "ALL", target = "ALL", cpage = 1) => {
     return response;
 };
 
-const selectActiveCompanyListApi = () => {
-
-    return axios({
-        url : `${ BASE_URL }admin/super/company-list`,
-        method : "get",
-        headers : {
-            Authorization : getAuthorization()
-        }
-    });
-};
-
-
 // 본사관리자 -> 목록 조회용
 const selectCompanyAdminListApi = (status = "ALL", cpage = 1) => {
 
@@ -89,16 +77,6 @@ const selectEmployeeListApi = (status = "ALL", isProgressed = "ALL", cpage = 1) 
     });
 };
 
-
-// 회원가입 회사 확인용
-const checkCompanyApi = (businessNo, companyName) => {
-
-    return axios({
-        url : `${ BASE_URL }public/company/check`,
-        method : "get",
-        params : { businessNo, companyName }
-    });
-};
 
 // 직원 로그인 아이디 중복 확인용
 const checkEmployeeLoginIdApi = loginId => {
@@ -249,6 +227,17 @@ const approveEmployeeApi = employeeId => {
     });
 };
 
+const rejectEmployeeApi = employeeId => {
+
+    return axios({
+        url : `${ BASE_URL }admin/company/member/employee/${ employeeId }/rejection`,
+        method : "delete",
+        headers : {
+            Authorization : getAuthorization()
+        }
+    });
+};
+
 const updateMyEmployeeApi = employee => {
 
     return axios({
@@ -263,13 +252,11 @@ const updateMyEmployeeApi = employee => {
 
 export {
     selectMemberListApi,
-    selectActiveCompanyListApi,
     selectCompanyAdminListApi,
     createCompanyAdminApi,
     createCompanyAdminBySuperApi,
     createSuperAdminApi,
     selectEmployeeListApi,
-    checkCompanyApi,
     checkEmployeeLoginIdApi,
     signupEmployeeApi,
     requestEmployeeLoginIdApi,
@@ -284,5 +271,6 @@ export {
     updateCompanyAdminApi,
     updateEmployeeApi,
     approveEmployeeApi,
+    rejectEmployeeApi,
     updateMyEmployeeApi
 };

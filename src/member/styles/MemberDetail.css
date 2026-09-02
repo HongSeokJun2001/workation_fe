@@ -120,6 +120,21 @@
   background-color: #fde68a;
 }
 
+.btn-reject-custom {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-reject-custom:hover {
+  background-color: #fecaca;
+}
+
 .msg-comment {
   font-size: 12px;
   margin-top: 4px;

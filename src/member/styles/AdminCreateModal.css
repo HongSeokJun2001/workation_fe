@@ -1,0 +1,113 @@
+.admin-create-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid #e1f0e8;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(17, 17, 17, 0.12);
+}
+
+.admin-create-modal .modal-header,
+.admin-create-modal .modal-footer {
+  padding: 20px 24px;
+  border-color: #edf4f0;
+}
+
+.admin-create-modal .modal-header {
+  position: relative;
+  background: #f5fbf7;
+}
+
+.admin-create-modal .modal-header::before {
+  width: 4px;
+  height: 34px;
+  margin-right: 12px;
+  border-radius: 4px;
+  background: #0d8a52;
+  content: "";
+}
+
+.admin-create-modal .modal-body {
+  padding: 24px;
+}
+
+.admin-create-kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: #0d8a52;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.admin-create-modal .modal-title {
+  color: #111111;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.admin-create-form .form-label {
+  margin-bottom: 8px;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-create-fields {
+  padding: 18px;
+  border: 1px solid #edf4f0;
+  border-radius: 8px;
+  background: #fcfefd;
+}
+
+.admin-create-form .form-control,
+.admin-create-form .form-select {
+  min-height: 42px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 14px;
+}
+
+.admin-create-form .form-control:focus,
+.admin-create-form .form-select:focus {
+  border-color: #0d8a52;
+  box-shadow: 0 0 0 0.2rem rgba(13, 138, 82, 0.12);
+}
+
+.admin-create-alert {
+  margin-bottom: 0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.admin-create-cancel,
+.admin-create-submit {
+  min-width: 76px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-create-cancel {
+  border: 0;
+  background: #f1f1f1;
+  color: #555555;
+}
+
+.admin-create-cancel:hover,
+.admin-create-cancel:focus {
+  background: #e4e4e4;
+  color: #333333;
+}
+
+.admin-create-submit {
+  border: 0;
+  background: #0d8a52;
+  color: #ffffff;
+}
+
+.admin-create-submit:hover,
+.admin-create-submit:focus {
+  background: #0a6f42;
+  color: #ffffff;
+}

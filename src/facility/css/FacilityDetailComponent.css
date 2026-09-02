@@ -1,151 +1,221 @@
 /* 메인 컨테이너 */
 .detail-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
+    width: 100% !important;
+    max-width: 950px !important;
+    margin: 30px auto !important;
+    padding: 40px !important;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #eef2f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #2c3e50;
 }
 
 .detail-title {
     text-align: center;
-    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a2e22;
+    margin-bottom: 28px;
+    letter-spacing: -0.5px;
 }
 
-/* 이미지 섹션 */
+/* 1. 이미지 섹션 */
 .image-section {
-    margin-bottom: 20px;
+    width: 100%;
+    margin-bottom: 32px;
 }
 
 .main-image-box {
     position: relative;
-    height: 400px;
+    width: 100%;
+    height: 420px;
     cursor: pointer;
     background-color: #f8f9fa;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .main-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.main-image-box:hover .main-image {
+    transform: scale(1.015);
 }
 
 .image-count-badge {
     position: absolute;
-    bottom: 15px;
-    right: 15px;
-    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 16px;
+    right: 16px;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
     color: #fff;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
+    padding: 7px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-/* 하단 썸네일 리스트 (가로 스크롤 대신 한눈에 보이는 Grid 레이아웃) */
 .thumbnail-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 자동으로 줄바꿈 처리 */
-    gap: 10px;
-    margin-top: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
     width: 100%;
 }
 
 .thumbnail-item {
     width: 100%;
-    height: 70px;
+    height: 68px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 2px solid transparent;
-    opacity: 0.6;
+    opacity: 0.65;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
 
-/* 마우스 호버 및 선택된 썸네일 강조 효과 */
 .thumbnail-item:hover,
 .thumbnail-item.active {
     opacity: 1;
-    border-color: #0d6efd; /* 강조용 파란색 테두리 */
+    border-color: #0d8a52; /* 포인트 초록색 */
 }
 
 .no-image-box {
     text-align: center;
-    padding: 50px 0;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    color: #6c757d;
+    padding: 60px 0;
+    background-color: #f8faf9;
+    border-radius: 14px;
+    border: 1px dashed #ced4da;
+    color: #868e96;
 }
 
-/* 시설 정보 테이블 */
+/* 2. 시설 정보 테이블 (핵심 디자인 변경 부분) */
 .info-table {
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #dee2e6;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    border-radius: 14px !important;
+    overflow: hidden;
+    border: 1px solid #e1f0e8 !important;
+    table-layout: fixed;
+    margin-bottom: 0 !important;
 }
 
+/* 투박했던 내부 선 정돈 */
+.info-table th,
+.info-table td {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid #edf4f0 !important;
+    padding: 16px 20px !important;
+    vertical-align: middle;
+}
+
+/* 마지막 줄 밑선 제거 */
+.info-table tr:last-child th,
+.info-table tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* 라벨 셀 (왼쪽 항목명) 세련되게 다듬기 */
 .info-label {
-    width: 180px;
-    background-color: #f8f9fa;
+    width: 18%;
+    background-color: #f4f8f5 !important; /* 은은한 세이지 그린 배경 */
     text-align: center;
-    padding: 12px;
-    border: 1px solid #dee2e6;
-    font-weight: bold;
+    font-weight: 600 !important;
+    color: #2c4235 !important;
+    font-size: 14px;
+    word-break: keep-all;
 }
 
+/* 값 셀 (오른쪽 데이터 내용) */
 .info-value {
-    padding: 12px;
-    border: 1px solid #dee2e6;
+    width: 32%;
+    font-size: 14.5px;
+    color: #333333;
+    word-break: break-all;
+    background-color: #ffffff;
 }
 
+/* 시설 유형 태그 */
 .type-tag {
-    background-color: #0d6efd;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
     display: inline-block;
 }
 
+/* 시설 설명 영역 */
 .description-text {
     margin: 0;
-    min-height: 120px;
+    min-height: 100px;
     white-space: pre-line;
+    line-height: 1.7;
+    color: #4a5568;
+    font-size: 14.5px;
 }
 
-/* 버튼 영역 */
+/* 3. 하단 버튼 영역 */
 .action-buttons {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 32px !important;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-list, .btn-update, .btn-delete {
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 10px 22px !important;
+    border-radius: 8px !important;
     cursor: pointer;
-    font-size: 14px;
-    margin: 0 4px;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease;
 }
 
 .btn-list {
-    border: 1px solid #6c757d;
-    background-color: transparent;
-    color: #333;
+    border: 1px solid #cbd5e0 !important;
+    background-color: #ffffff !important;
+    color: #4a5568 !important;
+}
+
+.btn-list:hover {
+    background-color: #f7fafc !important;
 }
 
 .btn-update {
-    border: none;
-    background-color: #ffc107;
-    color: #fff;
+    border: none !important;
+    background-color: #ffc107 !important;
+    color: #ffffff !important;
+}
+
+.btn-update:hover {
+    background-color: #e0a800 !important;
 }
 
 .btn-delete {
-    border: none;
-    background-color: #dc3545;
-    color: #fff;
+    border: none !important;
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
 }
 
-/* 모달 레이아웃 */
+.btn-delete:hover {
+    background-color: #c82333 !important;
+}
+
+/* 4. 모달 레이아웃 */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -153,6 +223,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
     z-index: 1050;
     display: flex;
     align-items: center;
@@ -206,5 +277,180 @@
     cursor: pointer;
 }
 
+/* 라벨 셀 안의 이모지/아이콘 강조 */
+.info-label {
+    width: 20%;
+    background-color: #f8faf9 !important;
+    text-align: left !important; /* 가운데 정렬 대신 좌측 정렬 */
+    padding-left: 24px !important;
+    font-weight: 600 !important;
+    color: #4a5568 !important;
+}
+
+/* 각 항목별 아이콘 포인트 부여 (CSS Pseudo Element 활용) */
+.info-table tr:nth-child(1) th:nth-of-type(1)::before { content: "🏷️ "; }
+.info-table tr:nth-child(1) th:nth-of-type(2)::before { content: "🏠 "; }
+.info-table tr:nth-child(2) th:nth-of-type(1)::before { content: "📍 "; }
+.info-table tr:nth-child(2) th:nth-of-type(2)::before { content: "🛏️ "; }
+.info-table tr:nth-child(3) th::before { content: "🗺️ "; }
+.info-table tr:nth-child(4) th::before { content: "📅 "; }
+.info-table tr:nth-child(5) th::before { content: "📝 "; }
+
 .modal-prev-btn { left: 10px; }
 .modal-next-btn { right: 10px; }
+
+/* ====================================================
+   댓글 / 리뷰 영역 추가 스타일
+   ==================================================== */
+.review-section {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 2px solid #edf4f0;
+}
+
+.review-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a2e22;
+    margin-bottom: 16px;
+}
+
+/* 댓글 작성 폼 */
+.review-form {
+    background-color: #f8faf9;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e1f0e8;
+    margin-bottom: 24px;
+}
+
+.review-form-header {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.review-select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    margin-left: 6px;
+}
+
+.review-form-body {
+    display: flex;
+    gap: 12px;
+}
+
+.review-textarea {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.review-textarea:focus {
+    outline: none;
+    border-color: #0d8a52;
+}
+
+.btn-review-submit {
+    width: 80px;
+    background-color: #0d8a52;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-review-submit:hover {
+    background-color: #0a6c40;
+}
+
+/* 댓글 리스트 및 카드 */
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.review-card {
+    background-color: #ffffff;
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1px solid #edf4f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.review-author {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.review-stars {
+    color: #f39c12;
+    font-size: 13px;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #868e96;
+    margin-left: auto;
+}
+
+.btn-review-delete {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 6px;
+}
+
+.btn-review-delete:hover {
+    text-decoration: underline;
+}
+
+.review-content {
+    margin: 0;
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.review-images {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.review-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+.no-review {
+    text-align: center;
+    color: #868e96;
+    padding: 30px 0;
+    font-size: 14px;
+}
