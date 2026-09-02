@@ -8,6 +8,9 @@ function FacilityEnrollFormComponent() {
     // 실행할 구문
     const navigate = useNavigate();
 
+    // 50MB 용량 제한 (Byte 단위: 50 * 1024 * 1024)
+    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
     // 입력 폼 상태 관리
     const [facility, setFacility] = useState({
         facilityName: "",
@@ -28,9 +31,27 @@ function FacilityEnrollFormComponent() {
         setFacility(newFacility);
     };
 
-    // 파일 선택 핸들러
+    // 파일 선택 핸들러 (용량 체크)
     const handleFileChange = (e) => {
-        setFiles(e.target.files);
+        const selectedFiles = e.target.files;
+        let totalSize = 0;
+        if (selectedFiles && selectedFiles.length > 0) {
+            
+            for(let i = 0; i < selectedFiles.length; i++) {
+                totalSize += selectedFiles[i].size;
+            }
+        }
+
+        // 선택한 파일 총량이 50MB 초과 시 차단
+        if(totalSize > MAX_FILE_SIZE) {
+            alert("첨부파일 전체 용량이 50MB를 초과할 수 없습니다. \n현재 선택한 용량 : " + (totalSize / (1024 * 1024)).toFixed(2) + "MB");
+            e.target.value = ""; //선택한 파일 초기화
+            setFiles([]);
+            return;
+        }
+
+        // 정상 용량일 떄 파일 상태 저정
+        setFiles(selectedFiles);
     };
 
     // 폼 제출 핸들러
@@ -42,6 +63,18 @@ function FacilityEnrollFormComponent() {
         if (facility.region.length > 20) return alert("지역은 최대 20자까지 입력 가능합니다.");
         if (facility.address.length > 255) return alert("상세 주소는 최대 255자까지 입력 가능합니다.");
         if (facility.description && facility.description.length > 900) return alert("시설 설명은 최대 900자까지 입력 가능합니다.");
+
+        // 파일 용량 2차 검증
+        if(files && files.length > 0) {
+            let totalSize = 0;
+            for (let i = 0; i < files.length; i++) {
+                totalSize += files[i].size;
+            }
+
+            if(totalSize > MAX_FILE_SIZE) {
+                return alert("첨부파일 총 용량이 50MB를 초과하여 등록할 수 없습니다.");
+            }
+        }
 
         const formData = new FormData();
 
@@ -70,7 +103,13 @@ function FacilityEnrollFormComponent() {
             }
         } catch (error) {
             console.log("시설 등록 오류 발생", error);
-            alert("시설 등록중 에러 발생하였습니다.");
+
+            // 서버에서 MaxUploadSizeExceededException (413/500) 에러가 반환될 경우 처리
+            if(error.response && (error.response.status === 413 || error.response.status === 500)) {
+                alert("업로드 용량 제한(50MB)를 초과했습니다.");
+            } else {
+                alert("시설 등록중 에러 발생하였습니다.");
+            }
         }
     };
 
