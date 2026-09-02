@@ -20,6 +20,7 @@ function MemberListComponent() {
     const [isProgressed, setIsProgressed] = useState("ALL");
     const [currentPage, setCurrentPage] = useState(1);
     const [pageInfo, setPageInfo] = useState(null);
+    const [companyName, setCompanyName] = useState("");
     
     const [showCreateModal, setShowCreateModal] = useState(false);
     const isEmployeeList = !isSuperAdmin && target === "EMPLOYEE";
@@ -31,8 +32,12 @@ function MemberListComponent() {
                 response = await selectMemberListApi(status, target, currentPage);
             } else if (target === "COMPANY_ADMIN") {
                 response = await selectCompanyAdminListApi(status, currentPage);
+                setCompanyName(response.data.list?.[0]?.companyName || "");
             } else {
                 response = await selectEmployeeListApi(status, isProgressed, currentPage);
+
+                const companyAdminResponse = await selectCompanyAdminListApi();
+                setCompanyName(companyAdminResponse.data.list?.[0]?.companyName || "");
             }
 
             const items = response.data.list || [];
@@ -73,7 +78,7 @@ function MemberListComponent() {
             <div className="member-header">
                 <div className="member-title-area">
                     <h2>계정 관리</h2>
-                    <p className="member-subtitle">(주)테크브릿지 소속 계정 목록 관리</p>
+                    {!isSuperAdmin && <p className="member-subtitle">{companyName || "회사 정보 없음"}</p>}
                 </div>
                 
                 {((!isSuperAdmin && target === "COMPANY_ADMIN") || (isSuperAdmin && (target === "SUPER" || target === "COMPANY"))) && (
@@ -154,7 +159,7 @@ function MemberListComponent() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className="member-email">{item.email || "email@techbridge.kr"}</div>
+                                                <div className="member-email">{item.email || "-"}</div>
                                                 <div className="member-dept">{item.department || "인사팀"}</div>
                                             </td>
                                             <td>{item.position || "-"}</td>
@@ -188,7 +193,7 @@ function MemberListComponent() {
                                                     <span className="member-name">{item.loginId}</span>
                                                 </div>
                                             </td>
-                                            <td>{item.companyLabel || "(주)테크브릿지"}</td>
+                                            <td>{item.companyLabel || "-"}</td>
                                             <td>
                                                 <div className="badge-group">
                                                     <span className="badge badge-role-admin">{item.role || "관리자"}</span>

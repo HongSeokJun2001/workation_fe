@@ -7,6 +7,7 @@ import {
     resetEmployeePasswordApi,
     verifyEmployeeRecoveryApi
 } from "../api/memberApi";
+import "../styles/EmployeeSignup.css";
 
 function EmployeeAccountRecoveryModal({ onClose }) {
 
@@ -21,7 +22,7 @@ function EmployeeAccountRecoveryModal({ onClose }) {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState("");
     const [form, setForm] = useState({
-        empNo: "",
+        companyName: "",
         employeeName: "",
         phone: "",
         email: "",
@@ -60,10 +61,7 @@ function EmployeeAccountRecoveryModal({ onClose }) {
 
         try {
             const response = mode === "LOGIN_ID"
-                ? await requestEmployeeLoginIdApi({
-                    ...form,
-                    empNo: Number(form.empNo)
-                })
+                ? await requestEmployeeLoginIdApi(form)
                 : await requestEmployeePasswordResetApi({ loginId: form.loginId });
 
             setRequestId(response.data.requestId);
@@ -123,8 +121,8 @@ function EmployeeAccountRecoveryModal({ onClose }) {
     const renderRequestForm = () => mode === "LOGIN_ID" ? (
         <>
             <Form.Group className="mb-3">
-                <Form.Label>사번</Form.Label>
-                <Form.Control name="empNo" value={form.empNo} onChange={handleChange} />
+                <Form.Label>소속 기업</Form.Label>
+                <Form.Control name="companyName" value={form.companyName} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>이름</Form.Label>
@@ -149,39 +147,43 @@ function EmployeeAccountRecoveryModal({ onClose }) {
     const formattedRemainingTime = `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
 
     return (
-        <Modal show onHide={onClose} centered>
-            <Form onSubmit={step === "REQUEST" ? requestCode : step === "VERIFY" ? verifyCode : resetPassword}>
+        <Modal show onHide={onClose} centered scrollable className="employee-signup-modal employee-recovery-modal">
+            <Form className="employee-signup-form" onSubmit={step === "REQUEST" ? requestCode : step === "VERIFY" ? verifyCode : resetPassword}>
                 <Modal.Header closeButton>
-                    <Modal.Title>직원 아이디/비밀번호 찾기</Modal.Title>
+                    <div>
+                        <div className="employee-signup-brand"><span className="employee-signup-brand-mark">W</span>워케이션 크루</div>
+                        <Modal.Title>직원 ID/PW 찾기</Modal.Title>
+                        <p className="employee-signup-caption">등록된 이메일 인증 후 계정을 확인할 수 있습니다.</p>
+                    </div>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="d-flex gap-2 mb-4">
-                        <Button type="button" variant={mode === "LOGIN_ID" ? "primary" : "outline-primary"} onClick={() => changeMode("LOGIN_ID")}>
+                    <div className="employee-recovery-mode">
+                        <Button type="button" className={mode === "LOGIN_ID" ? "active" : ""} onClick={() => changeMode("LOGIN_ID")}>
                             아이디 찾기
                         </Button>
-                        <Button type="button" variant={mode === "PASSWORD" ? "primary" : "outline-primary"} onClick={() => changeMode("PASSWORD")}>
+                        <Button type="button" className={mode === "PASSWORD" ? "active" : ""} onClick={() => changeMode("PASSWORD")}>
                             비밀번호 찾기
                         </Button>
                     </div>
 
-                    {step === "REQUEST" && renderRequestForm()}
+                    {step === "REQUEST" && <div className="employee-signup-fields">{renderRequestForm()}</div>}
 
                     {step === "VERIFY" && (
-                        <Form.Group>
+                        <div className="employee-signup-fields"><Form.Group>
                             <Form.Label>이메일 인증번호</Form.Label>
                             <Form.Control value={verificationCode} onChange={e => setVerificationCode(e.target.value)} maxLength={6} />
-                            <Form.Text className={remainingSeconds > 0 ? "text-primary" : "text-danger"}>
+                            <Form.Text className={`employee-signup-message ${remainingSeconds > 0 ? "text-success" : "text-danger"}`}>
                                 인증번호 유효시간: {formattedRemainingTime}
                             </Form.Text>
-                        </Form.Group>
+                        </Form.Group></div>
                     )}
 
                     {step === "RESULT" && (
-                        <Alert variant="success">직원 아이디는 <strong>{foundLoginId}</strong> 입니다.</Alert>
+                        <Alert className="employee-recovery-result" variant="success">직원 아이디는 <strong>{foundLoginId}</strong> 입니다.</Alert>
                     )}
 
                     {step === "RESET" && (
-                        <>
+                        <div className="employee-signup-fields">
                             <Form.Group className="mb-3">
                                 <Form.Label>새 비밀번호</Form.Label>
                                 <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} />
@@ -190,19 +192,19 @@ function EmployeeAccountRecoveryModal({ onClose }) {
                                 <Form.Label>새 비밀번호 확인</Form.Label>
                                 <Form.Control type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                             </Form.Group>
-                        </>
+                        </div>
                     )}
 
                     {message && <Alert className="mt-3" variant={step === "VERIFY" || step === "REQUEST" ? "danger" : "success"}>{message}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button type="button" variant="secondary" onClick={onClose}>닫기</Button>
-                    {step === "REQUEST" && <Button type="submit" variant="primary">인증번호 받기</Button>}
-                    {step === "VERIFY" && <Button type="submit" variant="primary">인증번호 확인</Button>}
+                    <Button type="button" className="employee-signup-secondary" onClick={onClose}>닫기</Button>
+                    {step === "REQUEST" && <Button type="submit" className="employee-signup-primary">인증번호 받기</Button>}
+                    {step === "VERIFY" && <Button type="submit" className="employee-signup-primary">인증번호 확인</Button>}
                     {step === "VERIFY" && remainingSeconds <= 0 && (
-                        <Button type="button" variant="outline-primary" onClick={() => setStep("REQUEST")}>인증번호 다시 받기</Button>
+                        <Button type="button" className="employee-signup-check" onClick={() => setStep("REQUEST")}>인증번호 다시 받기</Button>
                     )}
-                    {step === "RESET" && <Button type="submit" variant="primary">비밀번호 변경</Button>}
+                    {step === "RESET" && <Button type="submit" className="employee-signup-primary">비밀번호 변경</Button>}
                 </Modal.Footer>
             </Form>
         </Modal>

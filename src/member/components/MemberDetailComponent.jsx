@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     approveEmployeeApi,
+    rejectEmployeeApi,
     selectCompanyAdminDetailApi,
     selectEmployeeDetailApi,
     selectMyEmployeeDetailApi,
@@ -11,7 +12,7 @@ import {
     updateMyEmployeeApi,
     updateSuperAdminApi
 } from "../api/memberApi";
-import { selectCompanyListApi } from "../api/companyApi";
+import { selectActiveCompanyListApi } from "../api/companyApi";
 import "../styles/MemberDetail.css";
 
 function MemberDetailComponent({ memberType, selfMode }) {
@@ -25,6 +26,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
 
     const [member, setMember] = useState({});
     const [companyList, setCompanyList] = useState([]);
+    const isTargetCompanyAdmin = member.role === "COMPANY";
     
     // 비밀번호 제어 State
     const [password, setPassword] = useState("");
@@ -56,8 +58,8 @@ function MemberDetailComponent({ memberType, selfMode }) {
         const fetchCompanies = async () => {
             if (isSuperAdmin && !isEmployee) {
                 try {
-                    const res = await selectCompanyListApi();
-                    setCompanyList(res.data || []);
+                    const res = await selectActiveCompanyListApi();
+                    setCompanyList(Array.isArray(res.data) ? res.data : []);
                 } catch (err) {
                     console.error("회사 목록 조회 실패:", err);
                 }
@@ -100,12 +102,30 @@ function MemberDetailComponent({ memberType, selfMode }) {
 
     // 3. 직원 계정 승인
     const handleApprove = async () => {
+        if (!window.confirm("가입 신청을 승인하시겠습니까? 승인 후 직원 계정이 활성화됩니다.")) {
+            return;
+        }
+
         try {
-            await approveEmployeeApi(member.employeeId);
+            await approveEmployeeApi(targetId);
             alert("계정이 승인되었습니다.");
             navigate(-1);
         } catch (error) {
             alert(error.response?.data || "계정 승인에 실패했습니다.");
+        }
+    };
+
+    const handleReject = async () => {
+        if (!window.confirm("가입 신청을 거부하면 직원 계정 정보가 삭제됩니다. 계속하시겠습니까?")) {
+            return;
+        }
+
+        try {
+            await rejectEmployeeApi(targetId);
+            alert("가입 신청을 거부했습니다.");
+            navigate(-1);
+        } catch (error) {
+            alert(error.response?.data || "가입 신청 거부에 실패했습니다.");
         }
     };
 
@@ -130,7 +150,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
             if (selfMode) {
                 await updateMyEmployeeApi(requestBody);
             } else if (isEmployee) {
-                await updateEmployeeApi(member.employeeId, requestBody);
+                await updateEmployeeApi(targetId, requestBody);
             } else if (isSuperAdmin) {
                 await updateSuperAdminApi(member.adminId, requestBody);
             } else {
@@ -153,7 +173,6 @@ function MemberDetailComponent({ memberType, selfMode }) {
             <form className="detail-form" onSubmit={handleSubmit}>
                 {isEmployee ? (
                     <>
-                        {/* 직원 이름 수정 비활성화 */}
                         <div className="form-group">
                             <label>이름</label>
                             <input
@@ -161,7 +180,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
                                 name="employeeName"
                                 value={member.employeeName || ""}
                                 onChange={handleChange}
-                                disabled
+                                disabled={selfMode}
                             />
                         </div>
 
@@ -263,8 +282,8 @@ function MemberDetailComponent({ memberType, selfMode }) {
                                 <label>워케이션 사용가능일수</label>
                                 <input
                                     type="number"
-                                    name="workationDays"
-                                    value={member.workationDays ?? 0}
+                                    name="workationAvailDays"
+                                    value={member.workationAvailDays ?? 0}
                                     onChange={handleChange}
                                     min="0"
                                 />
@@ -293,42 +312,39 @@ function MemberDetailComponent({ memberType, selfMode }) {
                                 name="loginId"
                                 value={member.loginId || ""}
                                 onChange={handleChange}
-                                disabled={!isSuperAdmin}
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label>소속 회사</label>
-                            {isSuperAdmin ? (
-                                <select
-                                    name="companyId"
-                                    value={member.companyId || ""}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">회사 선택</option>
-                                    {companyList.map((comp) => (
-                                        <option key={comp.companyId} value={comp.companyId}>
-                                            {comp.companyName}
-                                        </option>
-                                    ))}
-                                </select>
-                            ) : (
-                                <input
-                                    type="text"
-                                    value={member.companyName || ""}
-                                    disabled
-                                />
-                            )}
-                        </div>
+                        {isSuperAdmin && isTargetCompanyAdmin && (
+                            <>
+                                <div className="form-group">
+                                    <label>소속 회사</label>
+                                    <select
+                                        name="companyId"
+                                        value={member.companyId || ""}
+                                        onChange={handleChange}
+                                    >
+                                        {!companyList.some((comp) => String(comp.companyId) === String(member.companyId)) && member.companyId && (
+                                            <option value={member.companyId}>{member.companyName || member.companyLabel}</option>
+                                        )}
+                                        {companyList.map((comp) => (
+                                            <option key={comp.companyId} value={comp.companyId}>
+                                                {comp.companyName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                        <div className="form-group">
-                            <label>계정 권한</label>
-                            <input
-                                type="text"
-                                value={member.role || "COMPANY_ADMIN"}
-                                disabled
-                            />
-                        </div>
+                                <div className="form-group">
+                                    <label>계정 권한</label>
+                                    <input
+                                        type="text"
+                                        value={member.role || "COMPANY_ADMIN"}
+                                        disabled
+                                    />
+                                </div>
+                            </>
+                        )}
                     </>
                 )}
 
@@ -370,6 +386,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
                             name="status"
                             value={member.status || "ACTIVE"}
                             onChange={handleChange}
+                            disabled={isEmployee && member.isProgressed === "N"}
                         >
                             <option value="ACTIVE">활성 (ACTIVE)</option>
                             <option value="LOCKED">잠금 (LOCKED)</option>
@@ -379,13 +396,22 @@ function MemberDetailComponent({ memberType, selfMode }) {
 
                 <div className="btn-group-detail">
                     {isEmployee && member.isProgressed === "N" && !selfMode && (
-                        <button
-                            type="button"
-                            className="btn-approve-custom"
-                            onClick={handleApprove}
-                        >
-                            승인하기
-                        </button>
+                        <>
+                            <button
+                                type="button"
+                                className="btn-reject-custom"
+                                onClick={handleReject}
+                            >
+                                승인 거부
+                            </button>
+                            <button
+                                type="button"
+                                className="btn-approve-custom"
+                                onClick={handleApprove}
+                            >
+                                승인하기
+                            </button>
+                        </>
                     )}
                     <button
                         type="button"

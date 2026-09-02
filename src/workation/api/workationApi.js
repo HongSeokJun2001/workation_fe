@@ -52,6 +52,38 @@ const insertApplicationApi = application => {
     return response;
 }
 
+const approveApplicationApi = workationId => {
+
+    const response = axios ({
+
+        url : `${BASE_URL}/approve/${workationId}`,
+        method : "PUT", 
+        headers: {
+            "Authorization": getAuthorization()
+        }
+
+    });
+
+    return response;
+}
+
+const cancelApplicationApi = (workationId, reason) => {
+
+    const response = axios ({
+
+        url : `${BASE_URL}/cancel/${workationId}`,
+        method : "PUT", 
+        data: { reason },
+        headers: {
+            "Authorization": getAuthorization()
+        }
+
+    });
+
+    return response;
+}
+
+
 const getReservationListApi = cpage => {
 
     const response = axios({
@@ -68,5 +100,34 @@ const getReservationListApi = cpage => {
     return response;
 }
 
+const getReservationDetailApi = reservationId => {
 
-export {getApplicationListApi, getApplicationDetailApi, insertApplicationApi, getReservationListApi};
+    const response = axios({
+        url : `${BASE_URL}/${reservationId}`,
+        method : "get", 
+        headers : {
+            "Authorization" : getAuthorization()
+        }
+
+    });
+    
+    return response
+}
+
+const cancelReservationApi = (reservationId) => {
+
+    const response = axios ({
+
+        url : `${BASE_URL}/cancel/${reservationId}`,
+        method : "PUT",
+        headers: {
+            "Authorization": getAuthorization()
+        }
+
+    });
+
+    return response;
+}
+
+
+export {getApplicationListApi, getApplicationDetailApi, insertApplicationApi, approveApplicationApi, cancelApplicationApi, getReservationListApi, getReservationDetailApi, cancelReservationApi};
