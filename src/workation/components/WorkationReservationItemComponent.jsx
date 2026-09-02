@@ -20,7 +20,7 @@ function WorkationReservationItemComponent({ item }) {
         <tr 
             style={{ cursor: "pointer" }}
             onClick={() => {
-                navigate(`/reservation/detail/${item.reservationId}`);
+                navigate(`/reservation/detail/${item.workationId}`);
             }}
         >
             <td>{item?.leaderName}</td>
