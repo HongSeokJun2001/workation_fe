@@ -177,11 +177,11 @@ function App() {
             {/* 공지사항 전체 조회 */}
             <Route path="admin/notice/list" element={<NoticeListComponent/>}/>
             {/* 공지사항 작성 */}
-            <Route path="notice/enroll" element={<NoticeEnrollFormComponent/>}/>
+            <Route path="notice/enroll" element={loginRole === "SUPER" ? <NoticeEnrollFormComponent/> : <Navigate to={roleHome} replace />} />
             {/* 공지사항 상세 조회 */}
             <Route path="notice/detail/:noticeId" element={<NoticeDetailComponent/>}/>
             {/* 공지사항 수정 */}
-            <Route path="/notice/updateForm" element={<NoticeUpdateFormComponent/>}/>
+            <Route path="/notice/updateForm" element={loginRole === "SUPER" ? <NoticeUpdateFormComponent/> : <Navigate to={roleHome} replace />} />
 
             
 
@@ -200,8 +200,8 @@ function App() {
             <Route path="/crew/list" element={<CrewListComponents />} />
 
             {/* 크루 생성 (모집글 작성) */}
-            <Route path="/crew/enroll" element={<CrewEnrollFormComponent />} />
-            <Route path="/crew/update" element={<CrewUpdateFormComponent />} />
+            <Route path="/crew/enroll" element={loginRole === "EMPLOYEE" ? <CrewEnrollFormComponent /> : <Navigate to={roleHome} replace />} />
+            <Route path="/crew/update" element={loginRole === "EMPLOYEE" ? <CrewUpdateFormComponent /> : <Navigate to={roleHome} replace />} />
 
             {/* 워케이션 관련 라우팅 */}
             <Route path="/application" element={<WorkationApplicationComponent/>}/>

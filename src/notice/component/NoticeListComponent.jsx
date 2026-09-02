@@ -7,6 +7,9 @@ import { selectNoticeListApi } from "../api/noticeApi";
 
 function NoticeListComponent(){
 
+    const loginRole = sessionStorage.getItem("loginRole");
+    const canManageNotice = loginRole === "SUPER";
+
     // 실행할 구문
 
     //URL 주소 전환용 navigate 함수 셋팅
@@ -121,12 +124,14 @@ function NoticeListComponent(){
             </div> */}
 
             {/* 글작성버튼, 스타일 나중에 주기 */}
-            <div align="right">
-                <button className="btn btn-outline-secondary btn-sm"
-                        onClick={() => {navigate("/notice/enroll"); }}>
-                        글작성
-                </button>
-            </div>
+            {canManageNotice && (
+                <div align="right">
+                    <button className="btn btn-outline-secondary btn-sm"
+                            onClick={() => {navigate("/notice/enroll"); }}>
+                            글작성
+                    </button>
+                </div>
+            )}
 
             <br />
 

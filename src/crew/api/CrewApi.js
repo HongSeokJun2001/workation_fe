@@ -14,10 +14,11 @@ const selectCrewListApi = cpage =>{
         method: "get",
         params: {
             cpage: cpage
+        },
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthorization()
         }
-        // headers: {
-        //     "Content-Type": "application/json",
-        // }
         
     });
 
@@ -31,7 +32,10 @@ const selectCrewApi = crewId =>{
     const response = axios({
 
         url: `${BASE_URL}/${crewId}`,
-        method: "get"
+        method: "get",
+        headers: {
+            Authorization: getAuthorization()
+        }
     });
 
     return response;
@@ -48,6 +52,10 @@ const searchCrewListApi = (cpage, keyword) => {
         params: {
             cpage: cpage,
             keyword: keyword
+        },
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthorization()
         }
         
     });
@@ -68,6 +76,7 @@ const insertCrewApi = crewData => {
         method : "post",
         headers: {
             "Content-Type": "application/json",
+            Authorization: getAuthorization()
         }
 
     });
@@ -84,9 +93,10 @@ const updateCrewApi = (crewId,payload) => {
         url : `${BASE_URL}/${crewId}`,
         method : "put",
         data : payload,
-        // headers: {
-        //     "Content-Type": "application/json",
-        // }
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthorization()
+        }
     })
 
     return response;
@@ -97,19 +107,25 @@ const deleteCrewApi = crewId => {
 
     const response = axios({
         url : `${BASE_URL}/${crewId}`,
-        method : "delete"
+        method : "delete",
+        headers: {
+            Authorization: getAuthorization()
+        }   
     })
 
     return response;
 }
 
 // 가입 크루 조회
-const selectMyCrewListApi = employeeId => {
+const selectMyCrewListApi = () => {
 
     const response = axios({
 
-        url : `${BASE_URL}/mylist/${employeeId}`,
-        method : "get"
+        url : `${BASE_URL}/mylist`,
+        method : "get",
+        headers: {
+            Authorization: getAuthorization()
+        }
 
     });
 
@@ -123,7 +139,10 @@ const joinCrewApi = crewId =>{
     const response = axios({
 
         url : `${BASE_URL}/${crewId}/join`,
-        method : "post"
+        method : "post",
+        headers: {
+            Authorization: getAuthorization()
+        }
 
     })
 
@@ -134,9 +153,14 @@ const joinCrewApi = crewId =>{
 // 크루 탈퇴 API
 const leaveCrewApi = crewId => axios({
     url: `${BASE_URL}/${crewId}/join`,
-    method: "delete"
+    method: "delete",
+    headers: {
+        Authorization: getAuthorization()
+    }
 });
 
+
+// -------------------------------------------
 
 // 워케이션신청시 크루장이 본인 크루 가져오는 코드
 const selectCrewLeaderListApi = () => {
@@ -152,8 +176,11 @@ const selectCrewLeaderListApi = () => {
     return response
 }
 
+
 export { selectCrewListApi, selectCrewApi, searchCrewListApi, insertCrewApi, updateCrewApi,
     deleteCrewApi,
     joinCrewApi,
     leaveCrewApi,
-    selectMyCrewListApi, selectCrewLeaderListApi };
+    selectMyCrewListApi,
+    selectCrewLeaderListApi
+};

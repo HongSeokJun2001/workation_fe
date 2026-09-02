@@ -14,6 +14,8 @@ import {
 function CrewListComponents() {
 
     const navigate = useNavigate();
+    const loginRole = sessionStorage.getItem("loginRole") || "EMPLOYEE";
+    const canCreateCrew = loginRole === "EMPLOYEE";
 
     // 크루 신청 중인 크루 ID
     const [joining, setJoining] = useState(null);
@@ -69,9 +71,9 @@ function CrewListComponents() {
     }, [cpage, searchKeyword]);
 
     useEffect(() => {
-        selectMyCrewListApi(1)
+        selectMyCrewListApi()
             .then(response => {
-                setJoinedCrews(response.data.map(history => history.crew?.crewId));
+                setJoinedCrews((response.data || []).map(history => history.crew?.crewId));
             })
             .catch(error => {
                 console.log("가입 크루 조회 ajax 통신 실패", error);
@@ -102,7 +104,7 @@ function CrewListComponents() {
     };
 
     // 검색 버튼 클릭 시 실행할 이벤트 핸들러 함수
-    const handleClick = () => {
+    const handleClick = (e) => {
 
         e.preventDefault();
         setSearchParams({ cpage: 1, keyword: keyword });
@@ -326,14 +328,15 @@ function CrewListComponents() {
 
             {/* 크루 모집 작성 폼 */}
 
-            <div>
-
-                <button
-                    onClick={() => navigate("/crew/enroll")}
-                >
-                    + 크루 만들기
-                </button>
-            </div>
+            {canCreateCrew && (
+                <div>
+                    <button
+                        onClick={() => navigate("/crew/enroll")}
+                    >
+                        + 크루 만들기
+                    </button>
+                </div>
+            )}
 
             {/* 내가 참여한 크루 */}
             {joinedCrews.length > 0 && (

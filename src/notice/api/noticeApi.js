@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import { getAuthorization } from "../../common/api/commonApi";
 
 const BASE_URL = "http://localhost:8007/workation/notices"
 
@@ -11,8 +12,10 @@ const selectNoticeListApi = cpage => {
 
         url : `${BASE_URL}`,
         params : { cpage },
-        method:"get"
-        // headers : 추가 ***
+        method:"get",
+        headers: {
+            Authorization: getAuthorization()
+        }
     });
 
     return response;
@@ -26,7 +29,11 @@ const insertNoticeApi = notice => {
 
         url : `${BASE_URL}`,
         method : "post",
-        data : notice
+        data : notice,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthorization()
+        }
     });
 
     return response;
@@ -37,7 +44,10 @@ const selectNoticeApi = noticeId => {
     const response = axios({
 
         url : `${BASE_URL}/${noticeId}`,
-        method : "get"
+        method : "get",
+        headers: {
+            Authorization: getAuthorization()
+        }
         // headers 추가
     });
 
@@ -52,9 +62,14 @@ const updateNoticeApi = (noticeId, notice) =>{
 
         url : `${BASE_URL}/${noticeId}`,
         method : "put",
-        data : notice
+        data : notice,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthorization()
+        }
         // 헤더 추가
     });
+
     return response;
 }
 
@@ -65,8 +80,11 @@ const deleteNoticeApi = noticeId => {
     const response = axios ({
 
         url : `${BASE_URL}/${noticeId}`,
-        method: "delete"
+        method: "delete",
         // 헤더 추가
+        headers: {
+            Authorization: getAuthorization()
+        }
     });
 
     return response;
