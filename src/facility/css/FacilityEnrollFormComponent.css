@@ -1,31 +1,192 @@
-/* 시설 등록 폼 메인 컨테이너 */
-.facility-enroll-container {
-    max-width: 700px;
-    margin: 30px auto;
-    padding: 20px;
+/* ====================================================
+   공통 디자인 시스템 (FacilityDetailComponent 동일)
+   ==================================================== */
+:root {
+  --primary-green: #0d8a52;
+  --primary-green-hover: #0a6f42;
+  --bg-main: #f8faf9;
+  --bg-card: #ffffff;
+  --border-color: #e1f0e8;
+  --border-light: #edf4f0;
+  --text-dark: #111111;
+  --text-medium: #444444;
+  --text-muted: #888888;
 }
 
-/* 제목 */
-.enroll-title {
-    text-align: center;
-    margin-bottom: 24px;
+/* ====================================================
+   상세 페이지 통합 메인 레이아웃 (.detail-container)
+   ==================================================== */
+.detail-container.enroll-container {
+  width: 100% !important;
+  max-width: 950px !important;
+  margin: 30px auto !important;
+  padding: 40px !important;
+  background-color: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-dark);
 }
 
-/* 입력 필드 그룹 */
+.detail-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
+}
+
+/* ====================================================
+   폼 레이아웃 & 입력 폼 컨트롤
+   ==================================================== */
 .form-group {
-    margin-bottom: 16px;
+  margin-bottom: 20px;
 }
+
+.form-grid {
+  display: flex;
+  gap: 16px;
+}
+
+.form-grid .form-group {
+  flex: 1;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
 
 .form-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 6px;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-medium);
+  margin-bottom: 8px;
 }
 
-/* 버튼 그룹 */
-.btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 30px;
+.required-star {
+  color: #e11d48;
+  margin-left: 2px;
+}
+
+/* Input, Select, Textarea 통합 스타일 */
+.form-control,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14.5px;
+  color: var(--text-dark);
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-green);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(13, 138, 82, 0.1);
+}
+
+.textarea-control {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* 파일 업로드 영역 */
+.form-file-input {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--bg-main);
+  border: 1px dashed var(--primary-green);
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--text-medium);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.file-info-text {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+/* 이미지 미리보기 Grid */
+.preview-container {
+  margin-top: 14px;
+  padding: 16px;
+  background-color: var(--bg-main);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.preview-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-medium);
+  margin-bottom: 12px;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.preview-img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+/* ====================================================
+   하단 버튼 영역 (Detail 페이지 액션 버튼과 일치)
+   ==================================================== */
+.action-buttons {
+  text-align: center;
+  margin-top: 36px !important;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 11px 28px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-submit {
+  background-color: var(--primary-green) !important;
+  color: #ffffff !important;
+}
+
+.btn-submit:hover {
+  background-color: var(--primary-green-hover) !important;
+}
+
+.btn-cancel {
+  border: 1px solid #dcdcdc !important;
+  background-color: #ffffff !important;
+  color: var(--text-medium) !important;
+}
+
+.btn-cancel:hover {
+  background-color: var(--bg-main) !important;
+  border-color: #cccccc !important;
 }

@@ -1,157 +1,226 @@
+/* ==========================================================================
+   Design System Variables
+   ========================================================================== */
+:root {
+  --primary-green: #0d8a52;
+  --primary-green-hover: #0a6f42;
+  --bg-main: #f8faf9;
+  --bg-card: #ffffff;
+  --border-color: #e1f0e8;
+  --border-light: #edf4f0;
+  --text-dark: #111111;
+  --text-medium: #444444;
+  --text-muted: #888888;
+  --text-light: #aaaaaa;
+}
+
+/* ==========================================================================
+   Facility List Components
+   ========================================================================== */
+
 /* 메인 컨테이너 */
 .facility-list-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  min-height: 100vh;
+  padding: 32px 40px;
+  background-color: var(--bg-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-sizing: border-box;
 }
 
-/* 제목 */
+/* 제목 헤더 (좌측 정렬 유지) */
 .facility-list-title {
-    text-align: center;
-    margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 24px 0;
+  text-align: left;
 }
 
-/* 검색 및 필터 통합 영역 */
+/* 검색 및 필터 통합 영역 (좌측 정렬 유지) */
 .search-area {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 24px;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
 }
 
 .search-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 /* 인라인 지역 선택 드롭다운 */
 .region-select-inline {
-    height: 38px;
-    padding: 0 12px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    border: 1px solid #17a2b8;
-    border-radius: 4px;
-    background-color: #fff;
-    outline: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  height: 40px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: var(--text-medium);
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .region-select-inline:hover {
-    border-color: #138496;
+  border-color: var(--primary-green);
 }
 
 .region-select-inline:focus {
-    box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.25);
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 0.2rem rgba(13, 138, 82, 0.12);
 }
 
 /* 검색 입력창 */
 .search-input {
-    height: 38px;
-    padding: 0 12px;
-    width: 320px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
+  height: 40px;
+  padding: 0 14px;
+  width: 320px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-dark);
+  background-color: var(--bg-card);
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
 .search-input:focus {
-    border-color: #007bff;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 0.2rem rgba(13, 138, 82, 0.12);
 }
 
 /* 검색 버튼 */
 .search-btn {
-    height: 38px;
-    padding: 0 16px;
-    font-size: 14px;
-    white-space: nowrap;
+  height: 40px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  background-color: var(--primary-green);
+  border: none;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-/* 시설 등록 버튼 영역 */
-.enroll-btn-area {
-    text-align: right;
-    margin-bottom: 16px;
+.search-btn:hover {
+  background-color: var(--primary-green-hover);
 }
 
-/* 시설 목록 그리드 레이아웃 */
-.facility-list-area {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-    width: 100%;
-}
-
-/* 페이징바 영역 */
-.paging-area {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    margin-top: 40px;
-    margin-bottom: 40px;
-}
-
-/* 검색 및 정렬 툴바 영역 */
+/* 검색 및 정렬 툴바 영역 (오른쪽으로 버튼들 정렬) */
 .list-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 12px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
 }
 
-/* 정렬 버튼 그룹 */
+/* 정렬 버튼 그룹 (등록 버튼 바로 좌측 위치) */
 .sort-btn-area {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
 }
 
 .sort-btn {
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: #888;
-    cursor: pointer;
-    padding: 2px 6px;
-    font-weight: 500;
-    transition: color 0.2s;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
 .sort-btn:hover {
-    color: #333;
+  color: var(--text-dark);
 }
 
 /* 활성화된 정렬 버튼 */
 .sort-btn.active {
-    color: #007bff;
-    font-weight: bold;
+  color: var(--primary-green);
+  font-weight: 700;
 }
 
 .sort-divider {
-    color: #ddd;
-    font-size: 12px;
+  color: var(--border-light);
+  font-size: 12px;
+}
+
+/* 시설 등록 버튼 영역 */
+.enroll-btn-area {
+  text-align: right;
+  margin-bottom: 0;
+}
+
+.btn-enroll {
+  background-color: var(--primary-green);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  height: 38px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+/* 시설 목록 그리 */
+.facility-list-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+/* 페이징바 영역 */
+.paging-area {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 32px;
+  margin-bottom: 32px;
 }
 
 /* 데이터 없음 안내 영역 스타일 */
 .no-data-area {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 250px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    border: 1px dashed #ddd;
-    margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px;
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .no-data-msg {
-    font-size: 16px;
-    color: #666;
-    font-weight: 500;
+  font-size: 15px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* 모바일 반응형 처리 */
+@media (max-width: 640px) {
+  .facility-list-container {
+    padding: 24px 16px;
+  }
+  
+  .facility-list-area {
+    grid-template-columns: 1fr;
+  }
+
+  .list-toolbar {
+    justify-content: space-between;
+  }
 }

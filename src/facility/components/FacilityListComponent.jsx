@@ -130,69 +130,47 @@ function FacilityListComponent() {
             const btnArr = [];
 
             // [이전] 버튼
-            if (cpage === 1) {
-                btnArr.push(
-                    <button key="prev" className="btn btn-info btn-sm" disabled>
-                        &lt;
-                    </button>
-                );
-            } else {
-                btnArr.push(
-                    <button
-                        key="prev"
-                        className="btn btn-outline-info btn-sm"
-                        onClick={() => {
-                            setSearchParams({ cpage: cpage - 1, keyword: searchKeyword, sort: sort, region: region });
-                        }}
-                    >
-                        &lt;
-                    </button>
-                );
-            }
+            btnArr.push(
+                <button
+                    key="prev"
+                    className="page-btn"
+                    disabled={cpage === 1}
+                    onClick={() => {
+                        setSearchParams({ cpage: cpage - 1, keyword: searchKeyword, sort: sort, region: region });
+                    }}
+                >
+                    이전
+                </button>
+            );
 
             // [숫자 페이지] 버튼
             for (let p = pageInfo.startPage; p <= pageInfo.endPage; p++) {
-                if (cpage === p) {
-                    btnArr.push(
-                        <button key={p} className="btn btn-info btn-sm">
-                            {p}
-                        </button>
-                    );
-                } else {
-                    btnArr.push(
-                        <button
-                            key={p}
-                            className="btn btn-outline-info btn-sm"
-                            onClick={() => {
-                                setSearchParams({ cpage: p, keyword: searchKeyword, sort: sort, region: region });
-                            }}
-                        >
-                            {p}
-                        </button>
-                    );
-                }
+                btnArr.push(
+                    <button
+                        key={p}
+                        className={`page-btn ${cpage === p ? "active" : ""}`}
+                        onClick={() => {
+                            setSearchParams({ cpage: p, keyword: searchKeyword, sort: sort, region: region });
+                        }}
+                    >
+                        {p}
+                    </button>
+                );
             }
 
             // [다음] 버튼
-            if (cpage === pageInfo.maxPage || pageInfo.maxPage === 0) {
-                btnArr.push(
-                    <button key="next" className="btn btn-info btn-sm" disabled>
-                        &gt;
-                    </button>
-                );
-            } else {
-                btnArr.push(
-                    <button
-                        key="next"
-                        className="btn btn-outline-info btn-sm"
-                        onClick={() => {
-                            setSearchParams({ cpage: cpage + 1, keyword: searchKeyword, sort: sort, region: region });
-                        }}
-                    >
-                        &gt;
-                    </button>
-                );
-            }
+            btnArr.push(
+                <button
+                    key="next"
+                    className="page-btn"
+                    disabled={cpage === pageInfo.maxPage || pageInfo.maxPage === 0}
+                    onClick={() => {
+                        setSearchParams({ cpage: cpage + 1, keyword: searchKeyword, sort: sort, region: region });
+                    }}
+                >
+                    다음
+                </button>
+            );
 
             setPageList(btnArr);
         }
@@ -225,38 +203,39 @@ function FacilityListComponent() {
                         onChange={handleChange} 
                         className="search-input"
                     />
-                    <button type="submit" className="btn btn-primary search-btn">검색</button>
+                    <button type="submit" className="search-btn">검색</button>
                 </form>
             </div>
-
-            {/* 정렬 버튼 영역 */}
-            <div className="sort-btn-area">
-                <button className={`sort-btn ${sort === "LATEST" ? "active" : ""}`}
-                        onClick={() => handleSortChange("LATEST")}>
-                    최신순
-                </button>
-                <span className="sort-divider">|</span>
-                <button className={`sort-btn ${sort === "OLDEST" ? "active" : ""}`}
-                        onClick={() => handleSortChange("OLDEST")}>
-                    오래된순
-                </button>
-            </div>
-
-            {/* 시설 등록 버튼 (최고관리자용) */}
-            {loginRole === "SUPER" && (
-                <div className="enroll-btn-area">
-                    <button className="btn btn-outline-secondary btn-sm" onClick={() => {navigate("/facility/enroll");}}>
-                        시설 등록
+            <div className="list-toolbar">
+                {/* 정렬 버튼 영역 */}
+                <div className="sort-btn-area">
+                    <button className={`sort-btn ${sort === "LATEST" ? "active" : ""}`}
+                            onClick={() => handleSortChange("LATEST")}>
+                        최신순
+                    </button>
+                    <span className="sort-divider">|</span>
+                    <button className={`sort-btn ${sort === "OLDEST" ? "active" : ""}`}
+                            onClick={() => handleSortChange("OLDEST")}>
+                        오래된순
                     </button>
                 </div>
-            )}
+
+                {/* 시설 등록 버튼 (최고관리자용) */}
+                {loginRole === "SUPER" && (
+                    <div className="enroll-btn-area">
+                        <button className="btn-enroll" onClick={() => {navigate("/facility/enroll");}}>
+                            시설 등록
+                        </button>
+                    </div>
+                )}
+            </div>
 
             {/* 워케이션 시설 목록 */}
             {dataList.length > 0 ? (
                 <div className="facility-list-area">
                     {dataList}
                 </div>
-            ): (
+            ) : (
                 <div className="no-data-area">
                     <p className="no-data-msg">
                         {searchKeyword || region !== "ALL"
