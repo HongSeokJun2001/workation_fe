@@ -16,6 +16,22 @@ function WorkationReservationItemComponent({ item }) {
         
     };
 
+    let statusInfo = "신청 대기";
+    if(item?.status === "CONFIRM"){
+        statusInfo = "예약 완료";
+    } else if(item?.status === "CANCELLED"){
+        statusInfo = "워케이션 취소";
+    } else if(item?.status === "COMPLETED"){
+        statusInfo = "워케이션 완료";
+    }
+
+    let facilityInfo = "-";
+    if(item?.facilityName){
+        facilityInfo = item?.facilityName;
+    } else if (item?.region){
+        facilityInfo = item?.region;
+    }
+
     return (
         <tr 
             style={{ cursor: "pointer" }}
@@ -31,9 +47,9 @@ function WorkationReservationItemComponent({ item }) {
                     : "일정 미정"}
             </td>
 
-            <td>{item?.facilityName || "시설 미선택"}</td>
+            <td>{facilityInfo}</td>
 
-            <td>{item?.status == "RESERVED" ? "예약완료" : item?.status == "CANCELLED" ? "예약취소" : "워케이션 종료"}</td>
+            <td>{statusInfo}</td>
 
             <td>{formatDate(item?.createdDate)}</td>
         </tr>

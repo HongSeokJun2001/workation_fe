@@ -130,4 +130,11 @@ const cancelReservationApi = (workationId, reason) => {
 }
 
 
-export {getApplicationListApi, getApplicationDetailApi, insertApplicationApi, approveApplicationApi, cancelApplicationApi, getReservationListApi, getReservationDetailApi, cancelReservationApi};
+export {getApplicationListApi, 
+        getApplicationDetailApi, 
+        insertApplicationApi, 
+        approveApplicationApi, 
+        cancelApplicationApi, 
+        getReservationListApi, 
+        getReservationDetailApi, 
+        cancelReservationApi};
