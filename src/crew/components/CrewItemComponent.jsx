@@ -1,10 +1,10 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReplyComponent from "./ReplyComponent";
-import { deleteCrewApi } from "../api/CrewApi";
+import { deleteCrewApi, selectCrewMemberNamesApi } from "../api/CrewApi";
+import "../styles/CrewItemComponent.css";
 
 function CrewItemComponent(props) {
-
     const item = props.item;
     const loginRole = sessionStorage.getItem("loginRole") || "EMPLOYEE";
     const currentToken = sessionStorage.getItem("accessToken");
@@ -15,22 +15,39 @@ function CrewItemComponent(props) {
             const payload = JSON.parse(atob(currentToken.split('.')[1]));
             currentLoginId = payload.sub ?? null;
         }
-    } catch (e) {
+    } catch {
         currentLoginId = null;
     }
 
     const isOwner = loginRole === "EMPLOYEE" && item.employee?.loginId && currentLoginId && item.employee.loginId === currentLoginId;
     const canManageCrew = loginRole === "SUPER" || isOwner;
-
     const [replyOpen, setReplyOpen] = useState(false);
-
-    const handleJoin = props.onJoin;
-
+    const [memberModalOpen, setMemberModalOpen] = useState(false);
+    const [memberNames, setMemberNames] = useState([]);
+    const [memberLoading, setMemberLoading] = useState(false);
     const joinedCrews = props.joinedCrews;
+    const isJoined = joinedCrews.some((crewId) => crewId === item.crewId);
 
-    const isJoined = joinedCrews.some(
-        (crew) => crew.crewId === item.crewId
-    );
+    useEffect(() => {
+        selectCrewMemberNamesApi(item.crewId)
+            .then(response => setMemberNames(response.data || []))
+            .catch(() => setMemberNames([]));
+    }, [item.crewId]);
+
+    const openMemberModal = async () => {
+        setMemberModalOpen(true);
+        setMemberLoading(true);
+
+        try {
+            const response = await selectCrewMemberNamesApi(item.crewId);
+            setMemberNames(response.data || []);
+        } catch {
+            setMemberNames([]);
+            alert("크루원 조회에 실패했습니다.");
+        } finally {
+            setMemberLoading(false);
+        }
+    };
 
 
 
@@ -51,7 +68,7 @@ function CrewItemComponent(props) {
                 alert("크루 글 삭제 실패");
             }
 
-        }catch(error){
+        }catch{
 
             console.log("크루 모집 글 삭제 ajax 통신 실패 !");
 
@@ -103,10 +120,11 @@ function CrewItemComponent(props) {
                     모집 상태 : {item.status}
                 </p>
 
+                                    crewOwnerLoginId={item.employee?.loginId}
 
-                <p>
-                    모집 정원 : {item.capacity}명
-                </p>
+                <button type="button" onClick={openMemberModal}>
+                    현재 모집 된 크루원 / 모집 정원 : {memberNames.length}/{item.capacity}명
+                </button>
 
             </div>
 
@@ -168,6 +186,32 @@ function CrewItemComponent(props) {
                 <ReplyComponent
                     crewId={item.crewId}
                 />
+            )}
+
+            {memberModalOpen && (
+                <div className="crew-member-modal" role="dialog" aria-modal="true">
+                    <div className="crew-member-modal__content">
+                        <div className="crew-member-modal__header">
+                            <h4>{item.crewName} 크루원</h4>
+                            <button type="button" onClick={() => setMemberModalOpen(false)}>
+                                닫기
+                            </button>
+                        </div>
+                        {memberLoading ? (
+                            <p>크루원을 불러오는 중입니다.</p>
+                        ) : memberNames.length > 0 ? (
+                            <ul>
+                                {memberNames.map((name, index) => (
+                                    <li key={`${name}-${index}`}>
+                                        {name} {name === item.employee?.employeeName ? "👑" : ""}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>신청한 크루원이 없습니다.</p>
+                        )}
+                    </div>
+                </div>
             )}
 
             </div>

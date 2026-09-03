@@ -6,14 +6,15 @@ import { getAuthorization } from "../../common/api/commonApi";
 const BASE_URL = "http://localhost:8007/workation/crews";
 
 // 크루 조회 Api
-const selectCrewListApi = cpage =>{
+const selectCrewListApi = (cpage, sort) =>{
 
     const response = axios({
 
         url: `${BASE_URL}`,
         method: "get",
         params: {
-            cpage: cpage
+            cpage: cpage,
+            sort: sort
         },
         headers: {
             "Content-Type": "application/json",
@@ -43,7 +44,7 @@ const selectCrewApi = crewId =>{
 
 
 // 크루 검색 Api
-const searchCrewListApi = (cpage, keyword) => {
+const searchCrewListApi = (cpage, keyword, sort) => {
 
     const response = axios({
 
@@ -51,7 +52,8 @@ const searchCrewListApi = (cpage, keyword) => {
         method: "get",
         params: {
             cpage: cpage,
-            keyword: keyword
+            keyword: keyword,
+            sort: sort
         },
         headers: {
             "Content-Type": "application/json",
@@ -159,6 +161,15 @@ const leaveCrewApi = crewId => axios({
     }
 });
 
+// 크루 멤버 이름 조회
+const selectCrewMemberNamesApi = crewId => axios({
+    url: `${BASE_URL}/${crewId}/members`,
+    method: "get",
+    headers: {
+        Authorization: getAuthorization()
+    }
+});
+
 
 // -------------------------------------------
 
@@ -181,6 +192,7 @@ export { selectCrewListApi, selectCrewApi, searchCrewListApi, insertCrewApi, upd
     deleteCrewApi,
     joinCrewApi,
     leaveCrewApi,
+    selectCrewMemberNamesApi,
     selectMyCrewListApi,
     selectCrewLeaderListApi
 };

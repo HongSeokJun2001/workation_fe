@@ -18,10 +18,9 @@ function CrewListComponents() {
     const canCreateCrew = loginRole === "EMPLOYEE";
 
     // 크루 신청 중인 크루 ID
-    const [joining, setJoining] = useState(null);
-
     // 내가 참여한 크루
     const [joinedCrews, setJoinedCrews] = useState([]);
+    const [joinedCrewDetails, setJoinedCrewDetails] = useState([]);
 
     // 검색어
     const [keyword, setKeyword] = useState("");
@@ -30,6 +29,7 @@ function CrewListComponents() {
 
     // 검색어 또한 쿼리스트링으로 처리
     const searchKeyword = searchParams.get("keyword") || "";
+    const sort = searchParams.get("sort") || "registered";
     // or 연산자로 최초 진입시 "" 로 초기화
 
     // 워케이션 신청 중인 크루 ID
@@ -58,22 +58,11 @@ function CrewListComponents() {
     };
 
     useEffect(() => {
-        // 크루 목록 조회 API 호출
-        if(searchKeyword == "") {
-
-            setCrewList();
-
-        }else {
-
-            // 검색어가 있을 경우, 검색어를 포함한 크루 목록을 가져오는 로직
-            searchCrewList();
-        }
-    }, [cpage, searchKeyword]);
-
-    useEffect(() => {
         selectMyCrewListApi()
             .then(response => {
-                setJoinedCrews((response.data || []).map(history => history.crew?.crewId));
+                const histories = response.data || [];
+                setJoinedCrews(histories.map(history => history.crew?.crewId).filter(Boolean));
+                setJoinedCrewDetails(histories.map(history => history.crew).filter(Boolean));
             })
             .catch(error => {
                 console.log("가입 크루 조회 ajax 통신 실패", error);
@@ -86,7 +75,7 @@ function CrewListComponents() {
 
         try {
 
-            const response = await selectCrewListApi(cpage);
+            const response = await selectCrewListApi(cpage, sort);
 
             handleResponse(response);
 
@@ -107,7 +96,7 @@ function CrewListComponents() {
     const handleClick = (e) => {
 
         e.preventDefault();
-        setSearchParams({ cpage: 1, keyword: keyword });
+        setSearchParams({ cpage: 1, keyword: keyword, sort });
 
     };
 
@@ -115,11 +104,11 @@ function CrewListComponents() {
     const searchCrewList = async () => {
         try{
 
-            const response = await searchCrewListApi(cpage, searchKeyword);
+            const response = await searchCrewListApi(cpage, searchKeyword, sort);
 
             handleResponse(response);
 
-        }catch(error){
+        }catch{
 
             console.log("검색어 포함 크루 조회 ajax 통신 실패 !");
 
@@ -155,6 +144,10 @@ function CrewListComponents() {
             alert("크루 신청 성공");
             // 가입한 크루 목록에 추가
             setJoinedCrews((prev) => [...prev, crewId]);
+            const joinedCrew = crews.find(crew => crew.crewId === crewId);
+            if (joinedCrew) {
+                setJoinedCrewDetails(prev => [...prev, joinedCrew]);
+            }
         } else {
             alert("크루 신청 실패");
         }
@@ -170,6 +163,7 @@ function CrewListComponents() {
 
             if (response.data === "success") {
                 setJoinedCrews(prev => prev.filter(id => id !== crewId));
+                setJoinedCrewDetails(prev => prev.filter(crew => crew.crewId !== crewId));
                 showToast("크루에서 탈퇴했습니다.");
             } else {
                 alert("크루 탈퇴 실패");
@@ -216,7 +210,7 @@ function CrewListComponents() {
                     key="prev"
                     className="btn btn-info btn-sm  "
                     onClick={() => {
-                        setSearchParams({ cpage: cpage - 1 });
+                        setSearchParams({ cpage: cpage - 1, keyword: searchKeyword, sort });
                     }}
                 >
                     &lt;
@@ -243,7 +237,7 @@ function CrewListComponents() {
                         key={p}
                         className="btn btn-outline-info btn-sm  "
                         onClick={() => {
-                            setSearchParams({ cpage: p, keyword: searchKeyword });
+                            setSearchParams({ cpage: p, keyword: searchKeyword, sort });
                         }}
                     >
                         {p}
@@ -270,7 +264,7 @@ function CrewListComponents() {
                     key="next"
                     className="btn btn-outline-info btn-sm  "
                     onClick={() => {
-                        setSearchParams({ cpage: cpage + 1 , keyword: searchKeyword });
+                        setSearchParams({ cpage: cpage + 1, keyword: searchKeyword, sort });
                     }}
                 >
                     &gt;
@@ -279,6 +273,14 @@ function CrewListComponents() {
         }
         setPageList(btnArr);
     };
+
+    useEffect(() => {
+        if (searchKeyword === "") {
+            setCrewList();
+        } else {
+            searchCrewList();
+        }
+    }, [cpage, searchKeyword, sort]);
 
     return (
         <div>
@@ -322,6 +324,13 @@ function CrewListComponents() {
                         onClick={() => setKeyword("")}>
                         검색 초기화
                     </button>
+                    <select
+                        value={sort}
+                        onChange={(e) => setSearchParams({ cpage: 1, keyword: searchKeyword, sort: e.target.value })}
+                    >
+                        <option value="registered">등록순</option>
+                        <option value="deadline">마감일 순</option>
+                    </select>
                 </form>
                 
             </div>
@@ -345,10 +354,7 @@ function CrewListComponents() {
                         내가 가입한 크루
                     </p>
                     <div>
-                        {crews
-                            .filter((crew) =>
-                                joinedCrews.includes(crew.crewId)
-                            )
+                        {joinedCrewDetails
                             .map((crew) => (
                                 <div key={crew.crewId}>
 
@@ -368,15 +374,6 @@ function CrewListComponents() {
 
                                     <div>
 
-                                        <button
-                                            onClick={() =>
-                                                setApplyingWorkcation(
-                                                    crew.crewId
-                                                )
-                                            }
-                                        >
-                                            워케이션 신청
-                                        </button>
                                         <button
                                             onClick={() =>
                                                 handleLeave(crew.crewId)
