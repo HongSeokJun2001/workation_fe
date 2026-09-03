@@ -1,166 +1,138 @@
+import { useEffect, useState } from "react";
+import {
+    deleteReplyApi,
+    insertReplyApi,
+    selectReplyList
+} from "../api/ReplyApi";
 
-import React, { useState} from 'react';
-
-
-function ReplyComponent(props) {
-
-    const crewId = props.crewId;
+function ReplyComponent({ crewId, crewOwnerLoginId }) {
     const [replies, setReplies] = useState([]);
-    const [comments, setComments] = useState([]);
-    const [commentContent, setCommentContent] = useState("");
-    const [commentSecret, setCommentSecret] = useState(false);
+    const [content, setContent] = useState("");
+    const [secret, setSecret] = useState(false);
+    const [parentReplyId, setParentReplyId] = useState(null);
     const [toast, setToast] = useState("");
+    const currentLoginId = getCurrentLoginId();
 
-    
-    const showToast = (msg) => {
-
-        setToast(msg);
-
-        setTimeout(() => {
-            setToast("");
-        }, 3000);
+    const showToast = (message) => {
+        setToast(message);
+        window.setTimeout(() => setToast(""), 3000);
     };
 
+    useEffect(() => {
+        let active = true;
+        selectReplyList(crewId)
+            .then((response) => {
+                if (active) setReplies(response.data || []);
+            })
+            .catch(() => {
+                if (active) showToast("댓글을 불러오지 못했습니다.");
+            });
 
-    //댓글 작성
-    const handleCommentSubmit = () => {
+        return () => {
+            active = false;
+        };
+    }, [crewId]);
 
-        if (!commentContent.trim()) {
+    const loadReplies = async () => {
+        const response = await selectReplyList(crewId);
+        setReplies(response.data || []);
+    };
+
+    const handleSubmit = async () => {
+        if (!content.trim()) {
             showToast("댓글 내용을 입력해주세요.");
             return;
         }
 
-        const newComment = {
-            commentId: Date.now(),
-            employeeId: 1, // 임시로 1번 직원으로 설정
-            content: commentContent,
-            createDate: new Date().toISOString(),
-            secret: commentSecret
-        };
-
-        setComments((prev) => [
-            ...prev,
-            newComment
-        ]);
-
-        setCommentContent("");
-        setCommentSecret(false);
-
-        showToast("댓글이 등록되었습니다.");
+        try {
+            await insertReplyApi(crewId, {
+                replyContent: content.trim(),
+                replyPrivate: secret ? "Y" : "N",
+                parentReply: parentReplyId ? { replyId: parentReplyId } : null
+            });
+            setContent("");
+            setSecret(false);
+            setParentReplyId(null);
+            await loadReplies();
+            showToast("댓글이 등록되었습니다.");
+        } catch {
+            showToast("댓글 등록에 실패했습니다.");
+        }
     };
 
-    // 댓글 삭제
-    const handleCommentDelete = (commentId) => {
+    const handleDelete = async (replyId) => {
+        try {
+            const response = await deleteReplyApi(replyId);
+            if (response.data !== "success") throw new Error();
+            setReplies((previous) => previous.filter((reply) => reply.replyId !== replyId));
+            showToast("댓글이 삭제되었습니다.");
+        } catch {
+            showToast("댓글 삭제에 실패했습니다.");
+        }
+    };
 
-        setComments((prev) =>
-            prev.filter(
-                (comment) => comment.commentId !== commentId
-            )
+    const canReadSecret = (reply) =>
+        reply.employee?.loginId === currentLoginId || crewOwnerLoginId === currentLoginId;
+
+    const children = (replyId) =>
+        replies.filter((reply) => reply.parentReply?.replyId === replyId);
+
+    const renderReply = (reply, isChild = false) => {
+        const visible = reply.replyPrivate !== "Y" || canReadSecret(reply);
+
+        return (
+            <div key={reply.replyId} style={{ marginLeft: isChild ? 24 : 0 }}>
+                <div>
+                    <strong>{reply.employee?.employeeName || reply.employee?.loginId || "작성자"}</strong>
+                    <span> {reply.createdDate?.substring(0, 10)}</span>
+                </div>
+                <p>{visible ? reply.replyContent : "🔒비밀 댓글 입니다."}</p>
+                {reply.employee?.loginId === currentLoginId && (
+                    <button type="button" onClick={() => handleDelete(reply.replyId)}>삭제</button>
+                )}
+                {!isChild && (
+                    <button type="button" onClick={() => setParentReplyId(reply.replyId)}>답글</button>
+                )}
+                {children(reply.replyId).map((child) => renderReply(child, true))}
+            </div>
         );
-
-        showToast("댓글이 삭제되었습니다.");
     };
-
 
     return (
         <div>
-
-            <h4>
-                댓글
-            </h4>
-
-            <div>
-
-            {comments.map((comment) => (
-
-                <div key={comment.commentId}>
-
-                    <div>
-
-                        <span>
-                            작성자 : {comment.employeeId}
-                        </span>
-
-                        <span>
-                            작성일 :{" "}
-                            {comment.createDate.substring(0, 10)}
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        {comment.secret
-                            ? "비밀글입니다."
-                            : comment.content}
-
-                    </div>
-
-
-                    <button
-                        onClick={() =>
-                            handleCommentDelete(
-                                comment.commentId
-                            )
-                        }
-                    >
-                        삭제
-                    </button>
-
-                </div>
-
-            ))}
-
-            </div>
-            
-
-            {/* 댓글 작성 */}
-                <div>
-
-                    <textarea
-                        value={commentContent}
-                        onChange={(e) =>
-                            setCommentContent(e.target.value)
-                        }
-                        placeholder="댓글을 입력해주세요."
-                    />
-
-
-                    <div>
-
-                        <label>
-
-                            <input
-                                type="checkbox"
-                                checked={commentSecret}
-                                onChange={(e) =>
-                                    setCommentSecret(
-                                        e.target.checked
-                                    )
-                                }
-                            />
-
-                            비밀글
-
-                        </label>
-
-
-                        <button
-                            onClick={handleCommentSubmit}
-                        >
-                            댓글 등록
-                        </button>
-
-                    </div>
-
-                </div>
-
-
+            <h4>댓글</h4>
+            {replies.filter((reply) => !reply.parentReply).map((reply) => renderReply(reply))}
+            <textarea
+                value={content}
+                onChange={(event) => setContent(event.target.value)}
+                placeholder={parentReplyId ? "대댓글을 입력해주세요." : "댓글을 입력해주세요."}
+            />
+            {parentReplyId && (
+                <button type="button" onClick={() => setParentReplyId(null)}>대댓글 취소</button>
+            )}
+            <label>
+                <input
+                    type="checkbox"
+                    checked={secret}
+                    onChange={(event) => setSecret(event.target.checked)}
+                />
+                비밀글
+            </label>
+            <button type="button" onClick={handleSubmit}>
+                {parentReplyId ? "대댓글 등록" : "댓글 등록"}
+            </button>
+            {toast && <p>{toast}</p>}
         </div>
+    );
+}
 
-    )
-
+function getCurrentLoginId() {
+    const token = sessionStorage.getItem("accessToken");
+    try {
+        return token ? JSON.parse(atob(token.split(".")[1])).sub : null;
+    } catch {
+        return null;
+    }
 }
 
 export default ReplyComponent;

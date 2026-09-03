@@ -98,6 +98,11 @@ function CrewEnrollFormComponent() {
           <input type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" />
         </div>
 
+        <div>
+          <label>워케이션 가용 일자 (일)</label>
+          <input type="number" name="workationAvailableDays" value={crewData.workationAvailableDays} onChange={handleChange} min="1" step="1" required />
+        </div>
+
         {/* 태그 필수 아님  */}
         {/* <div>
           <label>태그 (쉼표로 구분)</label>
