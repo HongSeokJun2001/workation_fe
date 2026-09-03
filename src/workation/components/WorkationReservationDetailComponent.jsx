@@ -177,7 +177,7 @@ function WorkationReservationDetailComponent() {
             <div className="action-buttons">
                 <button
                     className="btn btn-sm"
-                    onClick={() => navigate("/admin/application/list")}
+                    onClick={() => navigate("/reservation/list")}
                 >
                     목록으로
                 </button>   
