@@ -31,6 +31,35 @@ function FacilityItemComponent(props) {
     // 로그인 권한 확인
     const loginRole = sessionStorage.getItem("loginRole");
 
+    // 지역별 CSS 클래스 추출 함수
+    const getRegionColorClass = (regionName) => {
+        if(!regionName) return "tag-region-default";
+
+        if(["서울", "경기", "인천"].some(r => regionName.includes(r))) return "tag-region-capital";
+        if(regionName.includes("강원")) return "tag-region-gangwon";
+        if(["부산", "대구", "울산", "경북", "경남"].some(r => regionName.includes(r))) return "tag-region-gyeongsang";
+        if(["광주", "전북", "전남"].some(r => regionName.includes(r))) return "tag-region-chungcheong";
+        if(regionName.includes("제주")) return "tag-region-jeju";
+
+        return "tag-region-default"
+    }
+
+    // 시설 유형별 CSS 클래스 추출 함수
+    const getTypeColorClass = (typeCode) => {
+        switch (typeCode) {
+            case "RESORT": return "tag-type-resort";
+            case "HOTEL": return "tag-type-hotel";
+            case "OFFICE": return "tag-type-office";
+            case "GLAMPING/CAMPING": return "tag-type-camping";
+            case "HANOK": return "tag-type-hanok";
+            case "PENSION": return "tag-type-pension";
+            case "SHARE_HOUSE": return "tag-type-sharehouse";
+            case "COWORKING_SPACE": return "tag-type-coworking";
+            case "CAFE": return "tag-type-cafe";
+            default: return "tag-type-default";
+        }
+    };
+
     // 대표 이미지 URL 설정
     const getImageUrl = (path) => {
         if (!path) return "https://via.placeholder.com/300x200?text=No+Image";
@@ -79,10 +108,10 @@ function FacilityItemComponent(props) {
             <div className="card-body">
                 {/* 지역 및 타입 태그 */}
                 <div className="card-tags">
-                    <span className="tag-region">
+                    <span className={`tag-region ${getRegionColorClass(item.region)}`}>
                         {item.region}
                     </span>
-                    <span className="tag-type">
+                    <span className={`tag-type ${getTypeColorClass(item.facilityType)}`}>
                         {FACILITY_TYPE_MAP[item.facilityType] || item.facilityType}
                     </span>
                 </div>
