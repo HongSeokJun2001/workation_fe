@@ -1,20 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"; // useCallback 추가
 import { getApplicationListApi } from "../api/workationApi";
 import WorkationApplicationItemComponent from "./WorkationApplicationItemComponent";
+import { WorkationFilterBar } from './WorkationFilterBar';
 
 function WorkationApplicationListComponent() {
 
     const [cpage, setCpage] = useState(1);
 
-    const [rawList, setRawList] = useState([]);
+    const [filters, setFilters] = useState({
+        keyword: '',
+        status: 'ALL',
+        facility: 'ALL'
+    });
 
+    const [rawList, setRawList] = useState([]);
     const [pageInfo, setPageInfo] = useState(null);
 
-    const fetchData = async () => {
+    // 1. API 호출 시 filters 객체도 함께 백엔드로 전달
+    const fetchData = useCallback(async () => {
         try {
-
-            const response = await getApplicationListApi(cpage);
-        
+            const response = await getApplicationListApi(cpage, filters);
+            
             console.log("백엔드에서 넘어온 전체 response.data:", response.data);
             
             setRawList(response.data.list || []);
@@ -32,15 +38,22 @@ function WorkationApplicationListComponent() {
         } catch (error) {
             console.error("워케이션 신청 리스트 불러오기 실패:", error);
         }
-    };
+    }, [cpage, filters]); // cpage나 filters가 변경될 때 함수 재생성
 
+    // 2. 페이지 번호(cpage) 또는 필터(filters)가 바뀌면 데이터 재조회
     useEffect(() => {
         fetchData();
-    }, [cpage]);
+    }, [fetchData]);
+
+    // 3. 필터 변경 핸들러
+    const handleFilterChange = useCallback((newFilters) => {
+        setFilters(newFilters);
+        setCpage(1); // 필터가 바뀌면 1페이지부터 다시 조회
+    }, []);
 
     let dataList = [];
 
-    if (rawList.length > 0) {
+    if (rawList.length > 0) {   
         dataList = rawList.map((item, index) => (
             <WorkationApplicationItemComponent key={item.workationId || index} item={item}/>
         ));
@@ -114,10 +127,11 @@ function WorkationApplicationListComponent() {
 
     return (
         <div>
-
+            <br /><br />
+            <h2 align="center">워케이션 신청/예약 목록</h2>
             <br /><br />
 
-            <h2 align="center">워케이션 신청/예약 목록</h2>
+            <WorkationFilterBar onFilterChange={handleFilterChange} />
 
             <br /><br />
 
@@ -125,11 +139,12 @@ function WorkationApplicationListComponent() {
                 <table className="list-area table table-hover">
                     <thead>
                         <tr>
-                            <th style={{ width: "15%" }}>크루장</th>
+                            <th style={{ width: "10%" }}>크루이름</th>
+                            <th style={{ width: "10%" }}>크루장</th>
                             <th style={{ width: "35%" }}>신청기간</th>
                             <th style={{ width: "20%" }}>시설 및 장소</th>
-                            <th style={{ width: "15%" }}>예약상태</th>
                             <th style={{ width: "15%" }}>예약신청일</th>
+                            <th style={{ width: "10%" }}>예약상태</th>
                         </tr>
                     </thead>
                     <tbody>{ dataList }</tbody>

@@ -5,23 +5,23 @@ const BASE_URL = "http://localhost:8007/workation/application"
 
 const RES_URL = "http://localhost:8007/workation/reservation"
 
-const getApplicationListApi = async (cpage) =>{
+const getApplicationListApi = async (cpage, filters = {}) => {
+  const response = await axios({
+    url: `${BASE_URL}/list`,
+    method: "get",
+    params: {
+      cpage: cpage,
+      keyword: filters?.keyword || '',
+      status: filters?.status || 'ALL',
+      facilityId: filters?.facility || 'ALL'
+    },
+    headers: {
+      "Authorization": getAuthorization()
+    }
+  });
 
-    const response = axios({
-
-        url : `${BASE_URL}/list`,
-        method:"get",
-        params : {
-            cpage : cpage
-        },
-        headers : {
-            "Authorization" : getAuthorization()
-        }
-    });
-
-    return response;
-
-}
+  return response;
+};
 
 const getApplicationDetailApi = workationId => {
 
@@ -84,20 +84,22 @@ const cancelApplicationApi = (workationId, reason) => {
 }
 
 
-const getReservationListApi = cpage => {
+const getReservationListApi = async (cpage, filters = {}) => {
+  const response = await axios({
+    url: `${BASE_URL}/member/list`,
+    method: "get",
+    params: {
+      cpage: cpage,
+      keyword: filters?.keyword || '',
+      status: filters?.status || 'ALL',
+      facilityId: filters?.facility || 'ALL'
+    },
+    headers: {
+      "Authorization": getAuthorization()
+    }
+  });
 
-    const response = axios({
-
-        url : `${BASE_URL}/member/list`,
-        method:"get",
-        params : {
-            cpage : cpage
-        }, headers : {
-            "Authorization" : getAuthorization()
-        }
-    });
-
-    return response;
+  return response;
 }
 
 const getReservationDetailApi = workationId => {
