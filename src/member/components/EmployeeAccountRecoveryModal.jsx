@@ -7,6 +7,7 @@ import {
     resetEmployeePasswordApi,
     verifyEmployeeRecoveryApi
 } from "../api/memberApi";
+import { extractErrorMessage } from "../../common/api/errorUtils";
 import "../styles/EmployeeSignup.css";
 
 function EmployeeAccountRecoveryModal({ onClose }) {
@@ -69,7 +70,7 @@ function EmployeeAccountRecoveryModal({ onClose }) {
             setRemainingSeconds(5 * 60);
             setMessage("등록된 이메일로 인증번호를 전송했습니다.");
         } catch (error) {
-            setMessage(error.response?.data || "인증번호 전송 중 오류가 발생했습니다.");
+            setMessage(extractErrorMessage(error, "인증번호 전송 중 오류가 발생했습니다."));
         }
     };
 
@@ -92,7 +93,7 @@ function EmployeeAccountRecoveryModal({ onClose }) {
             }
             setMessage("");
         } catch (error) {
-            setMessage(error.response?.data || "인증번호 확인 중 오류가 발생했습니다.");
+            setMessage(extractErrorMessage(error, "인증번호 확인 중 오류가 발생했습니다."));
         }
     };
 
@@ -114,7 +115,7 @@ function EmployeeAccountRecoveryModal({ onClose }) {
             alert("비밀번호가 변경되었습니다.");
             onClose();
         } catch (error) {
-            setMessage(error.response?.data || "비밀번호 변경 중 오류가 발생했습니다.");
+            setMessage(extractErrorMessage(error, "비밀번호 변경 중 오류가 발생했습니다."));
         }
     };
 

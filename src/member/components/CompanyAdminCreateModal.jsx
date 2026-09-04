@@ -7,6 +7,7 @@ import {
     createSuperAdminApi
 } from "../api/memberApi";
 import { selectActiveCompanyListApi } from "../api/companyApi";
+import { extractErrorMessage } from "../../common/api/errorUtils";
 import "../styles/AdminCreateModal.css";
 
 function CompanyAdminCreateModal({ onClose, onCreated, isSuperAdmin = false, isCompanyAdminCreation = false }) {
@@ -66,7 +67,7 @@ function CompanyAdminCreateModal({ onClose, onCreated, isSuperAdmin = false, isC
             onCreated();
             onClose();
         } catch (error) {
-            setMessage(error.response?.data || "본사관리자 계정 생성 중 오류가 발생했습니다.");
+            setMessage(extractErrorMessage(error, "본사관리자 계정 생성 중 오류가 발생했습니다."));
         }
     };
 

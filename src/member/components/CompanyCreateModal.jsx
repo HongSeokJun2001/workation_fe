@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 
 import { checkCompanyApi, createCompanyApi } from "../api/companyApi";
+import { extractErrorMessage } from "../../common/api/errorUtils";
 import "../styles/MemberManagement.css";
 import "../styles/CompanyManagement.css";
 
@@ -66,7 +67,7 @@ function CompanyCreateModal(props) {
       onClose();
     } catch (error) {
       console.error("회사 등록 실패:", error);
-      setMessage(error.response?.data || "회사 등록 중 오류가 발생했습니다.");
+      setMessage(extractErrorMessage(error, "회사 등록 중 오류가 발생했습니다."));
     }
   };
 

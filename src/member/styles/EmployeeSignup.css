@@ -4,9 +4,20 @@
 
 .employee-signup-modal .modal-content {
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
   border: 1px solid #e1f0e8;
   border-radius: 8px;
   box-shadow: 0 14px 36px #11111124;
+}
+
+.employee-signup-modal .modal-body {
+  overflow-y: auto;
+}
+
+.employee-signup-modal .modal-footer {
+  flex-shrink: 0;
 }
 
 .employee-signup-modal .modal-header {
