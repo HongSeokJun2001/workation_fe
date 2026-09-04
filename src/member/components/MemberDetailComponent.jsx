@@ -13,6 +13,7 @@ import {
     updateSuperAdminApi
 } from "../api/memberApi";
 import { selectActiveCompanyListApi } from "../api/companyApi";
+import { extractErrorMessage } from "../../common/api/errorUtils";
 import "../styles/MemberDetail.css";
 
 function MemberDetailComponent({ memberType, selfMode }) {
@@ -111,7 +112,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
             alert("계정이 승인되었습니다.");
             navigate(-1);
         } catch (error) {
-            alert(error.response?.data || "계정 승인에 실패했습니다.");
+            alert(extractErrorMessage(error, "계정 승인에 실패했습니다."));
         }
     };
 
@@ -125,7 +126,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
             alert("가입 신청을 거부했습니다.");
             navigate(-1);
         } catch (error) {
-            alert(error.response?.data || "가입 신청 거부에 실패했습니다.");
+            alert(extractErrorMessage(error, "가입 신청 거부에 실패했습니다."));
         }
     };
 
@@ -160,7 +161,7 @@ function MemberDetailComponent({ memberType, selfMode }) {
             alert("정보가 변경되었습니다.");
             navigate(-1);
         } catch (error) {
-            alert(error.response?.data || "수정 중 오류가 발생했습니다.");
+            alert(extractErrorMessage(error, "수정 중 오류가 발생했습니다."));
         }
     };
 

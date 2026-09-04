@@ -6,6 +6,7 @@ import {
     signupEmployeeApi
 } from "../api/memberApi";
 import { checkCompanyApi } from "../api/companyApi";
+import { extractErrorMessage } from "../../common/api/errorUtils";
 import "../styles/EmployeeSignup.css";
 
 function EmployeeSignupModal(props) {
@@ -167,7 +168,7 @@ function EmployeeSignupModal(props) {
             console.error("직원 회원가입 신청 실패:", error);
             setMessages(messages => ({
                 ...messages,
-                submit: error.response?.data || "직원 회원가입 신청 중 오류가 발생했습니다."
+                submit: extractErrorMessage(error, "직원 회원가입 신청 중 오류가 발생했습니다.")
             }));
         }
     };

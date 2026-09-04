@@ -5,6 +5,7 @@ import {
     selectCompanyDetailApi,
     updateCompanyApi
 } from "../api/companyApi";
+import { extractErrorMessage } from "../../common/api/errorUtils";
 import "../styles/MemberManagement.css";
 import "../styles/CompanyManagement.css";
 
@@ -58,7 +59,7 @@ function CompanyDetailComponent() {
             navigate("/admin/super/company/list");
         } catch (error) {
             console.error(error);
-            alert(error.response?.data || "고객사 정보 업데이트 중 오류가 발생했습니다.");
+            alert(extractErrorMessage(error, "고객사 정보 업데이트 중 오류가 발생했습니다."));
         }
     };
 

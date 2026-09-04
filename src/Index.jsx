@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { loginMemberApi } from "./auth/api/authApi";
+import { extractErrorMessage } from "./common/api/errorUtils";
 import { selectPlatformStatsApi } from "./common/api/platformApi";
 import EmployeeAccountRecoveryModal from "./member/components/EmployeeAccountRecoveryModal";
 import EmployeeSignupModal from "./member/components/EmployeeSignupModal";
@@ -71,7 +72,7 @@ function Index(props) {
             console.error("로그인 중 오류 발생:", error);
 
             if (error.response?.status === 401) {
-                alert(error.response.data || "아이디 또는 비밀번호가 올바르지 않습니다.");
+                alert(extractErrorMessage(error, "아이디 또는 비밀번호가 올바르지 않습니다."));
             } else if (error.response) {
                 alert(`로그인 요청 실패 (${error.response.status})`);
             } else if (error.request) {
