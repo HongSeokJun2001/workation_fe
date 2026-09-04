@@ -38,6 +38,8 @@ function WorkationItemComponent({ item }) {
                 navigate(`/admin/application/detail/${item.workationId}`);
             }}
         >
+            <td>{item?.crewName}</td>
+
             <td>{item?.leaderName}</td>
 
             <td>
@@ -48,9 +50,10 @@ function WorkationItemComponent({ item }) {
 
             <td>{facilityInfo}</td>
 
+            <td>{formatDate(item?.createdDate)}</td>
+
             <td>{statusInfo}</td>
 
-            <td>{formatDate(item?.createdDate)}</td>
         </tr>
     );
 }

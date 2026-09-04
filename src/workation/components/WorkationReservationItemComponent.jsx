@@ -39,6 +39,8 @@ function WorkationReservationItemComponent({ item }) {
                 navigate(`/reservation/detail/${item.workationId}`);
             }}
         >
+            <td>{item?.crewName}</td>
+
             <td>{item?.leaderName}</td>
 
             <td>
@@ -49,9 +51,9 @@ function WorkationReservationItemComponent({ item }) {
 
             <td>{facilityInfo}</td>
 
-            <td>{statusInfo}</td>
-
             <td>{formatDate(item?.createdDate)}</td>
+
+            <td>{statusInfo}</td>
         </tr>
     );
 }

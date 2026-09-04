@@ -1,19 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getReservationListApi } from "../api/workationApi";
 import WorkationReservationItemComponent from "./WorkationReservationItemComponent";
+import { WorkationFilterBar } from './WorkationFilterBar';
 
 function WorkationReservationListComponent() {
 
     const [cpage, setCpage] = useState(1);
 
-    const [rawList, setRawList] = useState([]);
+    const [filters, setFilters] = useState({
+        keyword: '',
+        status: 'ALL',
+        facility: 'ALL'
+    });
 
+    const [rawList, setRawList] = useState([]);
     const [pageInfo, setPageInfo] = useState(null);
+
+    // 필터바에서 검색/상태/시설 변경 시 실행될 함수
+    const handleFilterChange = useCallback((newFilters) => {
+        setFilters(newFilters);
+        setCpage(1); // 조건 변경 시 첫 페이지로 리셋
+    }, []);
 
     const fetchData = async () => {
         try {
-
-            const response = await getReservationListApi(cpage);
+            // filters 파라미터도 함께 백엔드로 전달
+            const response = await getReservationListApi(cpage, filters);
         
             console.log("백엔드에서 넘어온 전체 response.data:", response.data);
             
@@ -34,9 +46,10 @@ function WorkationReservationListComponent() {
         }
     };
 
+    // [중요] cpage 또는 filters 변경 시 데이터 재조회
     useEffect(() => {
         fetchData();
-    }, [cpage]);
+    }, [cpage, filters]);
 
     let dataList = [];
 
@@ -96,7 +109,7 @@ function WorkationReservationListComponent() {
         }
 
         // [다음] 버튼
-        const maxPage = pageInfo.maxPage || pageInfo.endPage; // maxPage 예외 방어
+        const maxPage = pageInfo.maxPage || pageInfo.endPage;
         if (cpage >= maxPage) {
             pageList.push(
                 <button key="next" className="btn btn-info btn-sm" disabled>
@@ -117,23 +130,25 @@ function WorkationReservationListComponent() {
     }
 
     return (
-        <div>
-
-            <br /><br />
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
 
             <h2 align="center">워케이션 예약 목록</h2>
 
             <br /><br />
 
+            {/* 1. 필터 바 배치 */}
+            <WorkationFilterBar onFilterChange={handleFilterChange} />
+
             <div align="center">
                 <table className="list-area table table-hover">
                     <thead>
                         <tr>
-                            <th style={{ width: "15%" }}>크루장</th>
+                            <th style={{ width: "10%" }}>크루이름</th>
+                            <th style={{ width: "10%" }}>크루장</th>
                             <th style={{ width: "35%" }}>신청기간</th>
-                            <th style={{ width: "20%" }}>시설</th>
-                            <th style={{ width: "15%" }}>예약상태</th>
+                            <th style={{ width: "20%" }}>시설 및 장소</th>
                             <th style={{ width: "15%" }}>예약신청일</th>
+                            <th style={{ width: "10%" }}>예약상태</th>
                         </tr>
                     </thead>
                     <tbody>{ dataList }</tbody>
@@ -148,4 +163,5 @@ function WorkationReservationListComponent() {
         </div>
     );
 }
+
 export default WorkationReservationListComponent;
