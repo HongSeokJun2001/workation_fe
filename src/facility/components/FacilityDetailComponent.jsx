@@ -1,3 +1,4 @@
+import { selectReviewListApi } from "../api/reviewApi";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { selectFacilityApi, deleteFacilityApi, BASE_URL } from "../api/facilityApi";
@@ -81,26 +82,7 @@ function FacilityDetailComponent() {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // 댓글/리뷰 관련 State
-    const [reviewList, setReviewList] = useState([
-        {
-            reviewId: 1,
-            memberId: "user1",
-            employeeName: "김워케",
-            rating: 5,
-            content: "시설이 너무 깔끔하고 인터넷 속도가 빨라서 업무하기 최적이었습니다! 조용하고 뷰도 좋네요.",
-            createdDate: "2026-08-28",
-            images: [FALLBACK_IMAGE]
-        },
-        {
-            reviewId: 2,
-            memberId: "user2",
-            employeeName: "이이용",
-            rating: 4,
-            content: "주차 공간이 약간 협소하긴 했지만, 주변 편의시설이 잘 갖춰져 있어서 전반적으로 만족스럽습니다.",
-            createdDate: "2026-08-25",
-            images: []
-        }
-    ]);
+    const [reviewList, setReviewList] = useState([]);
 
     // 댓글 작성 입력 Form State
     const [newReview, setNewReview] = useState({
@@ -127,11 +109,18 @@ function FacilityDetailComponent() {
             }
         };
 
-        // TODO (팀원 구현 영역): 댓글 목록 조회 API 호출 함수 작성
-        // const fetchReviews = async () => { ... }
+        const fetchReviews = async () => {
+            try {
+                const response = await selectReviewListApi(facilityId);
+                setReviewList(response.data);
+            } catch (error) {
+                console.log("리뷰 목록 조회 실패!", error);
+            }
+        };
 
         selectFacility();
-    }, [facilityId, navigate]);
+        fetchReviews();
+        }, [facilityId, navigate]);
 
     // ----------------------------------------------------
     // 이미지 처리 Helper
