@@ -4,12 +4,11 @@ import { useLocation } from 'react-router-dom';
 
 import { useNavigate } from 'react-router-dom';
 import { updateCrewApi, selectCrewApi } from '../api/CrewApi';
+import '../styles/CrewCommunity.css';
 
-function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
+function CrewUpdateForm() {
   const LISTURL = "/crew/list";
 
-
-  const [result, setResult] = useState("success");
 
   const location = useLocation();
 
@@ -55,7 +54,7 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
         });
 
 
-      }catch(error){
+      }catch{
 
         console.log("크루 모집 글 조회 ajax통신 실패 !");
       }
@@ -107,12 +106,10 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
         // 수정 실패
 
         alert("공지사항 수정에 실패했습니다.");
-        setResult(response.data);
-        
       }
 
 
-    }catch(error){
+    }catch{
 
       // > 모집글 수정 실패 
 
@@ -121,14 +118,10 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
   };
 
   return (
-        <div align="center">
-      <h2>+ 크루 정보 수정</h2>
-      
-      <form onSubmit={updateCrew}>
-        <div>
-          <label>크루명</label>
-          <input type="text" name="crewName" value={crewData.crewName} onChange={handleChange} required />
-        </div>
+        <main className="crew-form-page"><div className="crew-form-shell">
+          <div className="crew-form-heading"><p className="crew-eyebrow">CREW COMMUNITY</p><h2>크루 정보 수정</h2><p>모집 정보와 소개를 최신 상태로 관리하세요.</p></div>
+          <form onSubmit={updateCrew}>
+            <div className="crew-field"><label htmlFor="crew-update-name">크루명</label><input id="crew-update-name" type="text" name="crewName" value={crewData.crewName} onChange={handleChange} required /></div>
 
         {/* 장소는 필수값 아님 */}
         {/* <div>
@@ -136,10 +129,8 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
           <input type="text" name="location" value={crewData.location} onChange={handleChange}/>
         </div> */}
 
-        <div>
-          <label>모집 마감일</label>
-          <input type="date" name="createdDate" value={crewData.createdDate} onChange={handleChange} /> ~ 
-          <input type="date" name="endDate" value={crewData.endDate} onChange={handleChange} />
+        <div className="crew-field-row"><div className="crew-field"><label htmlFor="crew-update-created-date">모집 시작일</label><input id="crew-update-created-date" type="date" name="createdDate" value={crewData.createdDate} onChange={handleChange} /></div>
+          <div className="crew-field"><label htmlFor="crew-update-end-date">모집 마감일</label><input id="crew-update-end-date" type="date" name="endDate" value={crewData.endDate} onChange={handleChange} /></div>
         </div>
           
         {/* 워케이션 진행기간 필수 아님 */}
@@ -149,10 +140,7 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
           <input type="date" name="periodEnd" value={crewData.periodEnd} onChange={handleChange} />
         </div> */}
 
-        <div>
-          <label>모집 인원 (명)</label>
-          <input type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-update-capacity">모집 인원 (명)</label><input id="crew-update-capacity" type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" required /></div>
 
         {/* 태그 필수 아님  */}
         {/* <div>
@@ -160,14 +148,11 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
           <input type="text" name="tags" placeholder="예: 개발, PM, 디자인" value={crewData.tags} onChange={handleChange} />
         </div> */}
 
-        <div>
-          <label>크루 및 워케이션 컨텐츠 소개</label>
-          <textarea name="crewContent" rows="5" value={crewData.crewContent} onChange={handleChange} />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-update-content">크루 및 워케이션 콘텐츠 소개</label><textarea id="crew-update-content" name="crewContent" rows="5" value={crewData.crewContent} onChange={handleChange} /></div>
 
-        <p color='red'>크루 모집 완료 후 관리자 승인을 받아야 워케이션 예약이 가능합니다.</p>
+        <p className="crew-notice">크루 모집 완료 후 관리자 승인을 받아야 워케이션 예약이 가능합니다.</p>
 
-        <div>
+        <div className="crew-form-actions">
 
           <button type="submit" >등록하기</button>
           <button type="reset" onClick={() => {setCrewData({crewName : "",
@@ -187,9 +172,7 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
 
 
       </form>
-
-
-    </div>
+    </div></main>
   );
 }
 
