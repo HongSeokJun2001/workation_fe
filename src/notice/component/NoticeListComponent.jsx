@@ -1,17 +1,14 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-
 import {useState, useEffect} from "react";
 import NoticeItemComponent from "./NoticeItemComponent";
-
 import { selectNoticeListApi } from "../api/noticeApi";
-
+import "../styles/Notice.css";
 function NoticeListComponent(){
 
     const loginRole = sessionStorage.getItem("loginRole");
     const canManageNotice = loginRole === "SUPER";
 
     // 실행할 구문
-
     //URL 주소 전환용 navigate 함수 셋팅
     let navigate = useNavigate();
 
@@ -26,117 +23,55 @@ function NoticeListComponent(){
 
     // 조회된 데이터를 담을 state 변수 셋팅
     const [dataList, setDataList] = useState([]);
-
-
-
-    useEffect(() => {
-
-        const setNoticeList = async () => {
-            try{
-
-                const response = await selectNoticeListApi(cpage);
-
-                console.log(response.data);
-
-                const items = response.data?.list || [];
-
-                const trArr = items.map((item,index)=>{
-                    return(
-                        <NoticeItemComponent key={item.noticeId ?? index} item={item}/>
-                    );
-
-                });
-
-                setDataList(trArr);
-
-                const pageInfo = response.data?.pi;
-                if (pageInfo) {
-                    const btnArr = [];
-
-                    btnArr.push(
-                        <button
-                            key="prev"
-                            className={cpage === 1 ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"}
-                            disabled={cpage === 1}
-                            onClick={() => setSearchParams({ cpage: cpage - 1 })}
-                        >
-                            &lt;
-                        </button>
-                    );
-
-                    for (let p = pageInfo.startPage; p <= pageInfo.endPage; p++) {
-                        btnArr.push(
-                            <button
-                                key={p}
-                                className={cpage === p ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"}
-                                onClick={() => setSearchParams({ cpage: p })}
-                            >
-                                {p}
-                            </button>
-                        );
-                    }
-
-                    btnArr.push(
-                        <button
-                            key="next"
-                            className={cpage === pageInfo.maxPage ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"}
-                            disabled={cpage === pageInfo.maxPage || pageInfo.maxPage === 0}
-                            onClick={() => setSearchParams({ cpage: cpage + 1 })}
-                        >
-                            &gt;
-                        </button>
-                    );
-
-                    setPageList(btnArr);
-                }
-
-            }catch{
-
-                console.log("공지사항 목록 조회용 ajax 통신 실패")
-
-            }
-        };
-
-        setNoticeList();
-
+    useEffect(() => { 
         
-    }, [cpage, setSearchParams]);
-
-
-    //return 구문
-
-    return(
-
-        <div>
-            {/* [css]클래스네임 다시 주기 */}
-            <h2 align="center">공지사항</h2>
-
-            <br/><br/>
-
-            {/* [고도화]검색창 영역 */}
-            {/* <div align="center" className="search-area">
-
-                <form>
-                    <input type="text" name="keyword" placeholder="검색어를 입력하세요." value={keyword} onchange={}/>
-                    <button type="submit" onClick={}>검색</button>
-                </form>
-
-            </div> */}
-
-            {/* 글작성버튼, 스타일 나중에 주기 */}
-            {canManageNotice && (
-                <div align="right">
-                    <button className="btn btn-outline-secondary btn-sm"
-                            onClick={() => {navigate("/notice/enroll"); }}>
-                            글작성
-                    </button>
-                </div>
-            )}
-
-            <br />
+        
+        const setNoticeList = async () => { 
+            
+            try { const response = await selectNoticeListApi(cpage); 
+                
+                const items = response.data?.list || []; 
+                
+                setDataList(items.map((item,index) => <NoticeItemComponent key={item.noticeId ?? index} item={item}/>)); 
+                
+                const pageInfo = response.data?.pi; 
+                
+                if (pageInfo) { const btnArr = []; 
+                    
+                    btnArr.push(<button key="prev" className={cpage === 1 ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"} 
+                        
+                        disabled={cpage === 1} onClick={() => setSearchParams({ cpage: cpage - 1 })}>&lt;</button>); 
+                        
+                        for (let p = pageInfo.startPage; p <= pageInfo.endPage; p++) btnArr.push(<button key={p} 
+                            className={cpage === p ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"} onClick={() => setSearchParams({ cpage: p })}>
+                                
+                                {p}</button>); 
+                                
+                                btnArr.push(<button key="next" className={cpage === pageInfo.maxPage ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"} 
+                                    
+                                    disabled={cpage === pageInfo.maxPage || pageInfo.maxPage === 0} 
+                                    
+                                    onClick={() => setSearchParams({ cpage: cpage + 1 })}>&gt;</button>); 
+                                    
+                                    setPageList(btnArr); } 
+                                
+            } catch { console.log("공지사항 목록 조회용 ajax 통신 실패"); } }; 
+                                    
+                setNoticeList(); }
+                                    
+            , [cpage, setSearchParams]);
 
             
-            <table className="list-area table table-hover">
+    //return 구문
+    return (
+        <main className="notice-page">
+            <section className="notice-hero">
+                <div><p className="notice-eyebrow">WORKATION NOTICE</p><h2>공지사항</h2><p>워케이션 서비스의 새로운 소식을 확인하세요.</p></div>
+                {canManageNotice && <button className="crew-primary-button" type="button" onClick={() => navigate("/notice/enroll")}>글 작성</button>}
+            </section>
+
+            <div className="notice-table-wrap">
+            <table className="notice-table">
                 <thead>
                     <tr>
                         <th width="150">글번호</th>
@@ -144,28 +79,14 @@ function NoticeListComponent(){
                         <th width="200">작성자</th>
                         <th width="150">조회수</th>
                         <th width="300">작성일</th>
-                    </tr>   
+                    </tr>
                 </thead>
-                <tbody>
-                    {dataList}
-                </tbody>
-
-
-            </table>
-
-            <br/><br/>
+                <tbody>{dataList}</tbody>
+            </table></div>
 
             {/* 페이징바 영역 */}
-            <div align="center" className="paging-area">{ pageList }</div>
-
-            <br/><br/>
-
-        </div>
-
-
-    
+            <div className="crew-pagination" aria-label="공지사항 페이지 이동">{pageList}</div>
+        </main>
     );
-
 }
-
 export default NoticeListComponent;

@@ -1,15 +1,17 @@
-
 import { useEffect, useState } from "react";
 import ReplyComponent from "./ReplyComponent";
 import { deleteCrewApi, selectCrewMemberNamesApi } from "../api/CrewApi";
-import "../styles/CrewItemComponent.css";
+import { selectReplyList } from "../api/ReplyApi";
+import "../styles/CrewCommunity.css";
 
 function CrewItemComponent(props) {
+
     const item = props.item;
     const loginRole = sessionStorage.getItem("loginRole") || "EMPLOYEE";
     const currentToken = sessionStorage.getItem("accessToken");
 
     let currentLoginId = null;
+
     try {
         if (currentToken && currentToken.split('.').length === 3) {
             const payload = JSON.parse(atob(currentToken.split('.')[1]));
@@ -21,35 +23,47 @@ function CrewItemComponent(props) {
 
     const isOwner = loginRole === "EMPLOYEE" && item.employee?.loginId && currentLoginId && item.employee.loginId === currentLoginId;
     const canManageCrew = loginRole === "SUPER" || isOwner;
+
     const [replyOpen, setReplyOpen] = useState(false);
-    const [memberModalOpen, setMemberModalOpen] = useState(false);
+    const [memberPanelOpen, setMemberPanelOpen] = useState(false);
     const [memberNames, setMemberNames] = useState([]);
-    const [memberLoading, setMemberLoading] = useState(false);
+    const [memberLoading, setMemberLoading] = useState(true);
+    const [replyCount, setReplyCount] = useState(0);
+    const [loadedAt] = useState(() => Date.now());
+
     const joinedCrews = props.joinedCrews;
     const isJoined = joinedCrews.some((crewId) => crewId === item.crewId);
+    const isClosed = item.endDate ? new Date(item.endDate).setHours(23, 59, 59, 999) < loadedAt : false;
+    const displayStatus = isClosed ? "모집마감" : item.status === "Y" ? "모집중" : item.status;
 
     useEffect(() => {
+        let active = true;
+
         selectCrewMemberNamesApi(item.crewId)
-            .then(response => setMemberNames(response.data || []))
-            .catch(() => setMemberNames([]));
+            .then(response => {
+                if (active) setMemberNames(response.data || []);
+            })
+            .catch(() => {
+                if (active) setMemberNames([]);
+            })
+            .finally(() => {
+                if (active) setMemberLoading(false);
+            });
+
+        selectReplyList(item.crewId)
+            .then(response => {
+                if (active) setReplyCount((response.data || []).length);
+            })
+            .catch(() => {
+                if (active) setReplyCount(0);
+            });
+
+        return () => { active = false; };
     }, [item.crewId]);
 
-    const openMemberModal = async () => {
-        setMemberModalOpen(true);
-        setMemberLoading(true);
-
-        try {
-            const response = await selectCrewMemberNamesApi(item.crewId);
-            setMemberNames(response.data || []);
-        } catch {
-            setMemberNames([]);
-            alert("크루원 조회에 실패했습니다.");
-        } finally {
-            setMemberLoading(false);
-        }
+    const openMemberPanel = () => {
+        setMemberPanelOpen(true);
     };
-
-
 
     // 크루 글 삭제 실행 구문 
     const deleteCrew = async () => {
@@ -58,169 +72,53 @@ function CrewItemComponent(props) {
             console.log(response.data);
 
             if(response.data == "success"){
-
                 alert("크루글 삭제 성공");
-
                 props.onDeleteSuccess(item.crewId);
-
             }else{
-
                 alert("크루 글 삭제 실패");
             }
-
         }catch{
-
             console.log("크루 모집 글 삭제 ajax 통신 실패 !");
-
         }
     };
 
-
     return (
-
-        <div>
-
-            {/* 크루 기본 정보 */}
-            <div>
-                {/* 크루명 */}
-
-                <h3>
-                    {item.crewName}
-                </h3>
-
-                
-                <p>
-                    회사 : {item.company?.companyName ?? "-"}
-                </p>
-
-
-                <p>
-                    크루장 : {item.employee?.employeeName ?? "-"}
-                </p>
-
-
-                <p>
-                    크루 소개 글 : {item.crewContent}
-                </p>
-
-
-                <p>
-                    작성일 :{" "}
-                    {item.createdDate?.substring(0, 10) ?? "-"}
-                </p>
-
-
-                <p>
-                    크루 모집 마감일 :{" "}
-                    {item.endDate?.substring(0, 10) ?? "-"}
-                </p>
-
-
-                <p>
-                    모집 상태 : {item.status}
-                </p>
-
-                                    crewOwnerLoginId={item.employee?.loginId}
-
-                <button type="button" onClick={openMemberModal}>
-                    현재 모집 된 크루원 / 모집 정원 : {memberNames.length}/{item.capacity}명
-                </button>
-
+        <article className="crew-card">
+            <div className="crew-card__top">
+                <h3>{item.crewName}</h3>
+                <span className={`crew-status${isClosed ? " crew-status--closed" : ""}`}>{displayStatus}</span>
+            </div>
+            <p className="crew-card__company">{item.company?.companyName ?? "회사 미등록"} · 크루장 {item.employee?.employeeName ?? "-"}</p>
+            <p className="crew-card__description">{item.crewContent || "소개 내용이 없습니다."}</p>
+            <div className="crew-card__meta">
+                <span>마감 {item.endDate?.substring(0, 10) ?? "-"}</span>
+                <span>모집 정원 {item.capacity ?? "-"}명</span>
+                <span>작성일 {item.createdDate?.substring(0, 10) ?? "-"}</span>
+                <span>댓글 {replyCount}개</span>
             </div>
 
-            {canManageCrew && (
-                <div>
-                    <button onClick={() => props.onUpdate(item.crewId)}>
-                        수정하기
-                    </button>
-                    <button onClick={deleteCrew}>
-                        삭제하기
-                    </button>
+            <div className="crew-card__footer">
+                <div className="crew-card__actions">
+                    <button type="button" onClick={openMemberPanel}>크루원 {memberNames.length}/{item.capacity ?? "-"}</button>
+                    {canManageCrew && <><button type="button" onClick={() => props.onUpdate(item.crewId)}>수정</button><button type="button" onClick={deleteCrew}>삭제</button></>}
                 </div>
-            )}
-
-
-
-
-
-            {/* 크루 신청 */}
-            <div>
-                {isJoined ? (
-                        <>
-                            <button disabled>
-                                신청 완료
-                            </button>
-
-                            <button onClick={() => props.onLeave(item.crewId)}>
-                                탈퇴하기
-                            </button>
-                        </>
-                    ) : (
-                        <button
-                            onClick={() => props.onJoin(item.crewId)}
-                            disabled={loginRole !== "EMPLOYEE" || isOwner}
-                        >
-                            {loginRole === "EMPLOYEE" ? (isOwner ? "작성자 본인" : "크루 신청") : "신청 불가"}
-                        </button>
-                    )}
-            </div>
-
-
-
-
-            {/* 댓글 */}
-            <div>
-                <button
-                onClick={() => setReplyOpen(!replyOpen)}>
-
-                {replyOpen
-                    ? "댓글 닫기 ▲"
-                    : "댓글 보기 ▼"
-                }
-                </button>
-
-
-            {/* 댓글 토글 */}
-
-            {replyOpen && (
-                <ReplyComponent
-                    crewId={item.crewId}
-                />
-            )}
-
-            {memberModalOpen && (
-                <div className="crew-member-modal" role="dialog" aria-modal="true">
-                    <div className="crew-member-modal__content">
-                        <div className="crew-member-modal__header">
-                            <h4>{item.crewName} 크루원</h4>
-                            <button type="button" onClick={() => setMemberModalOpen(false)}>
-                                닫기
-                            </button>
-                        </div>
-                        {memberLoading ? (
-                            <p>크루원을 불러오는 중입니다.</p>
-                        ) : memberNames.length > 0 ? (
-                            <ul>
-                                {memberNames.map((name, index) => (
-                                    <li key={`${name}-${index}`}>
-                                        {name} {name === item.employee?.employeeName ? "👑" : ""}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>신청한 크루원이 없습니다.</p>
-                        )}
-                    </div>
+                <div className="crew-card__actions">
+                    {isJoined ? <><button type="button" disabled>신청 완료</button><button type="button" onClick={() => props.onLeave(item.crewId)}>탈퇴</button></> : <button className="crew-action-main" type="button" onClick={() => props.onJoin(item.crewId)} disabled={isClosed || loginRole !== "EMPLOYEE" || isOwner}>{isClosed ? "모집마감" : loginRole === "EMPLOYEE" ? (isOwner ? "작성자 본인" : "크루 신청") : "신청 불가"}</button>}
                 </div>
-            )}
-
             </div>
 
-        </div>
+            {memberPanelOpen && <div className="crew-member-panel">
+                <div className="crew-card__top"><strong>현재 참여 크루원</strong><button type="button" onClick={() => setMemberPanelOpen(false)}>닫기</button></div>
+                {memberLoading ? <p>크루원을 불러오는 중입니다.</p> : memberNames.length > 0 ? <ul>{memberNames.map((name, index) => <li key={`${name}-${index}`}>{name} {name === item.employee?.employeeName ? "👑" : ""}</li>)}</ul> : <p>신청한 크루원이 없습니다.</p>}
+            </div>}
 
+            <div className="reply-section">
+                <button className="crew-secondary-button" type="button" onClick={() => setReplyOpen(!replyOpen)}>
+                    {replyOpen ? "댓글 닫기 ▲" : `댓글 ${replyCount}개 보기 ▼`}
+                </button>
+                {replyOpen && <ReplyComponent crewId={item.crewId} crewOwnerLoginId={item.employee?.loginId} onReplyCountChange={setReplyCount} />}
+            </div>
+        </article>
     );
-
-
 }
-
 export default CrewItemComponent;

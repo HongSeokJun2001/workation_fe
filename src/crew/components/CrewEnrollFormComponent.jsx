@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { insertCrewApi } from '../api/CrewApi';
+import '../styles/CrewCommunity.css';
 
 function CrewEnrollFormComponent() {
 
@@ -65,14 +66,10 @@ function CrewEnrollFormComponent() {
   };
 
   return (
-    <div align="center">
-      <h2>+ 새로운 크루 생성</h2>
-      
+    <main className="crew-form-page"><div className="crew-form-shell">
+      <div className="crew-form-heading"><p className="crew-eyebrow">CREW COMMUNITY</p><h2>새로운 크루 생성</h2><p>함께할 사람들과 워케이션 계획을 시작해보세요.</p></div>
       <form onSubmit={insertCrew}>
-        <div>
-          <label>크루명</label>
-          <input type="text" name="crewName" value={crewData.crewName} onChange={handleChange} required />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-name">크루명</label><input id="crew-name" type="text" name="crewName" value={crewData.crewName} onChange={handleChange} required /></div>
 
         {/* 장소는 필수값 아님 */}
         {/* <div>
@@ -80,10 +77,8 @@ function CrewEnrollFormComponent() {
           <input type="text" name="location" value={crewData.location} onChange={handleChange}/>
         </div> */}
 
-        <div>
-          <label>모집 마감일</label>
-          <input type="date" name="createdDate" value={crewData.createdDate} onChange={handleChange} /> ~ 
-          <input type="date" name="endDate" value={crewData.endDate} onChange={handleChange} />
+        <div className="crew-field-row"><div className="crew-field"><label htmlFor="crew-created-date">모집 시작일</label><input id="crew-created-date" type="date" name="createdDate" value={crewData.createdDate} onChange={handleChange} /></div>
+          <div className="crew-field"><label htmlFor="crew-end-date">모집 마감일</label><input id="crew-end-date" type="date" name="endDate" value={crewData.endDate} onChange={handleChange} /></div>
         </div>
           
         {/* 워케이션 진행기간 필수 아님 */}
@@ -93,15 +88,13 @@ function CrewEnrollFormComponent() {
           <input type="date" name="periodEnd" value={crewData.periodEnd} onChange={handleChange} />
         </div> */}
 
-        <div>
-          <label>모집 인원 (명)</label>
-          <input type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" />
-        </div>
+        <div className="crew-field">
+          <label htmlFor="crew-capacity">모집 인원 (명)</label>
+          <input id="crew-capacity" type="number" name="capacity" value={crewData.capacity} 
+            onChange={handleChange} min="2" required />
+            </div>
 
-        <div>
-          <label>워케이션 가용 일자 (일)</label>
-          <input type="number" name="workationAvailableDays" value={crewData.workationAvailableDays} onChange={handleChange} min="1" step="1" required />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-days">워케이션 가용 일자 (일)</label><input id="crew-days" type="number" name="workationAvailableDays" value={crewData.workationAvailableDays || ""} onChange={handleChange} min="1" step="1" required /></div>
 
         {/* 태그 필수 아님  */}
         {/* <div>
@@ -109,17 +102,14 @@ function CrewEnrollFormComponent() {
           <input type="text" name="tags" placeholder="예: 개발, PM, 디자인" value={crewData.tags} onChange={handleChange} />
         </div> */}
 
-        <div>
-          <label>크루 및 워케이션 컨텐츠 소개</label>
-          <textarea name="crewContent" rows="5" value={crewData.crewContent} onChange={handleChange} />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-content">크루 및 워케이션 콘텐츠 소개</label><textarea id="crew-content" name="crewContent" rows="5" value={crewData.crewContent} onChange={handleChange} /></div>
 
-        <p color='red'>크루 모집 완료 후 관리자 승인을 받아야 워케이션 예약이 가능합니다.</p>
+        <p className="crew-notice">크루 모집 완료 후 관리자 승인을 받아야 워케이션 예약이 가능합니다.</p>
 
-        <div>
+        <div className="crew-form-actions">
 
-          <button type="submit" >등록하기</button>
-          <button type="reset" onClick={() => {setCrewData({crewName : "",
+          <button className="crew-primary-button" type="submit" >등록하기</button>
+          <button className="crew-secondary-button" type="reset" onClick={() => {setCrewData({crewName : "",
                                                             createdDate : "",
                                                             endDate : "",
                                                             capacity : "",
@@ -128,7 +118,7 @@ function CrewEnrollFormComponent() {
                                                 }}>
               초기화
           </button>
-          <button type="button" onClick={() => navigate(`${LISTURL}`)}>목록으로</button>
+          <button className="crew-secondary-button" type="button" onClick={() => navigate(`${LISTURL}`)}>목록으로</button>
 
         </div>
 
@@ -136,9 +126,7 @@ function CrewEnrollFormComponent() {
 
 
       </form>
-
-
-    </div>
+    </div></main>
   );
 
     
