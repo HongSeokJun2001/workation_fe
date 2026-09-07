@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useNavigate } from 'react-router-dom';
 import { updateCrewApi, selectCrewApi } from '../api/CrewApi';
+import { selectMyEmployeeDetailApi } from '../../member/api/memberApi';
 import '../styles/CrewCommunity.css';
 
 function CrewUpdateForm() {
@@ -21,12 +22,18 @@ function CrewUpdateForm() {
                                             createdDate:"",
                                             endDate : "",
                                             crewContent : "",
+                                            workUsedDays : "",
                                             status : "Y"});
+  const [availableDays, setAvailableDays] = useState(null);
 
   //수정하기 페이지 > 기존의 글정보가 먼저 보여져야 함
   // 이 컴포넌트가 최초로 단 하 ㄴ번 로딩 된 후 실행할 구문 내에서 상세 조회ㅗ 먼저
 
   useEffect(()=>{
+
+    selectMyEmployeeDetailApi()
+      .then(response => setAvailableDays(response.data?.workationAvailDays ?? 0))
+      .catch(() => setAvailableDays(null));
 
     const updateCrew = async () => {
 
@@ -50,6 +57,7 @@ function CrewUpdateForm() {
             createdDate: response.data.createdDate?.substring(0, 10) ?? "",
             endDate: response.data.endDate?.substring(0, 10) ?? "",
             crewContent: response.data.crewContent ?? "",
+            workUsedDays: response.data.workUsedDays ?? "",
             status: response.data.status ?? "Y"
         });
 
@@ -70,7 +78,9 @@ function CrewUpdateForm() {
   const handleChange = e => {
     const newCrewData = {...crewData};
 
-    newCrewData[e.target.name] = e.target.value;
+    newCrewData[e.target.name] = e.target.name === "workUsedDays" && availableDays != null
+      ? Math.min(Number(e.target.value), availableDays)
+      : e.target.value;
 
     setCrewData(newCrewData);
 
@@ -81,11 +91,16 @@ function CrewUpdateForm() {
   const updateCrew = async e => {
     e.preventDefault();
 
+    if (availableDays != null && Number(crewData.workUsedDays) > availableDays) {
+      alert(`작성자의 워케이션 가용일수(${availableDays}일)를 초과할 수 없습니다.`);
+      return;
+    }
+
     try{
 
+      const { createdDate, ...updateData } = crewData;
       const payload = {
-
-        ...crewData,
+        ...updateData,
         crewId,
         status : crewData.status || "Y"
       };
@@ -96,7 +111,7 @@ function CrewUpdateForm() {
 
       if(response.data == "success"){
 
-        alert("공지사항 수정 성공");
+        alert("크루 모집 글 수정 성공");
 
         // 다시 목록으로 
         navigate(`${LISTURL}`);
@@ -105,7 +120,7 @@ function CrewUpdateForm() {
 
         // 수정 실패
 
-        alert("공지사항 수정에 실패했습니다.");
+        alert("크루 모집 글 수정에 실패했습니다.");
       }
 
 
@@ -142,6 +157,8 @@ function CrewUpdateForm() {
 
         <div className="crew-field"><label htmlFor="crew-update-capacity">모집 인원 (명)</label><input id="crew-update-capacity" type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" required /></div>
 
+        <div className="crew-field"><label htmlFor="crew-update-days">워케이션 가용 일자 (일)</label><input id="crew-update-days" type="number" name="workUsedDays" value={crewData.workUsedDays || ""} onChange={handleChange} min="1" max={availableDays ?? undefined} step="1" required /><small>작성자 가용일수: {availableDays == null ? "확인 중" : `${availableDays}일`}</small></div>
+
         {/* 태그 필수 아님  */}
         {/* <div>
           <label>태그 (쉼표로 구분)</label>
@@ -154,17 +171,18 @@ function CrewUpdateForm() {
 
         <div className="crew-form-actions">
 
-          <button type="submit" >등록하기</button>
-          <button type="reset" onClick={() => {setCrewData({crewName : "",
+          <button className="crew-primary-button" type="submit" >등록하기</button>
+          <button className="crew-secondary-button"type="reset" onClick={() => {setCrewData({crewName : "",
                                                             createdDate : "",
                                                             endDate : "",
                                                             capacity : "",
                                                             crewContent : "", 
+                                                            workUsedDays : "",
                                                           status : "Y"})
                                                 }}>
               초기화
           </button>
-          <button type="button" onClick={() => navigate(`${LISTURL}`)}>목록으로</button>
+          <button className="crew-secondary-button"type="button" onClick={() => navigate(`${LISTURL}`)}>목록으로</button>
 
         </div>
 

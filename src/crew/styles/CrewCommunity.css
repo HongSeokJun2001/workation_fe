@@ -39,6 +39,8 @@
 .crew-card__top, .crew-card__actions, .crew-card__meta, .crew-card__footer, .crew-joined-card { display: flex; align-items: center; gap: 10px; }
 .crew-card__top { justify-content: space-between; }
 .crew-card h3 { margin: 0; font-size: 20px; letter-spacing: -.025em; }
+.crew-card__title-link { cursor: pointer; }
+.crew-card__title-link:hover { color: var(--crew-green-dark); }
 .crew-status { border-radius: 99px; padding: 5px 9px; background: var(--crew-mint); color: var(--crew-green-dark); font-size: 12px; font-weight: 800; }
 .crew-status--closed { background: #f5e9e7; color: #a34e43; }
 .crew-card__company, .crew-card__description { color: var(--crew-muted); }
@@ -46,6 +48,7 @@
 .crew-card__description { min-height: 48px; margin: 18px 0; line-height: 1.6; font-size: 14px; }
 .crew-card__meta { flex-wrap: wrap; font-size: 13px; color: #536058; }
 .crew-card__meta span { background: var(--crew-sand); border-radius: 7px; padding: 7px 9px; }
+.crew-availability { margin-top: 10px; color: var(--crew-muted); font-size: 12px; text-align: right; }
 .crew-card__footer { justify-content: space-between; border-top: 1px solid #eef3ef; padding-top: 16px; margin-top: 17px; }
 .crew-card__actions button { padding: 9px 11px; background: white; border: 1px solid var(--crew-line); color: #48544d; font-size: 13px; }
 .crew-card__actions .crew-action-main { background: var(--crew-green); color: white; border-color: var(--crew-green); }
@@ -55,6 +58,10 @@
 .crew-member-panel li { background: #fff; border: 1px solid var(--crew-line); border-radius: 99px; padding: 6px 10px; font-size: 13px; }
 .crew-joined-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .crew-joined-card { justify-content: space-between; background: var(--crew-mint); border-radius: 12px; padding: 14px; }
+.crew-joined-card--link { cursor: pointer; }
+.crew-joined-card--link:hover { border-color: var(--crew-green); }
+.crew-joined-card__status { display: flex; align-items: center; gap: 8px; color: var(--crew-muted); font-size: 12px; }
+.crew-more-button { display: block; margin: 14px auto 0; }
 .crew-joined-card p { margin: 3px 0; font-size: 13px; color: var(--crew-muted); }
 .crew-joined-card strong { font-size: 15px; }
 .crew-empty { grid-column: 1 / -1; padding: 48px 20px; color: var(--crew-muted); text-align: center; background: var(--crew-sand); border-radius: 16px; }
