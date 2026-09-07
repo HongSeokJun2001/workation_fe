@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getAuthorization } from "../../common/api/commonApi";
+import { API_BASE_URL } from "../../common/api/apiConfig";
 
-const BASE_URL = "http://localhost:8007/workation";
+const BASE_URL = API_BASE_URL;
 
 // 워케이션 시설 목록 조회용
 const selectFacilityListApi = (cpage, sort = "LATEST", region = "ALL") => {

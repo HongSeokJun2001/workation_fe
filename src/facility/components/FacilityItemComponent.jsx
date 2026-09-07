@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../common/api/apiConfig";
 import "../css/FacilityItemComponent.css";
 
 function FacilityItemComponent(props) {
@@ -76,7 +77,7 @@ function FacilityItemComponent(props) {
 
         // 로컬 업로드 경로 처리
         const cleanPath = actualPath.startsWith("/") ? actualPath : `/${actualPath}`;
-        return `http://localhost:8007/workation${cleanPath}`;
+        return `${API_BASE_URL}${cleanPath}`;
     };
 
     const images = item.imageList || item.imagePaths || [];

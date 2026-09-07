@@ -1,8 +1,9 @@
 import axios from "axios";
 
 import { getAuthorization } from "../../common/api/commonApi";
+import { API_BASE_URL } from "../../common/api/apiConfig";
 
-const BASE_URL = "http://localhost:8007/workation/notices"
+const BASE_URL = `${API_BASE_URL}/notices`
 
 // 공지사항 목록조회
 
