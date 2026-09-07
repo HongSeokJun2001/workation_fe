@@ -1,0 +1,35 @@
+/* src/workation/WorkationApplication.css */
+
+/* =========================================================
+   신청 화면 전용
+   ========================================================= */
+
+
+/* 날짜 범위 */
+
+.date-range-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 500px;
+}
+
+.date-separator {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+
+/* 안내 문구 */
+
+.form-guide-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.form-info-text {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--primary-green);
+}
