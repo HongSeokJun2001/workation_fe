@@ -134,6 +134,22 @@ const selectMyCrewListApi = () => {
     return response;
 }
 
+const selectMyCreatedCrewListApi = () => axios({
+    url: `${BASE_URL}/mycreated`,
+    method: "get",
+    headers: {
+        Authorization: getAuthorization()
+    }
+});
+
+const selectCrewPageApi = crewId => axios({
+    url: `${BASE_URL}/position/${crewId}`,
+    method: "get",
+    headers: {
+        Authorization: getAuthorization()
+    }
+});
+
 
 //크루 신청하기 api
 const joinCrewApi = crewId =>{
@@ -194,5 +210,7 @@ export { selectCrewListApi, selectCrewApi, searchCrewListApi, insertCrewApi, upd
     leaveCrewApi,
     selectCrewMemberNamesApi,
     selectMyCrewListApi,
+    selectMyCreatedCrewListApi,
+    selectCrewPageApi,
     selectCrewLeaderListApi
 };
