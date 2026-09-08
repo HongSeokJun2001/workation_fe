@@ -41,6 +41,10 @@ function CrewListComponents() {
     // 상황에 맞는 페이징바를 나타내는 Link컴포넌트를 배열에 차곡차곡 담아둘 State형 변수
     const [pageList,setPageList] = useState([]);
 
+    const createdCrewIds = new Set(createdCrews.map(crew => crew.crewId));
+    const joinedOnlyDetails = joinedCrewDetails.filter(crew => !createdCrewIds.has(crew.crewId));
+    const joinedOnlyIds = joinedOnlyDetails.map(crew => crew.crewId);
+
     // cpage 값이 새로고침 되는것을 막기 위해 queryString을 사용하여 cpage 값을 가져오기
     const cpage = parseInt(searchParams.get("cpage")) || 1;
 
@@ -55,9 +59,11 @@ function CrewListComponents() {
 
 
     useEffect(() => {
+        if (loginRole !== "EMPLOYEE") return;
+
         selectMyEmployeeDetailApi()
             .then(response => setAvailableDays(response.data?.workationAvailDays ?? 0))
-            .catch(error => console.log("직원 가용일수 조회 실패", error));
+            .catch(() => setAvailableDays(null));
 
         selectMyCrewListApi().then(response => {
             const responseData = response.data;
@@ -78,13 +84,13 @@ function CrewListComponents() {
             setJoinedCrewDetails(crews);
 
 
-        }).catch(error => console.log("가입 크루 조회 ajax 통신 실패", error));
+        }).catch(() => setJoinedCrewDetails([]));
 
         selectMyCreatedCrewListApi()
             .then(response => setCreatedCrews(Array.isArray(response.data) ? response.data : []))
-            .catch(error => console.log("작성 크루 조회 ajax 통신 실패", error));
+            .catch(() => setCreatedCrews([]));
     
-    }, []);
+    }, [loginRole]);
 
     useEffect(() => {
         const crewIds = [...joinedCrewDetails, ...createdCrews]
@@ -205,6 +211,8 @@ function CrewListComponents() {
     const handleDeleteSuccess = crewId => {
         setCrews(prev => prev.filter(crew => crew.crewId !== crewId));
         setCreatedCrews(prev => prev.filter(crew => crew.crewId !== crewId));
+        setJoinedCrews(prev => prev.filter(id => id !== crewId));
+        setJoinedCrewDetails(prev => prev.filter(crew => crew.crewId !== crewId));
         setActiveCrewCount(prev => Math.max(0, prev - 1));
     };
 
@@ -261,7 +269,7 @@ function CrewListComponents() {
 
             <div className="crew-toolbar">
                 <form className="crew-search" onSubmit={handleClick}>
-                    <input type="search" name="keyword" value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="크루명 또는 소개를 검색해주세요." />
+                    <input type="search" name="keyword" value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="크루명을 검색해주세요." />
                     <select value={sort} onChange={e => setSearchParams({ cpage: 1, keyword: searchKeyword, sort: e.target.value })} aria-label="정렬 기준">
                         <option value="createdDate">등록순</option>
                         <option value="endDate">마감일 순</option>
@@ -288,15 +296,15 @@ function CrewListComponents() {
                 {createdCrews.length > 3 && <button className="crew-secondary-button crew-more-button" type="button" onClick={() => setShowAllCreated(prev => !prev)}>{showAllCreated ? "간략히 보기" : `더보기 (${createdCrews.length - 3})`}</button>}
             </section>}
 
-            {joinedCrews.length > 0 && <section>
-                <h3 className="crew-section-title">내가 가입한 크루 <span>{joinedCrews.length}개</span></h3>
+            {joinedOnlyDetails.length > 0 && <section>
+                <h3 className="crew-section-title">내가 가입한 크루 <span>{joinedOnlyDetails.length}개</span></h3>
                 <div className="crew-joined-list">
-                    {joinedCrewDetails.slice(0, showAllJoined ? joinedCrewDetails.length : 3).map(crew => <div className="crew-joined-card" key={crew.crewId}>
+                    {joinedOnlyDetails.slice(0, showAllJoined ? joinedOnlyDetails.length : 3).map(crew => <div className="crew-joined-card" key={crew.crewId}>
                         <div><strong>{crew.crewName}</strong><p>{crew.company?.companyName ?? "회사 미등록"}</p><p>마감일 {crew.endDate?.substring(0, 10) ?? "-"}</p><span>모집 정원 {memberCounts[crew.crewId] ?? 0}/{crew.capacity ?? "-"}명</span></div>
                         {createdCrews.some(createdCrew => createdCrew.crewId === crew.crewId) ? <button className="crew-danger-button" type="button" disabled>작성자는 탈퇴 불가</button> : <button className="crew-danger-button" type="button" onClick={() => handleLeave(crew.crewId)}>탈퇴</button>}
                     </div>)}
                 </div>
-                {joinedCrewDetails.length > 3 && <button className="crew-secondary-button crew-more-button" type="button" onClick={() => setShowAllJoined(prev => !prev)}>{showAllJoined ? "간략히 보기" : `더보기 (${joinedCrewDetails.length - 3})`}</button>}
+                {joinedOnlyDetails.length > 3 && <button className="crew-secondary-button crew-more-button" type="button" onClick={() => setShowAllJoined(prev => !prev)}>{showAllJoined ? "간략히 보기" : `더보기 (${joinedOnlyDetails.length - 3})`}</button>}
             </section>}
 
             <section>
@@ -305,7 +313,7 @@ function CrewListComponents() {
                     {crews.length > 0 ? crews.map(crew => <CrewItemComponent
                         key={crew.crewId}
                         item={crew}
-                        joinedCrews={joinedCrews}
+                        joinedCrews={joinedOnlyIds}
                         availableDays={availableDays}
                         onJoin={handleJoin}
                         onLeave={handleLeave}
