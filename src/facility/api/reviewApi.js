@@ -16,4 +16,33 @@ const selectReviewListApi = (facilityId) => {
     return response;
 };
 
-export { selectReviewListApi };
+// 리뷰 등록
+const insertReviewApi = (facilityId, review) => {
+
+    const response = axios({
+        url: `${BASE_URL}/facilities/${facilityId}/reviews`,
+        method: "post",
+        data: review,
+        headers: {
+            "Authorization": getAuthorization()
+        }
+    });
+
+    return response;
+};
+
+// 리뷰 삭제
+const deleteReviewApi = (reviewId) => {
+
+    const response = axios({
+        url: `${BASE_URL}/reviews/${reviewId}`,
+        method: "delete",
+        headers: {
+            "Authorization": getAuthorization()
+        }
+    });
+
+    return response;
+};
+
+export { selectReviewListApi, insertReviewApi, deleteReviewApi };
