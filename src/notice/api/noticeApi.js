@@ -56,6 +56,12 @@ const selectNoticeApi = noticeId => {
 
 }
 
+const selectNoticeNavigationApi = noticeId => axios({
+    url: `${BASE_URL}/${noticeId}/navigation`,
+    method: "get",
+    headers: { Authorization: getAuthorization() }
+});
+
 // 공지사항 수정
 const updateNoticeApi = (noticeId, notice) =>{
 
@@ -91,4 +97,4 @@ const deleteNoticeApi = noticeId => {
     return response;
 }
 
-export {selectNoticeListApi, insertNoticeApi, selectNoticeApi,updateNoticeApi,deleteNoticeApi};
+export {selectNoticeListApi, insertNoticeApi, selectNoticeApi, selectNoticeNavigationApi, updateNoticeApi, deleteNoticeApi};

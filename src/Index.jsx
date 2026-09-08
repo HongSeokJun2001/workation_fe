@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import { loginMemberApi } from "./auth/api/authApi";
 import { extractErrorMessage } from "./common/api/errorUtils";
-import { selectPlatformStatsApi } from "./common/api/platformApi";
+import { selectDashboardStatsApi, selectPlatformStatsApi } from "./common/api/platformApi";
+import "./common/styles/Dashboard.css";
 import EmployeeAccountRecoveryModal from "./member/components/EmployeeAccountRecoveryModal";
 import EmployeeSignupModal from "./member/components/EmployeeSignupModal";
 
@@ -22,6 +23,7 @@ function Index(props) {
     const [showSignupModal, setShowSignupModal] = useState(false);
     const [showRecoveryModal, setShowRecoveryModal] = useState(false);
     const [stats, setStats] = useState({ companyCount: 0, facilityCount: 0 });
+    const [dashboardStats, setDashboardStats] = useState({});
 
     useEffect(() => {
         selectPlatformStatsApi()
@@ -31,6 +33,16 @@ function Index(props) {
             }))
             .catch(error => console.error("플랫폼 통계 조회 실패:", error));
     }, []);
+
+    useEffect(() => {
+        if (!accessToken || !loginRole) {
+            return;
+        }
+
+        selectDashboardStatsApi(loginRole)
+            .then(response => setDashboardStats(response.data || {}))
+            .catch(error => console.error("대시보드 통계 조회 실패:", error));
+    }, [accessToken, loginRole]);
 
     // 10 단위로 내림 후 + 표기
     const formatCount = count => `${Math.floor((count ?? 0) / 10) * 10}+`;
@@ -110,32 +122,74 @@ function Index(props) {
 
     };
 
+    const renderStatCard = (icon, value, label, tone = "green") => (
+        <div className={`dashboard-card dashboard-card-${tone}`}>
+            <div className="dashboard-card-icon">{icon}</div>
+            <div><strong>{value ?? 0}</strong><span>{label}</span></div>
+        </div>
+    );
+
     if(accessToken != null) {
 
-        const loginTitle = loginRole === "EMPLOYEE"
-            ? "직원 로그인"
-            : "관리자 로그인";
+        const isSuperAdmin = loginRole === "SUPER";
+        const isCompanyAdmin = loginRole === "COMPANY";
+        const isEmployee = loginRole === "EMPLOYEE";
 
         // return 구문 - 로그인 후에는 로그아웃 버튼만 보여주기
         return (
-            <div className="login-session">
-                <div className="login-session-card">
-                    <h2>{loginTitle}</h2>
-                    <div className="login-session-actions">
-                        {loginRole === "EMPLOYEE" && (
-                            <button type="button"
-                                    className="login-session-edit"
-                                    onClick={() => navigate('/employee/my-info')}>
-                                정보 수정
-                            </button>
-                        )}
-                        <button type="button"
-                                className="login-session-logout"
-                                onClick={ logoutMember }>
-                            로그아웃
-                        </button>
+            <div className="dashboard-page">
+                <div className="dashboard-heading">
+                    <div>
+                        <h2>{isSuperAdmin ? "최고관리자 대시보드" : isCompanyAdmin ? "대시보드" : "직원 대시보드"}</h2>
+                        <p>{isSuperAdmin ? "플랫폼 전체 현황을 관리합니다" : isCompanyAdmin ? "소속 회사의 승인 현황을 관리합니다" : "내 워케이션 활동 현황을 확인합니다"}</p>
                     </div>
+                    <button type="button" className="dashboard-logout" onClick={ logoutMember }>로그아웃</button>
                 </div>
+
+                {isSuperAdmin && (
+                    <>
+                        <div className="dashboard-grid">
+                            {renderStatCard("🏠", dashboardStats.facilityCount, "등록 공간")}
+                            {renderStatCard("🏢", dashboardStats.companyCount, "고객사", "purple")}
+                            {renderStatCard("👥", dashboardStats.employeeCount, "전체 직원", "blue")}
+                            {renderStatCard("📋", dashboardStats.reservationCount, "전체 예약")}
+                        </div>
+                        <section className="dashboard-panel dashboard-panel-notice">
+                            <h3>⏳ 최초 계정 생성 신청 대기중</h3>
+                            <p>고객사 및 관리자 계정 관리는 상단의 기존 내비게이션 메뉴에서 처리합니다.</p>
+                        </section>
+                    </>
+                )}
+
+                {isCompanyAdmin && (
+                    <>
+                        <div className="dashboard-grid">
+                            {renderStatCard("👥", dashboardStats.employeeCount, "소속 직원")}
+                            {renderStatCard("⏳", dashboardStats.pendingEmployeeCount, "승인 대기 직원", "amber")}
+                            {renderStatCard("🏕️", dashboardStats.pendingApplicationCount, "워케이션 대기", "blue")}
+                            {renderStatCard("✅", dashboardStats.approvedThisMonthCount, "이달 승인 완료")}
+                        </div>
+                        <section className="dashboard-panel">
+                            <h3>🏕️ 처리 대기 중인 워케이션 신청</h3>
+                            <p>신청 처리는 상단의 기존 워케이션신청내역 메뉴에서 진행합니다.</p>
+                        </section>
+                    </>
+                )}
+
+                {isEmployee && (
+                    <>
+                        <div className="dashboard-grid dashboard-grid-employee">
+                            {renderStatCard("👥", dashboardStats.joinedCrewCount, "참여한 크루")}
+                            {renderStatCard("⏳", dashboardStats.pendingApplicationCount, "승인 대기 워케이션", "amber")}
+                            {renderStatCard("✅", dashboardStats.approvedReservationCount, "승인된 예약 내역", "blue")}
+                        </div>
+                        <section className="dashboard-panel dashboard-review-panel">
+                            <h3>후기 작성 가능한 시설</h3>
+                            <strong>{dashboardStats.reviewableFacilityCount ?? 0}</strong>
+                            <span>개</span>
+                        </section>
+                    </>
+                )}
             </div>
         );
     } else {

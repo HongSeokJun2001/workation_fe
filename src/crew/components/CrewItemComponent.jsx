@@ -92,13 +92,13 @@ function CrewItemComponent(props) {
                 <h3 className={props.onTitleClick ? "crew-card__title-link" : ""} onClick={props.onTitleClick}>{item.crewName}</h3>
                 <span className={`crew-status${isClosed || isFull ? " crew-status--closed" : ""}`}>{displayStatus}</span>
             </div>
-            <p className="crew-card__company">{item.company?.companyName ?? "회사 미등록"} · 크루장 {item.employee?.employeeName ?? "-"}</p>
+            <p className="crew-card__company"> 🏢 {item.company?.companyName ?? "회사 미등록"} | 👑 크루장 {item.employee?.employeeName ?? "-"}</p>
             <p className="crew-card__description">{item.crewContent || "소개 내용이 없습니다."}</p>
             <div className="crew-card__meta">
-                <span>마감 {item.endDate?.substring(0, 10) ?? "-"}</span>
-                <span>모집 정원 {memberCount}/{item.capacity ?? "-"}명</span>
-                <span>워케이션 {requiredDays}일</span>
-                <span>작성일 {item.createdDate?.substring(0, 10) ?? "-"}</span>
+                <span>📆 마감 {item.endDate?.substring(0, 10) ?? "-"}</span>
+                <span>🙋🏻‍♀️ 모집 정원 {memberCount}/{item.capacity ?? "-"}명</span>
+                <span>🏖️ 워케이션 {requiredDays}일</span>
+                {/* <span>작성일 {item.createdDate?.substring(0, 10) ?? "-"}</span> */}
             </div>
 
             <div className="crew-card__footer">
@@ -116,8 +116,16 @@ function CrewItemComponent(props) {
             <div className="crew-availability">내 가용일수 {props.availableDays == null ? "확인 중" : `${props.availableDays}일`} · 필요 일수 {requiredDays}일</div>
 
             {memberPanelOpen && <div className="crew-member-panel">
+
                 <div className="crew-card__top"><strong>현재 참여 크루원</strong><button type="button" onClick={() => setMemberPanelOpen(false)}>닫기</button></div>
-                {memberLoading ? <p>크루원을 불러오는 중입니다.</p> : memberNames.length > 0 ? <ul>{memberNames.map((name, index) => <li key={`${name}-${index}`}>{name} {name === item.employee?.employeeName ? "👑" : ""}</li>)}</ul> : <p>신청한 크루원이 없습니다.</p>}
+                {memberLoading ? <p>크루원을 불러오는 중입니다.</p> : memberNames.length > 0 ? <ul>{
+                
+                memberNames.map((name, index) => <li key={`${name}-${index}`}>{name} {name === item.employee?.employeeName ? "👑" : ""}
+                
+                </li>)}</ul> : 
+                
+                <p>신청한 크루원이 없습니다.</p>}
+
             </div>}
 
             <div className="reply-section">
