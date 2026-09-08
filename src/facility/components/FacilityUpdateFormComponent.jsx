@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { selectFacilityFormApi, updateFacilityApi } from "../api/facilityApi";
+import { API_BASE_URL } from "../../common/api/apiConfig";
 import "../css/FacilityUpdateFormComponent.css";
 
 function FacilityUpdateFormComponent() {
@@ -232,7 +233,7 @@ function FacilityUpdateFormComponent() {
                                         return (
                                             <div key={index} className="img-item-card">
                                                 <img 
-                                                    src={`http://localhost:8007/workation${imagePath}`} 
+                                                    src={`${API_BASE_URL}${imagePath}`}
                                                     alt={`기존 이미지 ${index + 1}`} 
                                                     className="img-preview"
                                                 />

@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE_URL } from "../../common/api/apiConfig";
 
-const BASE_URL = "http://localhost:8007/workation";
+const BASE_URL = API_BASE_URL;
 
 // AI 채팅 메시지 전송 API (인증 불필요)
 const sendChatMessageApi = (message) => {
