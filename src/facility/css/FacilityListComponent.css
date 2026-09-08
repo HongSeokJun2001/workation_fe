@@ -174,7 +174,7 @@
   transition: background-color 0.2s ease;
 }
 
-/* 시설 목록 그리 */
+/* 시설 목록 그리드 */
 .facility-list-area {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
