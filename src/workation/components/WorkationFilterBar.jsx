@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { selectFacilityAllListApi } from '../../facility/api/facilityApi';
+import '../styles/WorkationCommon.css';
+import "../styles/WorkationList.css";
 
 const DEFAULT_STATUS_OPTIONS = [
   { label: '전체 상태', value: 'ALL' },
@@ -27,7 +29,6 @@ export const WorkationFilterBar = ({
     const fetchFacilities = async () => {
       try {
         const response = await selectFacilityAllListApi();
-        // 백엔드 데이터 구조에 맞춰 매핑 (facilityId, facilityName)
         const list = response.data || [];
         const formattedList = list.map((item) => ({
           label: item.facilityName || item.name,
@@ -67,18 +68,18 @@ export const WorkationFilterBar = ({
   }, []);
 
   return (
-    <div style={styles.container}>
+    <div className="filter-bar-container">
       {/* 1. 검색어 (크루명/리더명) */}
-      <div style={styles.searchWrapper}>
+      <div className="filter-search-wrapper">
         <input
           type="text"
           placeholder="크루명, 리더 이름 검색..."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          style={styles.input}
+          className="filter-input"
         />
         {keyword && (
-          <button onClick={() => setKeyword('')} style={styles.clearBtn}>
+          <button onClick={() => setKeyword('')} className="filter-clear-btn">
             ✕
           </button>
         )}
@@ -88,7 +89,7 @@ export const WorkationFilterBar = ({
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value)}
-        style={styles.select}
+        className="filter-select"
       >
         {statusOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -101,7 +102,7 @@ export const WorkationFilterBar = ({
       <select
         value={facility}
         onChange={(e) => setFacility(e.target.value)}
-        style={styles.select}
+        className="filter-select"
       >
         {facilityListOptions.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -111,59 +112,9 @@ export const WorkationFilterBar = ({
       </select>
 
       {/* 4. 초기화 버튼 */}
-      <button onClick={handleReset} style={styles.resetBtn}>
-        🔄 필터 초기화
+      <button onClick={handleReset} className="filter-reset-btn">
+        필터 초기화
       </button>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    gap: '12px',
-    alignItems: 'center',
-    padding: '16px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
-    marginBottom: '20px',
-    flexWrap: 'wrap',
-  },
-  searchWrapper: {
-    position: 'relative',
-    flex: '1 1 200px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  input: {
-    width: '100%',
-    padding: '8px 32px 8px 12px',
-    borderRadius: '6px',
-    border: '1px solid #ced4da',
-    fontSize: '14px',
-  },
-  clearBtn: {
-    position: 'absolute',
-    right: '8px',
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    color: '#adb5bd',
-  },
-  select: {
-    padding: '8px 12px',
-    borderRadius: '6px',
-    border: '1px solid #ced4da',
-    fontSize: '14px',
-    backgroundColor: '#fff',
-    cursor: 'pointer',
-  },
-  resetBtn: {
-    padding: '8px 14px',
-    borderRadius: '6px',
-    border: '1px solid #ced4da',
-    backgroundColor: '#fff',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
 };

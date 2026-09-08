@@ -80,18 +80,17 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
             
             if (response.data !== "success") throw new Error(); 
             
-            setReplies(previous => {
-                const nextReplies = previous.filter(reply => reply.replyId !== replyId);
-                onReplyCountChange?.(nextReplies.length);
-                return nextReplies;
-            });
+            const nextReplies = replies.filter(reply => reply.replyId !== replyId);
+            setReplies(nextReplies);
+            onReplyCountChange?.(nextReplies.length);
             
             showToast("댓글이 삭제되었습니다."); 
         
         } catch { showToast("댓글 삭제에 실패했습니다."); } };
 
 
-    const canReadSecret = reply => reply.employee?.loginId === currentLoginId || crewOwnerLoginId === currentLoginId;
+    const canReadSecret = reply => reply.employee?.loginId === currentLoginId
+        || crewOwnerLoginId === currentLoginId;
 
 
     const children = replyId => replies.filter(reply => reply.parentReply?.replyId === replyId);
@@ -99,7 +98,8 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
 
     const renderReply = (reply, isChild = false) => {
         
-        const visible = reply.replyPrivate !== "Y" || canReadSecret(reply);
+        const isSecret = reply.replyPrivate === "Y";
+        const visible = !isSecret || canReadSecret(reply);
 
         return (
             <div className={`reply-item${isChild ? " reply-item--child" : ""}`} key={reply.replyId}>
@@ -108,7 +108,7 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
                     <span> {reply.createdDate?.substring(0, 10)}</span>
                 </div>
 
-                <p>{visible ? reply.replyContent : "🔒비밀 댓글 입니다."}</p>
+                <p>{visible ? `${isSecret ? "🔒" : ""}${reply.replyContent}` : "🔒비밀 댓글 입니다."}</p>
 
                 {reply.employee?.loginId === currentLoginId && (
                     <button className="reply-text-button" type="button" onClick={() => handleDelete(reply.replyId)}>삭제</button>

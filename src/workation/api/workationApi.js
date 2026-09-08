@@ -1,9 +1,10 @@
 import axios from "axios";
 import { getAuthorization } from "../../common/api/commonApi";
+import { API_BASE_URL } from "../../common/api/apiConfig";
 
-const BASE_URL = "http://localhost:8007/workation/application"
+const BASE_URL = `${API_BASE_URL}/application`
 
-const RES_URL = "http://localhost:8007/workation/reservation"
+const RES_URL = `${API_BASE_URL}/reservation`
 
 const getApplicationListApi = async (cpage, filters = {}) => {
   const response = await axios({
