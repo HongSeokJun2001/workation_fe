@@ -23,7 +23,7 @@ import MemberDetailComponent from "./member/components/MemberDetailComponent";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Index from "./index";
+import Index from "./Index";
 import FacilityUpdateFormComponent from './facility/components/FacilityUpdateFormComponent'
 import CompanyListComponent from './member/components/CompanyListComponent'
 import CompanyDetailComponent from './member/components/CompanyDetailComponent'
