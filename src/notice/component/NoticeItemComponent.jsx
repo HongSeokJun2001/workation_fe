@@ -14,7 +14,7 @@ function NoticeItemComponent(props){
 
     return(
         // 글 목록 클릭시 상세보기로 전환되는 navigate 함수 셋팅
-       <tr onClick={()=>{navigate(`/notice/detail/${item.noticeId}`);}}>
+    <tr onClick={()=>{navigate(`/notice/detail/${item.noticeId}`);}}>
             <td>{item.noticeId}</td>
             <td>{item.noticeTitle}</td>
             {/* 여기 시설로 수정  */}

@@ -4,12 +4,12 @@ import { useLocation } from 'react-router-dom';
 
 import { useNavigate } from 'react-router-dom';
 import { updateCrewApi, selectCrewApi } from '../api/CrewApi';
+import { selectMyEmployeeDetailApi } from '../../member/api/memberApi';
+import '../styles/CrewCommunity.css';
 
-function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
+function CrewUpdateForm() {
   const LISTURL = "/crew/list";
 
-
-  const [result, setResult] = useState("success");
 
   const location = useLocation();
 
@@ -22,12 +22,18 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
                                             createdDate:"",
                                             endDate : "",
                                             crewContent : "",
+                                            workUsedDays : "",
                                             status : "Y"});
+  const [availableDays, setAvailableDays] = useState(null);
 
   //수정하기 페이지 > 기존의 글정보가 먼저 보여져야 함
   // 이 컴포넌트가 최초로 단 하 ㄴ번 로딩 된 후 실행할 구문 내에서 상세 조회ㅗ 먼저
 
   useEffect(()=>{
+
+    selectMyEmployeeDetailApi()
+      .then(response => setAvailableDays(response.data?.workationAvailDays ?? 0))
+      .catch(() => setAvailableDays(null));
 
     const updateCrew = async () => {
 
@@ -51,11 +57,12 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
             createdDate: response.data.createdDate?.substring(0, 10) ?? "",
             endDate: response.data.endDate?.substring(0, 10) ?? "",
             crewContent: response.data.crewContent ?? "",
+            workUsedDays: response.data.workUsedDays ?? "",
             status: response.data.status ?? "Y"
         });
 
 
-      }catch(error){
+      }catch{
 
         console.log("크루 모집 글 조회 ajax통신 실패 !");
       }
@@ -71,7 +78,9 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
   const handleChange = e => {
     const newCrewData = {...crewData};
 
-    newCrewData[e.target.name] = e.target.value;
+    newCrewData[e.target.name] = e.target.name === "workUsedDays" && availableDays != null
+      ? Math.min(Number(e.target.value), availableDays)
+      : e.target.value;
 
     setCrewData(newCrewData);
 
@@ -82,11 +91,16 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
   const updateCrew = async e => {
     e.preventDefault();
 
+    if (availableDays != null && Number(crewData.workUsedDays) > availableDays) {
+      alert(`작성자의 워케이션 가용일수(${availableDays}일)를 초과할 수 없습니다.`);
+      return;
+    }
+
     try{
 
+      const { createdDate, ...updateData } = crewData;
       const payload = {
-
-        ...crewData,
+        ...updateData,
         crewId,
         status : crewData.status || "Y"
       };
@@ -97,7 +111,7 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
 
       if(response.data == "success"){
 
-        alert("공지사항 수정 성공");
+        alert("크루 모집 글 수정 성공");
 
         // 다시 목록으로 
         navigate(`${LISTURL}`);
@@ -106,13 +120,11 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
 
         // 수정 실패
 
-        alert("공지사항 수정에 실패했습니다.");
-        setResult(response.data);
-        
+        alert("크루 모집 글 수정에 실패했습니다.");
       }
 
 
-    }catch(error){
+    }catch{
 
       // > 모집글 수정 실패 
 
@@ -121,14 +133,10 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
   };
 
   return (
-        <div align="center">
-      <h2>+ 크루 정보 수정</h2>
-      
-      <form onSubmit={updateCrew}>
-        <div>
-          <label>크루명</label>
-          <input type="text" name="crewName" value={crewData.crewName} onChange={handleChange} required />
-        </div>
+        <main className="crew-form-page"><div className="crew-form-shell">
+          <div className="crew-form-heading"><p className="crew-eyebrow">CREW COMMUNITY</p><h2>크루 정보 수정</h2><p>모집 정보와 소개를 최신 상태로 관리하세요.</p></div>
+          <form onSubmit={updateCrew}>
+            <div className="crew-field"><label htmlFor="crew-update-name">크루명</label><input id="crew-update-name" type="text" name="crewName" value={crewData.crewName} onChange={handleChange} required /></div>
 
         {/* 장소는 필수값 아님 */}
         {/* <div>
@@ -136,10 +144,8 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
           <input type="text" name="location" value={crewData.location} onChange={handleChange}/>
         </div> */}
 
-        <div>
-          <label>모집 마감일</label>
-          <input type="date" name="createdDate" value={crewData.createdDate} onChange={handleChange} /> ~ 
-          <input type="date" name="endDate" value={crewData.endDate} onChange={handleChange} />
+        <div className="crew-field-row"><div className="crew-field"><label htmlFor="crew-update-created-date">모집 시작일</label><input id="crew-update-created-date" type="date" name="createdDate" value={crewData.createdDate} onChange={handleChange} /></div>
+          <div className="crew-field"><label htmlFor="crew-update-end-date">모집 마감일</label><input id="crew-update-end-date" type="date" name="endDate" value={crewData.endDate} onChange={handleChange} /></div>
         </div>
           
         {/* 워케이션 진행기간 필수 아님 */}
@@ -149,10 +155,9 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
           <input type="date" name="periodEnd" value={crewData.periodEnd} onChange={handleChange} />
         </div> */}
 
-        <div>
-          <label>모집 인원 (명)</label>
-          <input type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-update-capacity">모집 인원 (명)</label><input id="crew-update-capacity" type="number" name="capacity" value={crewData.capacity} onChange={handleChange} min="2" required /></div>
+
+        <div className="crew-field"><label htmlFor="crew-update-days">워케이션 가용 일자 (일)</label><input id="crew-update-days" type="number" name="workUsedDays" value={crewData.workUsedDays || ""} onChange={handleChange} min="1" max={availableDays ?? undefined} step="1" required /><small>작성자 가용일수: {availableDays == null ? "확인 중" : `${availableDays}일`}</small></div>
 
         {/* 태그 필수 아님  */}
         {/* <div>
@@ -160,26 +165,24 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
           <input type="text" name="tags" placeholder="예: 개발, PM, 디자인" value={crewData.tags} onChange={handleChange} />
         </div> */}
 
-        <div>
-          <label>크루 및 워케이션 컨텐츠 소개</label>
-          <textarea name="crewContent" rows="5" value={crewData.crewContent} onChange={handleChange} />
-        </div>
+        <div className="crew-field"><label htmlFor="crew-update-content">크루 및 워케이션 콘텐츠 소개</label><textarea id="crew-update-content" name="crewContent" rows="5" value={crewData.crewContent} onChange={handleChange} /></div>
 
-        <p color='red'>크루 모집 완료 후 관리자 승인을 받아야 워케이션 예약이 가능합니다.</p>
+        <p className="crew-notice">크루 모집 완료 후 관리자 승인을 받아야 워케이션 예약이 가능합니다.</p>
 
-        <div>
+        <div className="crew-form-actions">
 
-          <button type="submit" >등록하기</button>
-          <button type="reset" onClick={() => {setCrewData({crewName : "",
+          <button className="crew-primary-button" type="submit" >등록하기</button>
+          <button className="crew-secondary-button"type="reset" onClick={() => {setCrewData({crewName : "",
                                                             createdDate : "",
                                                             endDate : "",
                                                             capacity : "",
                                                             crewContent : "", 
+                                                            workUsedDays : "",
                                                           status : "Y"})
                                                 }}>
               초기화
           </button>
-          <button type="button" onClick={() => navigate(`${LISTURL}`)}>목록으로</button>
+          <button className="crew-secondary-button"type="button" onClick={() => navigate(`${LISTURL}`)}>목록으로</button>
 
         </div>
 
@@ -187,9 +190,7 @@ function CrewUpdateForm({ selectedCrew, onCancel, onSubmitSuccess }) {
 
 
       </form>
-
-
-    </div>
+    </div></main>
   );
 }
 

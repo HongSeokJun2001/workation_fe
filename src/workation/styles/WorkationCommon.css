@@ -1,0 +1,223 @@
+/* src/workation/WorkationCommon.css */
+
+/* =========================================================
+   1. Global Design Tokens
+   ========================================================= */
+
+:root {
+  /* Brand */
+  --primary-green: #0D8A52;
+  --primary-hover: #096b3f;
+
+  /* Status */
+  --danger-color: #dc3545;
+  --danger-hover: #bd2130;
+
+  /* Background */
+  --bg-main: #F4F7F5;
+  --bg-card: #FFFFFF;
+
+  /* Border */
+  --border-color: #E2E8F0;
+  --border-light: #edf4f0;
+
+  /* Text */
+  --text-dark: #222222;
+  --text-medium: #555555;
+  --text-light: #888888;
+  --text-muted: #888888;
+}
+
+
+/* =========================================================
+   2. Common Container / Card (너비 확장 및 여백 조정)
+   ========================================================= */
+
+.detail-container {
+  max-width: 1100px; /* 800px -> 1100px로 대폭 확장 */
+  margin: 30px auto;
+  padding: 0 24px;
+}
+
+.detail-card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.detail-header {
+  padding: 20px 36px; /* 위아래 패딩 감소로 세로 길이 슬림화 */
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fafdfb;
+}
+
+.detail-body {
+  padding: 28px 36px; /* 좌우는 넓히고 세로는 줄여 직사각형 비율 강화 */
+}
+
+/* =========================================================
+   3. Common Table (라벨 비율 줄여 입력 영역 확보)
+   ========================================================= */
+
+.info-label {
+  width: 15%; /* 25% -> 15%로 축소하여 우측 입력란을 훨씬 넓게 사용 */
+  padding: 16px 16px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.info-value {
+  width: 85%; /* 75% -> 85%로 확대 */
+  padding: 16px 16px;
+  font-size: 15px;
+  color: var(--text-medium);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   4. Common Buttons
+   ========================================================= */
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-detail {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100px;
+  height: 42px;
+  padding: 0 20px;
+  box-sizing: border-box;
+
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-green);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: #edf2f7;
+  color: var(--text-medium);
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-hover);
+}
+
+
+/* =========================================================
+   5. Common Form
+   ========================================================= */
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  box-sizing: border-box;
+
+  font-size: 14px;
+  color: var(--text-dark);
+
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(13, 138, 82, 0.1);
+}
+
+.form-control:disabled {
+  background-color: #f8faf9;
+  color: var(--text-light);
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   6. Common Status Badge
+   ========================================================= */
+
+.badge,
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  border-radius: 20px;
+}
+
+.status-pending,
+.badge-status-pending {
+  background-color: #fff8e1;
+  color: #b78103;
+}
+
+.status-confirm,
+.badge-status-active {
+  background-color: #e6f4ea;
+  color: var(--primary-green);
+}
+
+.status-completed {
+  background-color: #f1f3f4;
+  color: var(--text-medium);
+}
+
+.status-cancelled,
+.badge-status-locked {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+.badge-role-admin {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+}

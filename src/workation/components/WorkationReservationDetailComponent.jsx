@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { cancelReservationApi, getReservationDetailApi } from "../api/workationApi";
+import '../styles/WorkationCommon.css';
+import "../styles/WorkationDetail.css"; 
 
 function WorkationReservationDetailComponent() {
 
@@ -36,12 +38,19 @@ function WorkationReservationDetailComponent() {
 
                 console.error("상세 조회 실패:", error);
 
+                if (error.response && error.response.status === 403) {
+                    alert("해당 예약 내역을 조회할 권한이 없습니다. (소속 크루원 전용)");
+                    navigate(-1);
+                } else {
+                    alert("상세 정보를 불러오는데 실패했습니다.");
+                }
+
             });
 
-    }, [workationId]);
+    }, [workationId, navigate]);
 
     if (!application) {
-        return <div>Loading...</div>;
+        return <div className="detail-loading">Loading...</div>;
     }
 
     let facilityInfo = "-";
@@ -56,19 +65,24 @@ function WorkationReservationDetailComponent() {
     let title = "워케이션 신청 정보";
 
     let statusInfo = "신청 대기";
+    let badgeClass = "badge badge-status-pending";
 
     if(application.status === "CONFIRM"){
         title = "워케이션 예약 정보";
         statusInfo = "예약 완료";
+        badgeClass = "badge badge-status-active";
     } else if(application.status === "CANCELLED" && application.approvedYn === "REJECT"){
         title = "워케이션 승인 취소 정보";
         statusInfo = "워케이션 승인 취소";
+        badgeClass = "badge badge-status-locked";
     } else if(application.status === "CANCELLED" && application.approvedYn === "APPROVED"){
         title = "워케이션 예약 취소 정보"; 
         statusInfo = "워케이션 예약 취소"; 
+        badgeClass = "badge badge-status-locked";
     } else if(application.status === "COMPLETED"){
         title = "워케이션 완료 정보";
         statusInfo = "워케이션 완료";
+        badgeClass = "badge badge-status-active";
     }
 
     const handleCancel = async (e) => {
@@ -76,14 +90,10 @@ function WorkationReservationDetailComponent() {
 
         const reason = prompt("예약 취소 사유를 입력해주세요:");
 
-            if (reason === null) return;
+        if (reason === null) return;
 
-            if (!reason.trim()) {
-                alert("예약 취소 사유를 입력해야 합니다.");
-                return;
-            }
-
-        if(!reason){
+        if (!reason.trim()) {
+            alert("예약 취소 사유를 입력해야 합니다.");
             return;
         }
 
@@ -101,92 +111,97 @@ function WorkationReservationDetailComponent() {
     };
 
     return (
-        <div>
+        <div className="detail-container">
+            <div className="detail-card">
+                <div className="detail-header">
+                    <h2 className="detail-title">{title}</h2>
+                </div>
 
-            <br /><br />
-
-            <h2 align="center">{title}</h2>
-
-            <br /><br />
-
-            <table className="info-table">
-                <tbody>
-                    <tr>
-                        <th className="info-label">크루명</th>
-                        <td className="info-value">
-                            {application.crewName}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th className="info-label">크루장</th>
-                        <td className="info-value">
-                            {application.leaderName}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th className="info-label">
-                            예약상태
-                        </th>
-                        <td className="info-value">
-                            {statusInfo}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th className="info-label">
-                            예약날짜
-                        </th>
-                        <td className="info-value">
-                            {`${formatDate(application.startDate)} ~ ${formatDate(application.endDate)}`}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th className="info-label">
-                            시설 및 지역
-                        </th>
-                        <td className="info-value">
-                            {facilityInfo}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th className="info-label">
-                            목적
-                        </th>
-                        <td className="info-value">
-                            {purposeInfo}
-                        </td>
-                    </tr>
-                    {(application.status === 'CANCELLED') && (
-                        <tr>
-                            <th className="info-label">
-                                취소 사유
-                            </th>
-                            {(application.approvedYn === "REJECT") && (
+                <div className="detail-body">
+                    <table className="info-table">
+                        <tbody>
+                            <tr>
+                                <th className="info-label">크루명</th>
                                 <td className="info-value">
-                                    {application.rejectReason}
+                                    {application.crewName}
                                 </td>
-                            )}
-                            {(application.approvedYn === "APPROVED") && (
+                            </tr>
+                            <tr>
+                                <th className="info-label">크루장</th>
                                 <td className="info-value">
-                                    {application.cancelledReason}
+                                    {application.leaderName}
                                 </td>
+                            </tr>
+                            <tr>
+                                <th className="info-label">예약상태</th>
+                                <td className="info-value">
+                                    <span className={badgeClass}>{statusInfo}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="info-label">예약날짜</th>
+                                <td className="info-value">
+                                    {`${formatDate(application.startDate)} ~ ${formatDate(application.endDate)}`}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="info-label">시설 및 지역</th>
+                                <td className="info-value">
+                                    {facilityInfo}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="info-label">목적</th>
+                                <td className="info-value">
+                                    {purposeInfo}
+                                </td>
+                            </tr>
+                            {(application.status === 'CANCELLED') && (
+                                <tr>
+                                    <th className="info-label">취소 사유</th>
+                                    {(application.approvedYn === "REJECT") && (
+                                        <td className="info-value">
+                                            {application.rejectReason}
+                                        </td>
+                                    )}
+                                    {(application.approvedYn === "APPROVED") && (
+                                        <td className="info-value">
+                                            {application.cancelledReason}
+                                        </td>
+                                    )}
+                                </tr>
                             )}
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-            <div className="action-buttons">
-                <button
-                    className="btn btn-sm"
-                    onClick={() => navigate("/reservation/list")}
-                >
-                    목록으로
-                </button>   
-                {application.status === "CONFIRM" && (
-                    <button type="button" onClick={handleCancel}>취소하기</button>
-                )}
+                        </tbody>
+                    </table>
+
+                    <div className="action-buttons">
+
+                        <div className="left-space" />
+
+                        <div className="center-group">
+                            <button
+                                type="button"
+                                className="btn-detail btn-secondary"
+                                onClick={() => navigate("/reservation/list")}
+                            >
+                                목록으로
+                            </button> 
+                        </div>
+                        <div className="right-group">
+                            {application?.status === "CONFIRM" && application?.isleader && (
+                                <button 
+                                type="button" 
+                                className="btn-detail btn-danger"
+                                onClick={handleCancel}
+                                >
+                                취소하기
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     );
 }
 
