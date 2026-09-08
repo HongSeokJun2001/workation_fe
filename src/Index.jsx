@@ -1,4 +1,3 @@
-import "./index.css";
 import "./common/styles/Login.css";
 
 import { useEffect, useState } from "react";
