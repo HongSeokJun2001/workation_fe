@@ -181,7 +181,6 @@ function WorkationApplicationDetailComponent() {
 
             <div className="left-space" />
 
-            <div className="center-group">
               <button
                 type="button"
                 className="btn-detail btn-secondary"
@@ -189,9 +188,7 @@ function WorkationApplicationDetailComponent() {
               >
                 목록으로
               </button>
-            </div>
-
-            <div className="right-group">
+              
               {application.status === "APPLY" && (
                 <>
                   <button
@@ -220,7 +217,6 @@ function WorkationApplicationDetailComponent() {
                   취소하기
                 </button>
               )}
-            </div>
           </div>
         </div>
       </div>
