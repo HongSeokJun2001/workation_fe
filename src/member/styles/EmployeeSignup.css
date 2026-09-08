@@ -6,13 +6,22 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: 85vh;
+  max-height: calc(100vh - 48px);
   border: 1px solid #e1f0e8;
   border-radius: 8px;
   box-shadow: 0 14px 36px #11111124;
 }
 
+.employee-signup-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: inherit;
+}
+
 .employee-signup-modal .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 
