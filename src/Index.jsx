@@ -140,10 +140,15 @@ function Index(props) {
             <div className="dashboard-page">
                 <div className="dashboard-heading">
                     <div>
-                        <h2>{isSuperAdmin ? "최고관리자 대시보드" : isCompanyAdmin ? "대시보드" : "직원 대시보드"}</h2>
+                        <h2>{isSuperAdmin ? "최고관리자 대시보드" : isCompanyAdmin ? "대시보드" : `${dashboardStats.employeeName || ""}님 환영합니다`}</h2>
                         <p>{isSuperAdmin ? "플랫폼 전체 현황을 관리합니다" : isCompanyAdmin ? "소속 회사의 승인 현황을 관리합니다" : "내 워케이션 활동 현황을 확인합니다"}</p>
                     </div>
-                    <button type="button" className="dashboard-logout" onClick={ logoutMember }>로그아웃</button>
+                    <div className="dashboard-heading-actions">
+                        {isEmployee && (
+                            <button type="button" className="dashboard-myinfo" onClick={() => navigate("/employee/my-info")}>내 정보 수정</button>
+                        )}
+                        <button type="button" className="dashboard-logout" onClick={ logoutMember }>로그아웃</button>
+                    </div>
                 </div>
 
                 {isSuperAdmin && (
