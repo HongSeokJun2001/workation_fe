@@ -149,29 +149,44 @@ function Index(props) {
                 {isSuperAdmin && (
                     <>
                         <div className="dashboard-grid">
-                            {renderStatCard("🏠", dashboardStats.facilityCount, "등록 공간")}
+                            {renderStatCard("🏠", dashboardStats.activeFacilityCount, "정상 영업 시설")}
+                            {renderStatCard("⏸", dashboardStats.inactiveFacilityCount, "휴업 시설", "amber")}
                             {renderStatCard("🏢", dashboardStats.companyCount, "고객사", "purple")}
-                            {renderStatCard("👥", dashboardStats.employeeCount, "전체 직원", "blue")}
-                            {renderStatCard("📋", dashboardStats.reservationCount, "전체 예약")}
+                            {renderStatCard("✅", dashboardStats.approvedReservationCount, "예약 완료", "blue")}
                         </div>
-                        <section className="dashboard-panel dashboard-panel-notice">
-                            <h3>⏳ 최초 계정 생성 신청 대기중</h3>
-                            <p>고객사 및 관리자 계정 관리는 상단의 기존 내비게이션 메뉴에서 처리합니다.</p>
+                        <section className="dashboard-panel">
+                            <h3>📢 최근 공지사항</h3>
+                            <div className="dashboard-list">
+                                {(dashboardStats.recentNotices || []).length > 0 ? dashboardStats.recentNotices.map(notice => (
+                                    <button key={notice.noticeId} type="button" onClick={() => navigate(`/notice/detail/${notice.noticeId}`)}>
+                                        <span>{notice.title}</span><strong>보기</strong>
+                                    </button>
+                                )) : <p>등록된 공지사항이 없습니다.</p>}
+                            </div>
                         </section>
                     </>
                 )}
 
                 {isCompanyAdmin && (
                     <>
-                        <div className="dashboard-grid">
+                        <div className="dashboard-grid dashboard-grid-company">
                             {renderStatCard("👥", dashboardStats.employeeCount, "소속 직원")}
                             {renderStatCard("⏳", dashboardStats.pendingEmployeeCount, "승인 대기 직원", "amber")}
                             {renderStatCard("🏕️", dashboardStats.pendingApplicationCount, "워케이션 대기", "blue")}
-                            {renderStatCard("✅", dashboardStats.approvedThisMonthCount, "이달 승인 완료")}
                         </div>
                         <section className="dashboard-panel">
                             <h3>🏕️ 처리 대기 중인 워케이션 신청</h3>
-                            <p>신청 처리는 상단의 기존 워케이션신청내역 메뉴에서 진행합니다.</p>
+                            <div className="dashboard-list">
+                                {(dashboardStats.pendingApplications || []).length > 0 ? dashboardStats.pendingApplications.map(application => (
+                                    <button key={application.workationId} type="button" onClick={() => navigate(`/admin/application/detail/${application.workationId}`)}>
+                                        <span>
+                                            <strong>{application.leaderName} · {application.crewName}</strong>
+                                            <small>{application.facilityName} · {application.startDate} ~ {application.endDate}</small>
+                                        </span>
+                                        <em>승인 대기</em>
+                                    </button>
+                                )) : <p>처리 대기 중인 워케이션 신청이 없습니다.</p>}
+                            </div>
                         </section>
                     </>
                 )}
@@ -183,10 +198,16 @@ function Index(props) {
                             {renderStatCard("⏳", dashboardStats.pendingApplicationCount, "승인 대기 워케이션", "amber")}
                             {renderStatCard("✅", dashboardStats.approvedReservationCount, "승인된 예약 내역", "blue")}
                         </div>
-                        <section className="dashboard-panel dashboard-review-panel">
-                            <h3>후기 작성 가능한 시설</h3>
-                            <strong>{dashboardStats.reviewableFacilityCount ?? 0}</strong>
-                            <span>개</span>
+                        <section className="dashboard-panel">
+                            <h3>✍️ 후기 작성 가능한 시설</h3>
+                            <div className="dashboard-list dashboard-facility-list">
+                                {(dashboardStats.reviewableFacilities || []).length > 0 ? dashboardStats.reviewableFacilities.map(facility => (
+                                    <button key={facility.facilityId} type="button" onClick={() => navigate(`/facility/detail/${facility.facilityId}`)}>
+                                        <span><strong>{facility.facilityName}</strong><small>{facility.region}</small></span>
+                                        <em>후기 작성</em>
+                                    </button>
+                                )) : <p>현재 후기 작성 가능한 시설이 없습니다.</p>}
+                            </div>
                         </section>
                     </>
                 )}
