@@ -91,6 +91,9 @@ function CrewUpdateForm() {
   const updateCrew = async e => {
     e.preventDefault();
 
+    const isConfirm = window.confirm("크루 모집글을 수정하시겠습니까?");
+    if (!isConfirm) return;
+
     if (availableDays != null && Number(crewData.workUsedDays) > availableDays) {
       alert(`작성자의 워케이션 가용일수(${availableDays}일)를 초과할 수 없습니다.`);
       return;

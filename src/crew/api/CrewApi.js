@@ -143,6 +143,14 @@ const selectMyCreatedCrewListApi = () => axios({
     }
 });
 
+const selectMyActiveCreatedCrewListApi = () => axios({
+    url: `${BASE_URL}/mycreated/active`,
+    method: "get",
+    headers: {
+        Authorization: getAuthorization()
+    }
+});
+
 const selectCrewPageApi = crewId => axios({
     url: `${BASE_URL}/position/${crewId}`,
     method: "get",
@@ -212,6 +220,7 @@ export { selectCrewListApi, selectCrewApi, searchCrewListApi, insertCrewApi, upd
     selectCrewMemberNamesApi,
     selectMyCrewListApi,
     selectMyCreatedCrewListApi,
+    selectMyActiveCreatedCrewListApi,
     selectCrewPageApi,
     selectCrewLeaderListApi
 };

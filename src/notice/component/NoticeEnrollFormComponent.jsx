@@ -25,6 +25,8 @@ function NoticeEnrollFormComponent(){
     // 작성하기 버튼 클릭시 실행할 이벤트 핸들러 함수
     const insertNotice = async e => {
         e.preventDefault();
+        const isConfirm = window.confirm("공지사항을 등록하시겠습니까?");
+        if (!isConfirm) return;
         //> 기본이벤트 제거
         try {
             const response = await insertNoticeApi(notice);

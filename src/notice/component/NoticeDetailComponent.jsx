@@ -59,6 +59,9 @@ function NoticeDetailComponent(){
     // 삭제하기 버튼 클릭 시 실행할 이벤트 핸들러 함수
     const deleteNotice = async() => {
 
+        const isConfirm = window.confirm("공지사항을 삭제하시겠습니까?");
+        if (!isConfirm) return;
+
         try{
             const response = await deleteNoticeApi(noticeId);
             if(response.data == "success"){
