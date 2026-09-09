@@ -62,6 +62,7 @@ function FacilityDetailComponent() {
 
     const loginRole = sessionStorage.getItem("loginRole");
     const loginId = sessionStorage.getItem("loginId"); // 댓글 작성자/삭제 권한 확인용 (팀원 구현용)
+    const loginCompanyId = sessionStorage.getItem("companyId");
 
     // ----------------------------------------------------
     // State 관리
@@ -191,9 +192,25 @@ function FacilityDetailComponent() {
     // ----------------------------------------------------
     // 댓글(리뷰) 관련 이벤트 핸들러 (팀원이 백엔드 API 연동할 부분)
     // ----------------------------------------------------
+   
+    const maskText = (text) => {
+        if (!text) return "";
+
+        return text.charAt(0) + "**";
+    };
+    
     const handleReviewChange = (e) => {
         const { name, value } = e.target;
         setNewReview((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleReviewImageChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        setNewReview((prev) => ({
+            ...prev,
+            images: files
+        }));
     };
 
     const handleReviewSubmit = async (e) => {
@@ -209,7 +226,8 @@ function FacilityDetailComponent() {
         try {
                 await insertReviewApi(facilityId, {
                     rating: Number(newReview.rating),
-                    content: newReview.content
+                    content: newReview.content,
+                    images: newReview.images
                 });
 
                 alert("리뷰가 등록되었습니다.");
@@ -385,6 +403,14 @@ function FacilityDetailComponent() {
                             className="review-textarea"
                             rows={3}
                         />
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleReviewImageChange}
+                        />
+
                         <button type="submit" className="btn-review-submit">등록</button>
                     </div>
                 </form>
@@ -395,14 +421,21 @@ function FacilityDetailComponent() {
                         {reviewList.map((review) => (
                             <div key={review.reviewId} className="review-card">
                                 <div className="review-header">
-                                    <span className="review-author">{review.employeeName}</span>
+                                    <span className="review-author">{maskText(review.employeeName)}</span>
                                     <span className="review-stars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
                                     <span className="review-date">{review.createdDate}</span>
                                     
-                                    {/* 본인 작성 댓글이거나 SUPER 관리자일 경우 삭제 버튼 표시 */}
-                                    {(loginId === review.loginId || loginRole === "SUPER") && (
-                                        <button 
-                                            className="btn-review-delete" 
+                                    {/* 본인 작성자, SUPER 관리자, 같은 회사의 COMPANY 관리자일 경우 삭제 버튼 표시 */}
+                                    {(
+                                        loginId === review.loginId
+                                        || loginRole === "SUPER"
+                                        || (
+                                            loginRole === "COMPANY"
+                                            && loginCompanyId === String(review.companyId)
+                                        )
+                                    ) && (
+                                        <button
+                                            className="btn-review-delete"
                                             onClick={() => handleReviewDelete(review.reviewId)}
                                         >
                                             삭제
@@ -417,7 +450,7 @@ function FacilityDetailComponent() {
                                         {review.images.map((img, i) => (
                                             <img 
                                                 key={i} 
-                                                src={img} 
+                                                src={img.startsWith("http") ? img : `${BASE_URL}${img.startsWith("/") ? img : "/" + img}`}
                                                 alt={`후기 이미지 ${i + 1}`} 
                                                 className="review-img" 
                                                 onError={handleImageError} 

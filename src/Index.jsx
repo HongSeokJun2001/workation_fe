@@ -58,6 +58,7 @@ function Index(props) {
             sessionStorage.setItem("tokenType", loginResponse.tokenType);
             sessionStorage.setItem("loginRole", loginResponse.role);
             sessionStorage.setItem("loginId", member.loginId);
+            sessionStorage.setItem("companyId", loginResponse.companyId);
             setAccessToken(loginResponse.accessToken);
             setLoginRole(loginResponse.role);
 
@@ -90,6 +91,7 @@ function Index(props) {
         sessionStorage.removeItem("tokenType");
         sessionStorage.removeItem("loginRole");
         sessionStorage.removeItem("loginId");
+        sessionStorage.removeItem("companyId");
         setAccessToken(null);
         setLoginRole(null);
         setMember({loginId : "", password : "", loginType : "ADMIN"});

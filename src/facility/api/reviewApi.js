@@ -19,10 +19,21 @@ const selectReviewListApi = (facilityId) => {
 // 리뷰 등록
 const insertReviewApi = (facilityId, review) => {
 
+    const formData = new FormData();
+
+    formData.append("rating", review.rating);
+    formData.append("content", review.content);
+
+    if (review.images && review.images.length > 0) {
+        review.images.forEach((file) => {
+            formData.append("upfiles", file);
+        });
+    }
+
     const response = axios({
         url: `${BASE_URL}/facilities/${facilityId}/reviews`,
         method: "post",
-        data: review,
+        data: formData,
         headers: {
             "Authorization": getAuthorization()
         }
