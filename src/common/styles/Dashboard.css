@@ -37,6 +37,24 @@
   cursor: pointer;
 }
 
+.dashboard-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.dashboard-myinfo {
+  padding: 8px 18px;
+  border: 1px solid #0d8a52;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0d8a52;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
