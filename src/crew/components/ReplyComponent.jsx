@@ -54,7 +54,12 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
             
             return; 
         
-        } try { await insertReplyApi(crewId, {
+        }
+
+        const isConfirm = window.confirm("댓글을 등록하시겠습니까?");
+        if (!isConfirm) return;
+
+        try { await insertReplyApi(crewId, {
             replyContent: content.trim(),
             replyPrivate: secret ? "Y" : "N",
             parentReplyId
@@ -74,7 +79,15 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
     };
 
 
+    const handleReplyClick = (reply) => {
+        setParentReplyId(reply.replyId);
+        setSecret(reply.replyPrivate === "Y");
+    };
+
+
     const handleDelete = async (replyId) => { 
+        const isConfirm = window.confirm("댓글을 삭제하시겠습니까?");
+        if (!isConfirm) return;
         
         try { const response = await deleteReplyApi(replyId); 
             
@@ -90,7 +103,11 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
 
 
     const canReadSecret = reply => reply.employee?.loginId === currentLoginId
-        || crewOwnerLoginId === currentLoginId;
+        || crewOwnerLoginId === currentLoginId
+        || reply.parentReply?.employee?.loginId === currentLoginId;
+
+    const parentReply = parentReplyId != null ? replies.find(reply => reply.replyId === parentReplyId) : null;
+    const isParentSecret = parentReply?.replyPrivate === "Y";
 
 
     const children = replyId => replies.filter(reply => reply.parentReply?.replyId === replyId);
@@ -115,7 +132,7 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
                 )}
 
                 {!isChild && (
-                    <button className="reply-text-button" type="button" onClick={() => setParentReplyId(reply.replyId)}>답글</button>
+                    <button className="reply-text-button" type="button" onClick={() => handleReplyClick(reply)}>답글</button>
                 )}
 
                 {children(reply.replyId).map(child => renderReply(child, true))}
@@ -134,14 +151,20 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
                 <textarea
                     value={content}
                     onChange={event => setContent(event.target.value)}
-                    placeholder={parentReplyId ? "대댓글을 입력해주세요." : "댓글을 입력해주세요."}
+                    placeholder={parentReplyId ? "답댓글을 입력해주세요." : "댓글을 입력해주세요."}
                 />
 
-                {parentReplyId && <button className="reply-text-button" type="button" onClick={() => setParentReplyId(null)}>대댓글 취소</button>}
+                {parentReplyId && <button className="reply-text-button" type="button" onClick={() => { setParentReplyId(null); setSecret(false); }}>답댓글 취소</button>}
 
                 <div className="reply-form__bottom">
-                    <label><input type="checkbox" checked={secret} onChange={event => setSecret(event.target.checked)}/> 비밀글</label>
-                    <button className="crew-primary-button" type="button" onClick={handleSubmit}>{parentReplyId ? "대댓글 등록" : "댓글 등록"}</button>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={secret}
+                            onChange={event => setSecret(event.target.checked)}
+                        /> 비밀글
+                    </label>
+                    <button className="crew-primary-button" type="button" onClick={handleSubmit}>{parentReplyId ? "답댓글 등록" : "댓글 등록"}</button>
                 </div>
             </div>
 
@@ -149,5 +172,13 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
         </section>
     );
 }
-function getCurrentLoginId() { const token = sessionStorage.getItem("accessToken"); try { return token ? JSON.parse(atob(token.split(".")[1])).sub : null; } catch { return null; } }
+function getCurrentLoginId() { 
+    const token = sessionStorage.getItem("accessToken"); 
+    
+    try { return token ? JSON.parse(atob(token.split(".")[1])).sub : null; 
+
+
+    } catch { return null; } 
+
+}
 export default ReplyComponent;

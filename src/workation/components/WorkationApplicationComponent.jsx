@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'; 
+import { useState, useEffect, useMemo } from 'react'; 
 import { insertApplicationApi } from "../api/workationApi";
 import { selectFacilityAllListApi } from '../../facility/api/facilityApi';
 import { selectCrewLeaderListApi } from '../../crew/api/CrewApi';
@@ -23,20 +23,8 @@ function WorkationApplicationComponent() {
     const [region, setRegion] = useState(''); 
     const [purpose, setPurpose] = useState('');
 
-    // 1. today 변수를 useMemo로 처리하여 불필요한 매 렌더링 시 계산 방지
+    // 오늘 날짜 (YYYY-MM-DD)
     const today = useMemo(() => new Date().toISOString().split('T')[0], []);
-
-    // 2. 날짜 계산 함수 (타임존 방지를 위한 UTC 오프셋 고려)
-    const addDays = useCallback((dateString, days) => {
-        if (!dateString) return '';
-        const [year, month, day] = dateString.split('-').map(Number);
-        const result = new Date(year, month - 1, day + days);
-        
-        const yyyy = result.getFullYear();
-        const mm = String(result.getMonth() + 1).padStart(2, '0');
-        const dd = String(result.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-    }, []);
 
     useEffect(() => {
         const initData = async () => {
@@ -64,8 +52,8 @@ function WorkationApplicationComponent() {
                 const validCrewList = crewArray.filter(crew => Number(crew.workUsedDays) > 0);
 
                 if (validCrewList.length === 0) {
-                    alert("크루장으로 등록된 크루가 없어 워케이션을 신청할 수 없습니다. 크루를 먼저 생성해 주세요!");
-                    navigate("/lobby");
+                    alert("워케이션 신청 가능한 크루가 존재하지 않습니다.");
+                    navigate("/crew/list");
                     return;
                 }
 
@@ -79,40 +67,34 @@ function WorkationApplicationComponent() {
         initData();
     }, [navigate]);
 
+    // 크루 선택 핸들러 (날짜 자동 계산 로직 제거)
     const handleCrewChange = (e) => {
         const crewId = e.target.value;
         setSelectedCrew(crewId);
 
         const crewObj = crewList.find((crew) => String(crew.crewId) === String(crewId));
         setSelectedCrewInfo(crewObj || null);
-
-        if (crewObj && startDate) {
-            const allowedDays = Number(crewObj.workUsedDays) || 1;
-            setEndDate(addDays(startDate, allowedDays - 1));
-        }
     };
 
+    // 시작일 변경 핸들러
     const handleStartDateChange = (e) => {
         const newStart = e.target.value;
         setStartDate(newStart);
 
-        const allowedDays = Number(selectedCrewInfo?.workUsedDays) || 1;
-        const calculatedEnd = addDays(newStart, allowedDays - 1);
-        setEndDate(calculatedEnd);
+        // 만약 기존 종료일이 새로운 시작일보다 이전이라면 종료일을 초기화하거나 시작일로 맞춤
+        if (endDate && endDate < newStart) {
+            setEndDate(newStart);
+        }
     };
 
+    // 종료일 변경 핸들러
     const handleEndDateChange = (e) => {
         const newEnd = e.target.value;
-        const allowedDays = Number(selectedCrewInfo?.workUsedDays) || 1;
-        let calculatedStart = addDays(newEnd, -(allowedDays - 1));
-
-        if (calculatedStart < today) {
-            setStartDate(today);
-            setEndDate(addDays(today, allowedDays - 1));
-        } else {
-            setStartDate(calculatedStart);
-            setEndDate(newEnd);
+        if (startDate && newEnd < startDate) {
+            alert("종료일은 시작일보다 이전일 수 없습니다.");
+            return;
         }
+        setEndDate(newEnd);
     };  
 
     const handleSubmit = async (e) => {
@@ -126,7 +108,6 @@ function WorkationApplicationComponent() {
             alert("예약 날짜를 선택해주세요.");
             return;
         }
-        // 시설 선택이 없을 시 희망 지역 입력 여부 검증 추가
         if (!selectedFacility && !region.trim()) {
             alert("시설을 선택하지 않은 경우 희망 지역을 입력해야 합니다.");
             return;
@@ -197,8 +178,8 @@ function WorkationApplicationComponent() {
 
                                         {selectedCrewInfo && (
                                             <div className="form-info-text">
-                                                <strong>{selectedCrewInfo.crewName}</strong> 크루 신청 시, 
-                                                <strong> {selectedCrewInfo.workUsedDays}일</strong> 동안 예약할 수 있습니다.
+                                                <strong>{selectedCrewInfo.crewName}</strong> 크루의 부여 일수: 
+                                                <strong> {selectedCrewInfo.workUsedDays}일</strong>
                                             </div>
                                         )}
                                     </td>
@@ -236,7 +217,7 @@ function WorkationApplicationComponent() {
                                             <input 
                                                 type="date" 
                                                 className="form-control" 
-                                                min={startDate || today} // 시작일 이전 날짜 선택 불가능하도록 보완
+                                                min={startDate || today} 
                                                 value={endDate} 
                                                 onChange={handleEndDateChange} 
                                                 disabled={!selectedCrew || !startDate}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useEffectEvent } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import CrewItemComponent from "./CrewItemComponent";
-import { selectCrewListApi, searchCrewListApi, joinCrewApi, leaveCrewApi, selectMyCrewListApi, selectMyCreatedCrewListApi, selectCrewPageApi, selectCrewMemberNamesApi } from "../api/CrewApi";
+import { selectCrewListApi, searchCrewListApi, joinCrewApi, leaveCrewApi, selectMyCrewListApi, selectMyCreatedCrewListApi, selectMyActiveCreatedCrewListApi, selectCrewPageApi, selectCrewMemberNamesApi } from "../api/CrewApi";
 import { selectMyEmployeeDetailApi } from "../../member/api/memberApi";
 import "../styles/CrewCommunity.css";
 
@@ -86,7 +86,7 @@ function CrewListComponents() {
 
         }).catch(() => setJoinedCrewDetails([]));
 
-        selectMyCreatedCrewListApi()
+        selectMyActiveCreatedCrewListApi()
             .then(response => setCreatedCrews(Array.isArray(response.data) ? response.data : []))
             .catch(() => setCreatedCrews([]));
     
@@ -167,12 +167,14 @@ function CrewListComponents() {
 
     // 크루 참여 함수
     const handleJoin = async crewId => { 
+        const isConfirm = window.confirm("크루에 가입 하시겠습니까?");
+        if (!isConfirm) return;
         
         try { const response = await joinCrewApi(crewId); 
             
             if (response.data == "success") { 
                 
-                alert("크루 신청 성공"); 
+                alert("크루 가입 성공"); 
                 
                 setJoinedCrews(prev => [...prev, crewId]); 
                 
@@ -180,17 +182,19 @@ function CrewListComponents() {
                 
                 if (joinedCrew) setJoinedCrewDetails(prev => [...prev, joinedCrew]); 
             
-                } else alert(response.data || "크루 신청 실패");
+                } else alert(response.data || "크루 가입 실패");
                 
                 } catch(error) {
-                    alert(error.response?.data || "크루 신청에 실패했습니다.");
-                    console.log("크루 신청 ajax 통신 실패", error);
+                    alert(error.response?.data || "크루 가입에 실패했습니다.");
+                    console.log("크루 가입 ajax 통신 실패", error);
                 } };
 
 
 
     // 크루 탈퇴 함수
     const handleLeave = async crewId => { 
+        const isConfirm = window.confirm("크루에서 탈퇴하시겠습니까?");
+        if (!isConfirm) return;
         
         try { const response = await leaveCrewApi(crewId); 
             
@@ -269,7 +273,7 @@ function CrewListComponents() {
 
             <div className="crew-toolbar">
                 <form className="crew-search" onSubmit={handleClick}>
-                    <input type="search" name="keyword" value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="크루명을 검색해주세요." />
+                    <input type="search" name="keyword" value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="🔎 크루명 또는 회사명을 검색해주세요." />
                     <select value={sort} onChange={e => setSearchParams({ cpage: 1, keyword: searchKeyword, sort: e.target.value })} aria-label="정렬 기준">
                         <option value="createdDate">등록순</option>
                         <option value="endDate">마감일 순</option>
@@ -280,7 +284,7 @@ function CrewListComponents() {
             </div>
 
             {createdCrews.length > 0 && <section>
-                <h3 className="crew-section-title">내가 모집하는 크루 <span>{createdCrews.length}개</span></h3>
+                <h3 className="crew-section-title">🚩 내가 모집하는 크루 <span>{createdCrews.length}개</span></h3>
                 <div className="crew-joined-list">
                     {createdCrews.slice(0, showAllCreated ? createdCrews.length : 3).map(crew => <div className="crew-joined-card crew-joined-card--link" key={crew.crewId}
                         onClick={() => openCreatedCrew(crew.crewId)}>
@@ -297,7 +301,7 @@ function CrewListComponents() {
             </section>}
 
             {joinedOnlyDetails.length > 0 && <section>
-                <h3 className="crew-section-title">내가 가입한 크루 <span>{joinedOnlyDetails.length}개</span></h3>
+                <h3 className="crew-section-title">💌 내가 가입한 크루 <span>{joinedOnlyDetails.length}개</span></h3>
                 <div className="crew-joined-list">
                     {joinedOnlyDetails.slice(0, showAllJoined ? joinedOnlyDetails.length : 3).map(crew => <div className="crew-joined-card" key={crew.crewId}>
                         <div><strong>{crew.crewName}</strong><p>{crew.company?.companyName ?? "회사 미등록"}</p><p>마감일 {crew.endDate?.substring(0, 10) ?? "-"}</p><span>모집 정원 {memberCounts[crew.crewId] ?? 0}/{crew.capacity ?? "-"}명</span></div>
@@ -308,7 +312,7 @@ function CrewListComponents() {
             </section>}
 
             <section>
-                <h3 className="crew-section-title">모집 중인 크루 <span>{activeCrewCount}개</span></h3>
+                <h3 className="crew-section-title">📍 모집 중인 크루 <span>{activeCrewCount}개</span></h3>
                 <div className="crew-card-grid">
                     {crews.length > 0 ? crews.map(crew => <CrewItemComponent
                         key={crew.crewId}

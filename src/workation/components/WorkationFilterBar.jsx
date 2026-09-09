@@ -6,7 +6,7 @@ import "../styles/WorkationList.css";
 const DEFAULT_STATUS_OPTIONS = [
   { label: '전체 상태', value: 'ALL' },
   { label: '신청 대기', value: 'APPLY' },
-  { label: '승인 완료', value: 'CONFIRM' },
+  { label: '예약 완료', value: 'CONFIRM' },
   { label: '반려/취소', value: 'CANCELLED' },
   { label: '예약 종료', value: 'COMPLETED' }
 ];

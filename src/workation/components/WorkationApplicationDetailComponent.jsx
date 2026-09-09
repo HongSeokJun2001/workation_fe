@@ -147,7 +147,19 @@ function WorkationApplicationDetailComponent() {
               </tr>
               <tr>
                 <th className="info-label">크루장</th>
-                <td className="info-value">{application.leaderName || "-"}</td>
+                <td className="info-value">
+                  {application.leaderId ? (
+                    <span 
+                      className="click-link"
+                      onClick={() => navigate(`/admin/company/member/employee/${application.leaderId}`)}
+                      title="직원 상세 정보 보기"
+                    >
+                      {application.leaderName || "-"}
+                    </span>
+                  ) : (
+                    application.leaderName || "-"
+                  )}
+                </td>
               </tr>
               <tr>
                 <th className="info-label">예약 날짜</th>
@@ -157,7 +169,17 @@ function WorkationApplicationDetailComponent() {
               </tr>
               <tr>
                 <th className="info-label">시설 및 지역</th>
-                <td className="info-value">{facilityInfo}</td>
+                <td className="info-value">{application.facilityName ? (
+                    <span 
+                      className="click-link"
+                      onClick={() => navigate(`/facility/detail/${application.facilityId}`)}
+                      title="시설 상세 정보 보기"
+                    >
+                      {application.facilityName}
+                    </span>
+                  ) : (
+                    facilityInfo
+                  )}</td>
               </tr>
               <tr>
                 <th className="info-label">목적</th>
