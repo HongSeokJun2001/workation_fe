@@ -50,6 +50,9 @@ function NoticeUpdateFormComponent(){
     const updateNotice = async e => { 
         
         e.preventDefault(); 
+
+        const isConfirm = window.confirm("공지사항을 수정하시겠습니까?");
+        if (!isConfirm) return;
         
         try { const payload = {...notice,noticeId,status: notice.status || "Y"}; 
         

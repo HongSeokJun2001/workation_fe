@@ -71,6 +71,9 @@ function CrewItemComponent(props) {
 
     // 크루 글 삭제 실행 구문 
     const deleteCrew = async () => {
+        const isConfirm = window.confirm("크루 모집글을 삭제하시겠습니까?");
+        if (!isConfirm) return;
+
         try{
             const response = await deleteCrewApi(item.crewId);
             console.log(response.data);
