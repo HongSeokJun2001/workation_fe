@@ -17,3 +17,14 @@
   font-size: 16px;
   color: var(--text-medium);
 }
+
+.click-link {
+  cursor: pointer;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.click-link:hover {
+  color: #2b6cb0; /* Hover 시 변경될 색상 (원하는 색상으로 변경 가능) */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
