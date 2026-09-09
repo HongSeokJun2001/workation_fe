@@ -153,9 +153,9 @@ function MemberDetailComponent({ memberType, selfMode }) {
             } else if (isEmployee) {
                 await updateEmployeeApi(targetId, requestBody);
             } else if (isSuperAdmin) {
-                await updateSuperAdminApi(member.adminId, requestBody);
+                await updateSuperAdminApi(targetId, requestBody);
             } else {
-                await updateCompanyAdminApi(member.adminId, requestBody);
+                await updateCompanyAdminApi(targetId, requestBody);
             }
 
             alert("정보가 변경되었습니다.");
