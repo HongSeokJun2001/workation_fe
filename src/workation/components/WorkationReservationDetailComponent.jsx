@@ -146,9 +146,17 @@ function WorkationReservationDetailComponent() {
                             </tr>
                             <tr>
                                 <th className="info-label">시설 및 지역</th>
-                                <td className="info-value">
-                                    {facilityInfo}
-                                </td>
+                                <td className="info-value">{application.facilityName ? (
+                                    <span 
+                                    className="click-link"
+                                    onClick={() => navigate(`/facility/detail/${application.facilityId}`)}
+                                    title="시설 상세 정보 보기"
+                                    >
+                                    {application.facilityName}
+                                    </span>
+                                ) : (
+                                    facilityInfo
+                                )}</td>
                             </tr>
                             <tr>
                                 <th className="info-label">목적</th>
