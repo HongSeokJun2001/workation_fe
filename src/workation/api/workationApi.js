@@ -84,6 +84,23 @@ const cancelApplicationApi = (workationId, reason) => {
     return response;
 }
 
+const userCancelApplicationApi = (workationId, reason) => {
+
+    const response = axios ({
+
+        url : `${BASE_URL}/user/cancel/${workationId}`,
+        method : "PUT", 
+        data: { reason },
+        headers: {
+            "Authorization": getAuthorization()
+        }
+
+    });
+
+    return response;
+}
+
+
 
 const getReservationListApi = async (cpage, filters = {}) => {
   const response = await axios({
@@ -140,4 +157,5 @@ export {getApplicationListApi,
         cancelApplicationApi, 
         getReservationListApi, 
         getReservationDetailApi, 
-        cancelReservationApi};
+        cancelReservationApi,
+        userCancelApplicationApi};

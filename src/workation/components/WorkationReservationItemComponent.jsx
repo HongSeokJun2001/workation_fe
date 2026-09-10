@@ -16,19 +16,18 @@ function WorkationReservationItemComponent({ item }) {
   };
 
   // 예약상태 배지 및 텍스트 분기 처리
-  let statusInfo = "신청 대기";
-  let statusBadgeClass = "badge-status-pending";
-
-  if (item?.status === "CONFIRM") {
-    statusInfo = "예약 완료";
-    statusBadgeClass = "badge-status-active";
-  } else if (item?.status === "CANCELLED") {
-    statusInfo = "예약 취소";
-    statusBadgeClass = "badge-status-locked";
-  } else if (item?.status === "COMPLETED") {
-    statusInfo = "이용 완료";
-    statusBadgeClass = "badge-status-active";
-  }
+  const getStatusBadge = (status) => {
+        switch (status) {
+            case "CONFIRM":
+                return <span className="badge badge-status-active">예약 완료</span>;
+            case "CANCELLED":
+                return <span className="badge badge-status-locked">워케이션 취소</span>;
+            case "COMPLETED":
+                return <span className="badge badge-role-admin">워케이션 완료</span>;
+            default:
+                return <span className="badge badge-status-pending">신청 대기</span>;
+        }
+    };
 
   // 시설 및 장소 처리
   let facilityInfo = "-";
@@ -45,23 +44,29 @@ function WorkationReservationItemComponent({ item }) {
         navigate(`/reservation/detail/${item.workationId}`);
       }}
     >
-      <td>{item?.crewName || "-"}</td>
+      {/* 크루 이름 */}
+        <td className="member-name">{item?.crewName || "-"}</td>
 
-      <td>{item?.leaderName || "-"}</td>
+        {/* 크루장 */}
+        <td>{item?.leaderName || "-"}</td>
 
-      <td>
-        {item?.startDate && item?.endDate
-          ? `${formatDate(item.startDate)} ~ ${formatDate(item.endDate)}`
-          : "일정 미정"}
-      </td>
+        {/* 신청 기간 */}
+        <td>
+            {item?.startDate && item?.endDate 
+                ? `${formatDate(item.startDate)} ~ ${formatDate(item.endDate)}` 
+                : "일정 미정"}
+        </td>
 
-      <td>{facilityInfo}</td>
+        {/* 시설 및 장소 */}
+        <td>{facilityInfo}</td>
 
-      <td>{formatDate(item?.createdDate)}</td>
+        {/* 예약 신청일 */}
+        <td className="member-empno">{formatDate(item?.createdDate)}</td>
 
-      <td>
-        <span className={`badge ${statusBadgeClass}`}>{statusInfo}</span>
-      </td>
+        {/* 예약 상태 (배지 스타일 적용) */}
+        <td>
+            {getStatusBadge(item?.status)}
+        </td>
     </tr>
   );
 }

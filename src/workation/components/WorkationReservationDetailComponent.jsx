@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { cancelReservationApi, getReservationDetailApi } from "../api/workationApi";
+import { userCancelApplicationApi, cancelReservationApi, getReservationDetailApi } from "../api/workationApi";
 import '../styles/WorkationCommon.css';
 import "../styles/WorkationDetail.css"; 
 
@@ -98,10 +98,19 @@ function WorkationReservationDetailComponent() {
         }
 
         try {
-            const response = await cancelReservationApi(workationId, reason);
-            if( response.data === "success" || response.data === 1 ){
+            let response = "";
+            if (application.status === "APPLY") {
+                response = await userCancelApplicationApi(workationId, reason);
+                if (response.data === "success" || response.data === 1) {
+                alert("워케이션 취소가 완료되었습니다.");
+                navigate("/reservation/list");
+                }
+            } else {
+                response = await cancelReservationApi(workationId, reason);
+                if (response.data === "success" || response.data === 1) {
                 alert("예약 취소가 완료되었습니다.");
                 navigate("/reservation/list");
+                }
             }
         } catch (error) {
             console.error("취소 실패:", error);
@@ -196,7 +205,7 @@ function WorkationReservationDetailComponent() {
                             </button> 
                         </div>
                         <div className="right-group">
-                            {application?.status === "CONFIRM" && application?.isleader && (
+                            {(application?.status === "CONFIRM" || application?.status === "APPLY") && application?.isleader && (
                                 <button 
                                 type="button" 
                                 className="btn-detail btn-danger"
