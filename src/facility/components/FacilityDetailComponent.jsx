@@ -1,4 +1,4 @@
-import { selectReviewListApi } from "../api/reviewApi";
+import { selectReviewListApi, insertReviewApi, deleteReviewApi } from "../api/reviewApi";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { selectFacilityApi, deleteFacilityApi, BASE_URL } from "../api/facilityApi";
@@ -61,7 +61,8 @@ function FacilityDetailComponent() {
     };
 
     const loginRole = sessionStorage.getItem("loginRole");
-    const loginMemberId = sessionStorage.getItem("loginMemberId"); // 댓글 작성자/삭제 권한 확인용 (팀원 구현용)
+    const loginId = sessionStorage.getItem("loginId"); // 댓글 작성자/삭제 권한 확인용 (팀원 구현용)
+    const loginCompanyId = sessionStorage.getItem("companyId");
 
     // ----------------------------------------------------
     // State 관리
@@ -112,7 +113,17 @@ function FacilityDetailComponent() {
         const fetchReviews = async () => {
             try {
                 const response = await selectReviewListApi(facilityId);
-                setReviewList(response.data);
+
+                const reviews = [...response.data];
+
+                reviews.sort((a, b) => {
+                    if (a.loginId === loginId) return -1;
+                    if (b.loginId === loginId) return 1;
+                    return 0;
+                });
+
+                setReviewList(reviews);
+
             } catch (error) {
                 console.log("리뷰 목록 조회 실패!", error);
             }
@@ -181,32 +192,96 @@ function FacilityDetailComponent() {
     // ----------------------------------------------------
     // 댓글(리뷰) 관련 이벤트 핸들러 (팀원이 백엔드 API 연동할 부분)
     // ----------------------------------------------------
+   
+    const maskText = (text) => {
+        if (!text) return "";
+
+        return text.charAt(0) + "**";
+    };
+    
     const handleReviewChange = (e) => {
         const { name, value } = e.target;
         setNewReview((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleReviewImageChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        setNewReview((prev) => ({
+            ...prev,
+            images: files
+        }));
+    };
+
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
         if (!newReview.content.trim()) {
-            alert("댓글 내용을 입력해 주세요.");
+            alert("리뷰 내용을 입력해 주세요.");
             return;
         }
 
         // TODO (팀원 구현 영역): 댓글 등록 API 요청 처리 (Axios)
         // const formData = new FormData(); ...
         
-        console.log("등록할 댓글 데이터:", newReview);
-        alert("댓글 등록 스텁 함수입니다. 백엔드 API를 연동해 주세요.");
-        setNewReview({ rating: 5, content: "", images: [] });
+        try {
+                await insertReviewApi(facilityId, {
+                    rating: Number(newReview.rating),
+                    content: newReview.content,
+                    images: newReview.images
+                });
+
+                alert("리뷰가 등록되었습니다.");
+
+                const response = await selectReviewListApi(facilityId);
+
+                const reviews = [...response.data];
+
+                reviews.sort((a, b) => {
+                    if (a.loginId === loginId) return -1;
+                    if (b.loginId === loginId) return 1;
+                    return 0;
+                });
+
+                setReviewList(reviews);
+
+                setNewReview({
+                    rating: 5,
+                    content: "",
+                    images: []
+                });
+
+            } catch (error) {
+                console.log("리뷰 등록 실패!", error);
+
+                if (error.response?.data) {
+                    alert(error.response.data);
+                } else {
+                    alert("리뷰 등록에 실패했습니다.");
+                }
+            }
     };
 
     const handleReviewDelete = async (reviewId) => {
-        if (!window.confirm("이 댓글을 삭제하시겠습니까?")) return;
+        if (!window.confirm("이 리뷰를 삭제하시겠습니까?")) return;
 
-        // TODO (팀원 구현 영역): 댓글 삭제 API 요청 처리
-        console.log("삭제할 리뷰 ID:", reviewId);
-        setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId));
+        try {
+            await deleteReviewApi(reviewId);
+
+            alert("리뷰가 삭제되었습니다.");
+
+            setReviewList((prev) =>
+                prev.filter((item) => item.reviewId !== reviewId)
+            );
+
+        } catch (error) {
+            console.log("리뷰 삭제 실패!", error);
+
+            if (error.response?.data) {
+                alert(error.response.data);
+            } else {
+                alert("리뷰 삭제에 실패했습니다.");
+            }
+        }
     };
 
     return (
@@ -328,6 +403,14 @@ function FacilityDetailComponent() {
                             className="review-textarea"
                             rows={3}
                         />
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleReviewImageChange}
+                        />
+
                         <button type="submit" className="btn-review-submit">등록</button>
                     </div>
                 </form>
@@ -338,14 +421,21 @@ function FacilityDetailComponent() {
                         {reviewList.map((review) => (
                             <div key={review.reviewId} className="review-card">
                                 <div className="review-header">
-                                    <span className="review-author">{review.employeeName}</span>
+                                    <span className="review-author">{maskText(review.employeeName)}</span>
                                     <span className="review-stars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
                                     <span className="review-date">{review.createdDate}</span>
                                     
-                                    {/* 본인 작성 댓글이거나 SUPER 관리자일 경우 삭제 버튼 표시 */}
-                                    {(loginMemberId === review.memberId || loginRole === "SUPER") && (
-                                        <button 
-                                            className="btn-review-delete" 
+                                    {/* 본인 작성자, SUPER 관리자, 같은 회사의 COMPANY 관리자일 경우 삭제 버튼 표시 */}
+                                    {(
+                                        loginId === review.loginId
+                                        || loginRole === "SUPER"
+                                        || (
+                                            loginRole === "COMPANY"
+                                            && loginCompanyId === String(review.companyId)
+                                        )
+                                    ) && (
+                                        <button
+                                            className="btn-review-delete"
                                             onClick={() => handleReviewDelete(review.reviewId)}
                                         >
                                             삭제
@@ -360,7 +450,7 @@ function FacilityDetailComponent() {
                                         {review.images.map((img, i) => (
                                             <img 
                                                 key={i} 
-                                                src={img} 
+                                                src={img.startsWith("http") ? img : `${BASE_URL}${img.startsWith("/") ? img : "/" + img}`}
                                                 alt={`후기 이미지 ${i + 1}`} 
                                                 className="review-img" 
                                                 onError={handleImageError} 

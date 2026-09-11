@@ -122,7 +122,7 @@ function CrewEnrollFormComponent() {
         <div className="crew-field">
           <label htmlFor="crew-capacity">모집 인원 (명)</label>
           <input id="crew-capacity" type="number" name="capacity" value={crewData.capacity} 
-            onChange={handleChange} min="2" required />
+            onChange={handleChange} min="1" required />
             </div>
 
         <div className="crew-field"><label htmlFor="crew-days">워케이션 가용 일자 (일)</label><input id="crew-days" type="number" name="workUsedDays" value={crewData.workUsedDays || ""} onChange={handleChange} min="1" max={availableDays ?? undefined} step="1" required /><small>작성자 가용일수: {availableDays == null ? "확인 중" : `${availableDays}일`}</small></div>

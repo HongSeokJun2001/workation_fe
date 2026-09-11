@@ -16,4 +16,44 @@ const selectReviewListApi = (facilityId) => {
     return response;
 };
 
-export { selectReviewListApi };
+// 리뷰 등록
+const insertReviewApi = (facilityId, review) => {
+
+    const formData = new FormData();
+
+    formData.append("rating", review.rating);
+    formData.append("content", review.content);
+
+    if (review.images && review.images.length > 0) {
+        review.images.forEach((file) => {
+            formData.append("upfiles", file);
+        });
+    }
+
+    const response = axios({
+        url: `${BASE_URL}/facilities/${facilityId}/reviews`,
+        method: "post",
+        data: formData,
+        headers: {
+            "Authorization": getAuthorization()
+        }
+    });
+
+    return response;
+};
+
+// 리뷰 삭제
+const deleteReviewApi = (reviewId) => {
+
+    const response = axios({
+        url: `${BASE_URL}/reviews/${reviewId}`,
+        method: "delete",
+        headers: {
+            "Authorization": getAuthorization()
+        }
+    });
+
+    return response;
+};
+
+export { selectReviewListApi, insertReviewApi, deleteReviewApi };
