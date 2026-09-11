@@ -17,8 +17,6 @@ function NoticeItemComponent(props){
     <tr onClick={()=>{navigate(`/notice/detail/${item.noticeId}`);}}>
             <td>{item.noticeId}</td>
             <td>{item.noticeTitle}</td>
-            {/* 여기 시설로 수정  */}
-            {/* <td>{item.admin?.adminId ?? "-"}</td> */}
             <td>관리자</td>
             {/* 작성자 테이블 확인 필요 */}
             <td>{item.viewCount}</td>
