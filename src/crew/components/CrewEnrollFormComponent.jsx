@@ -84,19 +84,22 @@ function CrewEnrollFormComponent() {
       }else{
         // > 크루 글 작성 실패
 
-        alert("글 작성 실패");
+        alert("크루 모집 글 작성에 실패하셨습니다. 다시 시도해주세요.");
         console.log("작성 실패!");
 
       }
 
     }catch(error){
+      const errorMessage = error.response?.data?.message
+        || error.response?.data?.error
+        || error.response?.data
+        || "크루 모집 글 작성에 실패하셨습니다. 다시 시도해주세요.";
 
+      alert(errorMessage);
       console.log("크루 모집 글 작성 ajax 실패 !");
-       console.log(error);
-        console.log(error.response);
-        console.log(error.response?.data);
-
-
+      console.log(error);
+      console.log(error.response);
+      console.log(error.response?.data);
     }
 
   };

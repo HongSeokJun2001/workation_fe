@@ -2,12 +2,26 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { selectNoticeApi, selectNoticeNavigationApi, deleteNoticeApi } from "../api/noticeApi";
 import "../styles/Notice.css";
+
+const decodeEscapedText = (text) => {
+    if (typeof text !== "string") return "";
+
+    return text
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x27;/g, "'");
+};
+
 function NoticeDetailComponent(){
 
     const loginRole = sessionStorage.getItem("loginRole");
     const canManageNotice = loginRole === "SUPER";
 
     //실행할 구문
+    
     //pahtVariable 방식으로 얻어온 글번호 셋팅
     const { noticeId } = useParams();
 
@@ -80,13 +94,13 @@ function NoticeDetailComponent(){
     return (
         <main className="notice-page">
             <article className="notice-detail">
-                <h2 className="notice-detail__title">{notice.noticeTitle}</h2>
+                <h2 className="notice-detail__title">{decodeEscapedText(notice.noticeTitle)}</h2>
                 <div className="notice-detail__meta"><span>작성자 관리자</span><span>작성일 {notice.createDate?.substring(0, 10) || "-"}</span><span>조회수 {notice.viewCount ?? 0}</span></div>
-                <div className="notice-detail__content">{notice.noticeContent}</div>
+                <div className="notice-detail__content">{decodeEscapedText(notice.noticeContent)}</div>
             </article>
             <nav className="notice-navigation" aria-label="공지사항 이전 다음 글">
-                {navigation.previous ? <button type="button" onClick={() => navigate(`/notice/detail/${navigation.previous.noticeId}`)}><span>이전글</span><strong>{navigation.previous.noticeTitle}</strong></button> : <span className="notice-navigation__empty">이전글이 없습니다.</span>}
-                {navigation.next ? <button type="button" onClick={() => navigate(`/notice/detail/${navigation.next.noticeId}`)}><span>다음글</span><strong>{navigation.next.noticeTitle}</strong></button> : <span className="notice-navigation__empty">다음글이 없습니다.</span>}
+                {navigation.previous ? <button type="button" onClick={() => navigate(`/notice/detail/${navigation.previous.noticeId}`)}><span>이전글</span><strong>{decodeEscapedText(navigation.previous.noticeTitle)}</strong></button> : <span className="notice-navigation__empty">이전글이 없습니다.</span>}
+                {navigation.next ? <button type="button" onClick={() => navigate(`/notice/detail/${navigation.next.noticeId}`)}><span>다음글</span><strong>{decodeEscapedText(navigation.next.noticeTitle)}</strong></button> : <span className="notice-navigation__empty">다음글이 없습니다.</span>}
             </nav>
             <div className="notice-actions">
                 <button className="crew-secondary-button" type="button" onClick={() => navigate("/admin/notice/list")}>목록으로</button>

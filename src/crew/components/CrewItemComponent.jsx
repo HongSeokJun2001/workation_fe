@@ -4,6 +4,18 @@ import { deleteCrewApi, selectCrewMemberNamesApi } from "../api/CrewApi";
 import { selectReplyList } from "../api/ReplyApi";
 import "../styles/CrewCommunity.css";
 
+const decodeEscapedText = (text) => {
+    if (typeof text !== "string") return "";
+
+    return text
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x27;/g, "'");
+};
+
 function CrewItemComponent(props) {
 
     const item = props.item;
@@ -96,7 +108,7 @@ function CrewItemComponent(props) {
                 <span className={`crew-status${isClosed || isFull ? " crew-status--closed" : ""}`}>{displayStatus}</span>
             </div>
             <p className="crew-card__company"> 🏢 {item.company?.companyName ?? "회사 미등록"} | 👑 크루장 {item.employee?.employeeName ?? "-"}</p>
-            <p className="crew-card__description">{item.crewContent || "소개 내용이 없습니다."}</p>
+            <p className="crew-card__description">{decodeEscapedText(item.crewContent) || "소개 내용이 없습니다."}</p>
             <div className="crew-card__meta">
                 <span>📆 마감 {item.endDate?.substring(0, 10) ?? "-"}</span>
                 <span>🙋🏻‍♀️ 모집 정원 {memberCount}/{item.capacity ?? "-"}명</span>

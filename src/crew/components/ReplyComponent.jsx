@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { deleteReplyApi, insertReplyApi, selectReplyList } from "../api/ReplyApi";
 
+const decodeEscapedText = (text) => {
+    if (typeof text !== "string") return "";
+
+    return text
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x27;/g, "'");
+};
+
 function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
 
     const [replies, setReplies] = useState([]); 
@@ -93,9 +105,14 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
             
             if (response.data !== "success") throw new Error(); 
             
-            const nextReplies = replies.filter(reply => reply.replyId !== replyId);
+            const nextReplies = replies.map(reply =>
+                reply.replyId === replyId
+                    ? { ...reply, replyContent: "[삭제된 댓글입니다.]", status: "DELETED", isDeleted: true }
+                    : reply
+            );
+
             setReplies(nextReplies);
-            onReplyCountChange?.(nextReplies.length);
+            onReplyCountChange?.(nextReplies.filter(reply => reply.status !== "DELETED" && !reply.isDeleted).length);
             
             showToast("댓글이 삭제되었습니다."); 
         
@@ -117,6 +134,7 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
         
         const isSecret = reply.replyPrivate === "Y";
         const visible = !isSecret || canReadSecret(reply);
+        const isDeleted = reply.isDeleted || reply.status === "DELETED";
 
         return (
             <div className={`reply-item${isChild ? " reply-item--child" : ""}`} key={reply.replyId}>
@@ -125,13 +143,19 @@ function ReplyComponent({ crewId, crewOwnerLoginId, onReplyCountChange }) {
                     <span> {reply.createdDate?.substring(0, 10)}</span>
                 </div>
 
-                <p>{visible ? `${isSecret ? "🔒" : ""}${reply.replyContent}` : "🔒비밀 댓글 입니다."}</p>
+                <p>
+                    {isDeleted
+                        ? "[삭제된 댓글입니다.]"
+                        : visible
+                            ? `${isSecret ? "🔒" : ""}${decodeEscapedText(reply.replyContent)}`
+                            : "🔒비밀 댓글 입니다."}
+                </p>
 
-                {reply.employee?.loginId === currentLoginId && (
+                {!isDeleted && reply.employee?.loginId === currentLoginId && (
                     <button className="reply-text-button" type="button" onClick={() => handleDelete(reply.replyId)}>삭제</button>
                 )}
 
-                {!isChild && (
+                {!isDeleted && !isChild && (
                     <button className="reply-text-button" type="button" onClick={() => handleReplyClick(reply)}>답글</button>
                 )}
 

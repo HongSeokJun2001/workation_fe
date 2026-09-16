@@ -32,7 +32,9 @@ function NoticeListComponent(){
                 
                 const items = response.data?.list || []; 
                 
-                setDataList(items.map((item,index) => <NoticeItemComponent key={item.noticeId ?? index} item={item}/>)); 
+                setDataList(items.map((item,index) => 
+                
+                <NoticeItemComponent key={item.noticeId ?? index} item={item}/>)); 
                 
                 const pageInfo = response.data?.pi; 
                 
@@ -43,17 +45,20 @@ function NoticeListComponent(){
                         disabled={cpage === 1} onClick={() => setSearchParams({ cpage: cpage - 1 })}>&lt;</button>); 
                         
                         for (let p = pageInfo.startPage; p <= pageInfo.endPage; p++) btnArr.push(<button key={p} 
-                            className={cpage === p ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"} onClick={() => setSearchParams({ cpage: p })}>
+                            className={cpage === p ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"}
+                            disabled={cpage === p}
+                            aria-current={cpage === p ? "page" : undefined}
+                            onClick={() => setSearchParams({ cpage: p })}>
                                 
                                 {p}</button>); 
                                 
-                                btnArr.push(<button key="next" className={cpage === pageInfo.maxPage ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"} 
-                                    
-                                    disabled={cpage === pageInfo.maxPage || pageInfo.maxPage === 0} 
-                                    
-                                    onClick={() => setSearchParams({ cpage: cpage + 1 })}>&gt;</button>); 
-                                    
-                                    setPageList(btnArr); } 
+                            btnArr.push(<button key="next" className={cpage === pageInfo.maxPage ? "btn btn-info btn-sm" : "btn btn-outline-info btn-sm"} 
+                                
+                                disabled={cpage === pageInfo.maxPage || pageInfo.maxPage === 0} 
+                                
+                                onClick={() => setSearchParams({ cpage: cpage + 1 })}>&gt;</button>); 
+                                
+                                setPageList(btnArr); } 
                                 
             } catch { console.log("공지사항 목록 조회용 ajax 통신 실패"); } }; 
                                     
@@ -66,8 +71,14 @@ function NoticeListComponent(){
     return (
         <main className="notice-page">
             <section className="notice-hero">
-                <div><p className="notice-eyebrow">WORKATION NOTICE</p><h2>공지사항</h2><p>워케이션 서비스의 새로운 소식을 확인하세요.</p></div>
-                {canManageNotice && <button className="crew-primary-button" type="button" onClick={() => navigate("/notice/enroll")}>글 작성</button>}
+                <div><p className="notice-eyebrow">WORKATION NOTICE</p>
+
+                <h2>공지사항</h2>
+
+                <p>워케이션 서비스의 새로운 소식을 확인하세요.</p></div>
+
+                {canManageNotice && <button className="crew-primary-button" type="button" 
+                onClick={() => navigate("/notice/enroll")}>글 작성</button>}
             </section>
 
             <div className="notice-table-wrap">
