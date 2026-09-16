@@ -42,26 +42,26 @@ function WorkationItemComponent({ item }) {
             }}
         >
             {/* 크루 이름 */}
-            <td className="member-name">{item?.crewName || "-"}</td>
+            <td className="member-name ellipsis-cell">{item?.crewName || "-"}</td>
 
             {/* 크루장 */}
-            <td>{item?.leaderName || "-"}</td>
+            <td className="ellipsis-cell">{item?.leaderName || "-"}</td>
 
             {/* 신청 기간 */}
-            <td>
+            <td className="ellipsis-cell">
                 {item?.startDate && item?.endDate 
                     ? `${formatDate(item.startDate)} ~ ${formatDate(item.endDate)}` 
                     : "일정 미정"}
             </td>
 
             {/* 시설 및 장소 */}
-            <td>{facilityInfo}</td>
+            <td className="ellipsis-cell">{facilityInfo}</td>
 
             {/* 예약 신청일 */}
-            <td className="member-empno">{formatDate(item?.createdDate)}</td>
+            <td className="member-empno ellipsis-cell">{formatDate(item?.createdDate)}</td>
 
             {/* 예약 상태 (배지 스타일 적용) */}
-            <td>
+            <td className="ellipsis-cell">
                 {getStatusBadge(item?.status)}
             </td>
         </tr>

@@ -123,10 +123,10 @@ function WorkationReservationListComponent() {
         <table className="workation-table">
           <thead>
             <tr>
-              <th style={{ width: "12%" }}>크루이름</th>
+              <th style={{ width: "16%" }}>크루이름</th>
               <th style={{ width: "10%" }}>크루장</th>
-              <th style={{ width: "28%" }}>신청기간</th>
-              <th style={{ width: "22%" }}>시설 및 장소</th>
+              <th style={{ width: "26%" }}>신청기간</th>
+              <th style={{ width: "20%" }}>시설 및 장소</th>
               <th style={{ width: "14%" }}>예약신청일</th>
               <th style={{ width: "14%" }}>예약상태</th>
             </tr>

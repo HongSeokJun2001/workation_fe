@@ -40,6 +40,13 @@
   border-collapse: collapse;
   text-align: left;
   font-size: 14px;
+  table-layout: fixed;
+}
+
+.ellipsis-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .workation-table th {
