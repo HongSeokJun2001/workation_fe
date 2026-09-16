@@ -65,7 +65,8 @@
 .crew-joined-card p { margin: 3px 0; font-size: 13px; color: var(--crew-muted); }
 .crew-joined-card strong { font-size: 15px; }
 .crew-empty { grid-column: 1 / -1; padding: 48px 20px; color: var(--crew-muted); text-align: center; background: var(--crew-sand); border-radius: 16px; }
-.crew-pagination { display: flex; justify-content: center; gap: 6px; margin-top: 34px; }
+.crew-pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 34px; flex-wrap: wrap; }
+.crew-pagination__current { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 0 12px; border-radius: 999px; background: var(--crew-mint); color: var(--crew-green-dark); border: 1px solid var(--crew-line); font-size: 13px; font-weight: 700; }
 .crew-pagination button { width: 34px; height: 34px; border: 1px solid var(--crew-line); background: #fff; color: var(--crew-ink); }
 .crew-pagination button:disabled { background: var(--crew-green); border-color: var(--crew-green); color: white; }
 .crew-toast { position: fixed; z-index: 1200; bottom: 28px; left: 50%; transform: translateX(-50%); background: #253b30; color: white; padding: 12px 18px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,.18); }

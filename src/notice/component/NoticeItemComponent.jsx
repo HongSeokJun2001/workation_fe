@@ -1,6 +1,17 @@
 
 import { useNavigate } from "react-router-dom";
 
+const decodeEscapedText = (text) => {
+    if (typeof text !== "string") return "";
+
+    return text
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x27;/g, "'");
+};
 
 function NoticeItemComponent(props){
 
@@ -16,7 +27,7 @@ function NoticeItemComponent(props){
         // 글 목록 클릭시 상세보기로 전환되는 navigate 함수 셋팅
     <tr onClick={()=>{navigate(`/notice/detail/${item.noticeId}`);}}>
             <td>{item.noticeId}</td>
-            <td>{item.noticeTitle}</td>
+            <td>{decodeEscapedText(item.noticeTitle)}</td>
             <td>관리자</td>
             {/* 작성자 테이블 확인 필요 */}
             <td>{item.viewCount}</td>
